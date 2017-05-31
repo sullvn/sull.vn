@@ -1,0 +1,13 @@
+{
+  "name": "axolotl.industries",
+  "version": "0.0.0",
+  "description": "https://axolotl.industries",
+  "main": "config.toml",
+  "repository": "https://github.com/bitantics/axolotl.industries",
+  "author": "Kevin Sullivan <kevin@bitantics.com>",
+  "license": "MIT",
+  "dependencies": {
+    "postcss": "^6.0.1",
+    "postcss-cssnext": "^2.11.0"
+  }
+}
