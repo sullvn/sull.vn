@@ -17,14 +17,14 @@
   }
 
   &::before {
-    animation: sprinkles-top-left .8s step-start infinite;
+    animation: sprinkles-top-left .8s .5s step-start infinite;
 
     left: 0;
     top: 0;
   }
 
   &::after {
-    animation: sprinkles-bottom-right 1.3s step-start infinite;
+    animation: sprinkles-bottom-right 1.3s .5s step-start infinite;
 
     right: 0;
     bottom: 0;
