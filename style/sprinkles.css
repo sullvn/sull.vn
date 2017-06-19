@@ -1,0 +1,136 @@
+.sprinkles {
+  position: relative;
+
+  &::before, &::after {
+    content: '';
+    display: none;
+
+    position: absolute;
+    font-weight: bold;
+    font-size: 1.5em;
+  }
+}
+
+.sprinkles:hover {
+  &::before, &::after {
+    display: block;
+  }
+
+  &::before {
+    animation: sprinkles-top-left .8s step-start infinite;
+
+    left: 0;
+    top: 0;
+  }
+
+  &::after {
+    animation: sprinkles-bottom-right 1.3s step-start infinite;
+
+    right: 0;
+    bottom: 0;
+  }
+}
+
+
+@keyframes sprinkles-top-left {
+  from, to {
+    content: '◆';
+    color: var(--green);
+
+    top: -.3em;
+    left: -.3em;
+    transform: rotateZ(10deg);
+  }
+
+  13% {
+    content: '◡';
+    color: var(--green);
+
+    top: -.8em;
+    left: 30%;
+    transform: rotateZ(160deg);
+  }
+
+  43% {
+    content: '▱';
+    color: var(--red);
+
+    top: -.6em;
+    left: -.3em;
+    transform: rotateZ(160deg);
+  }
+
+  56% {
+    content: '◇';
+    color: var(--purple);
+
+    top: -.3em;
+    left: -.6em;
+    transform: rotateZ(205deg);
+  }
+
+  83% {
+    content: '◜';
+    color: var(--red);
+
+    top: .5em;
+    left: 10%;
+    transform: rotateZ(35deg);
+  }
+}
+
+@keyframes sprinkles-bottom-right {
+  from, to {
+    content: '●';
+    color: var(--red);
+
+    right: 30%;
+    bottom: -1em;
+    transform: rotateZ(245deg);
+  }
+
+  12% {
+    content: '○';
+    color: var(--purple);
+
+    right: 0;
+    bottom: .3em;
+    transform: rotateZ(315deg);
+  }
+
+  30% {
+    content: '□';
+    color: var(--red);
+
+    right: -.3em;
+    bottom: -.7em;
+    transform: rotateZ(5deg);
+  }
+
+  47% {
+    content: '▲';
+    color: var(--purple);
+
+    right: -.4em;
+    bottom: .3em;
+    transform: rotateZ(200deg);
+  }
+
+  68% {
+    content: '■';
+    color: var(--green);
+
+    right: 45%;
+    bottom: -.6em;
+    transform: rotateZ(134deg);
+  }
+
+  92% {
+    content: '△';
+    color: var(--green);
+
+    right: 15%;
+    bottom: -.9em;
+    transform: rotateZ(320deg);
+  }
+}
