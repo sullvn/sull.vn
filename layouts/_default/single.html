@@ -1,0 +1,11 @@
+{{ partial "head.html" . }}
+
+<article>
+  <hgroup>
+    <h1>{{ .Title }}</h1>
+    <time>{{ .Date.Format "Jan 1, 2006" }}</time>
+  </hgroup>
+  {{ .Content }}
+</article>
+
+{{ partial "foot.html" . }}

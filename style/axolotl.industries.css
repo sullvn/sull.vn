@@ -38,6 +38,11 @@ html {
   font-family: var(--font-futura);
 
   padding: 1em;
+
+  &.dark {
+    color: var(--white);
+    background-color: var(--black);
+  }
 }
 
 body {
