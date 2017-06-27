@@ -10,7 +10,7 @@
     "build:html": "hugo",
     "build:style": "postcss ./style/axolotl.industries.css --dir ./static/style --use postcss-import --use postcss-cssnext --no-map",
     "watch:style": "npm run build:style -- --watch",
-    "start": "npm run watch:style & hugo serve -D"
+    "start": "npm run watch:style & hugo serve --buildDrafts --bind 0.0.0.0"
   },
   "dependencies": {
     "normalize.css": "^7.0.0"
