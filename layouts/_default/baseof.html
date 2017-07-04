@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-us">
+<html class="{{ block "theme" . }}{{ end }}" lang="en-us">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,11 +7,14 @@
 
     {{ .Hugo.Generator }}
 
-    <title>{{ .Title }} &middot; {{ .Site.Title }}</title>
+    <title>{{ block "title" . }}
+      {{ .Site.Title }}
+    {{ end }}</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="/style/axolotl.industries.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/solarized-light.min.css">
+    {{ block "css" . }}
+    {{ end }}
   </head>
   <body>
     <header>
@@ -27,4 +30,16 @@
         <a class="sprinkles" href="/imagery">Imagery</a>
       </nav>
     </header>
+
     <main>
+      {{ block "main" . }}
+      {{ end }}
+    </main>
+
+    <footer>
+    </footer>
+
+    {{ block "scripts" . }}
+    {{ end }}
+  </body>
+</html> 
