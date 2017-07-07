@@ -18,7 +18,7 @@
   --double-fade: calc(var(--fade) / 2);
   --quadruple-fade: calc(var(--fade) / 4);
 
-  --font-futura: Futura, "Trebuchet MS", Arial, sans-serif;
+  --font-futura: "futura-pt-bold", Futura, "Trebuchet MS", Arial, sans-serif;
   --font-palatino: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 
   --article-text-width: 30rem;
