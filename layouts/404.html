@@ -1,6 +1,12 @@
-{{ partial "head.html" . }}
+{{ define "title" }}
+  404 ◇ {{ .Site.Title }}
+{{ end }}
 
-<h1>404</h1>
-<h2>Page not found</h2>
+{{ define "main" }}
+  <section id="not-found">
+    <h1>404</h1>
+    <h2>Page not found</h2>
+  </section>
+{{ end }}
 
-{{ partial "foot.html" . }}
+{{ define "theme" }}dark{{ end }}
