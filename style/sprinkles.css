@@ -1,3 +1,29 @@
+.tombstone {
+  fill: var(--black);
+  opacity: var(--quadruple-fade);
+
+  @nest .dark & {
+    fill: var(--white);
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.tombstone:hover polygon {
+  fill: var(--green);
+}
+
+.tombstone:hover rect {
+  fill: var(--red);
+}
+
+.tombstone:hover circle {
+  fill: var(--purple);
+}
+
+
 .sprinkles {
   position: relative;
 

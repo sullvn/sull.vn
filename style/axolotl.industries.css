@@ -14,8 +14,9 @@
   --purple: #927bd0;
 
   --fade: 0.3;
-  --double-fade: calc(var(--fade) / 2);
   --half-fade: calc(var(--fade) * 2.5);
+  --double-fade: calc(var(--fade) / 2);
+  --quadruple-fade: calc(var(--fade) / 4);
 
   --font-futura: Futura, "Trebuchet MS", Arial, sans-serif;
   --font-palatino: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -48,17 +49,27 @@ html {
   font-family: var(--font-futura);
   font-size: 18px;
 
-  padding: 1em;
-
   &.dark {
     color: var(--white);
     background-color: var(--black);
   }
 }
 
+
 body {
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100vh;
   max-width: 50em;
+
+  margin: 0 auto;
+  padding: 1em;
+}
+
+
+main {
+  flex: 1;
 }
 
 
@@ -135,6 +146,15 @@ header a {
   header a {
     margin: .1em 0;
   }
+}
+
+
+/* Footer */
+footer {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 4rem;
 }
 
 
