@@ -6,7 +6,7 @@
 
 #intro > * {
   margin: 0;
-  padding: 3rem 0;
+  padding: calc(var(--content-start-spacing) / 2) 0;
   position: relative;
 
   &::after {
@@ -29,9 +29,21 @@
   }
 }
 
+@media(--article-width) {
+  #intro > * {
+    text-align: left !important;
+
+    padding: calc(var(--content-start-spacing) / 4) 0;
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
 
 #intro-welcome {
-  margin-top: var(--content-start-spacing);
+  margin-top: calc(var(--content-start-spacing) / 2);
 
   text-align: center;
 }
