@@ -2,6 +2,7 @@
 
 @import "./sprinkles.css";
 @import "./intro.css";
+@import "./navigation-list.css";
 
 
 /* Variables */
@@ -195,6 +196,12 @@ article img {
   max-width: 100%;
   margin: 2em 0;
 }
+
+
+article li {
+  margin: .75em 0;
+}
+
 
 /* Code */
 pre code, pre code.hljs {
