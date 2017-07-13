@@ -9,18 +9,18 @@
   "scripts": {
     "deploy": "firebase deploy",
     "deploy:login": "firebase login",
-
     "build": "npm run build:style && npm run build:html",
     "build:html": "hugo",
-    "build:style": "postcss ./style/axolotl.industries.css --dir ./static/style --use postcss-import --use postcss-cssnext --no-map",
-
+    "build:style": "postcss ./style/axolotl.industries.css --config postcss.config.js --dir ./static/style --no-map",
     "start": "npm run watch:style & hugo serve --buildDrafts --bind 0.0.0.0",
+    "postcss": "postcss",
     "watch:style": "npm run build:style -- --watch"
   },
   "dependencies": {
     "normalize.css": "^7.0.0"
   },
   "devDependencies": {
+    "cssnano": "^3.10.0",
     "firebase-tools": "^3.9.1",
     "postcss": "^6.0.1",
     "postcss-cli": "^4.0.0",
