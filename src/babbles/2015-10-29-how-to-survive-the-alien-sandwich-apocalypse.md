@@ -1,12 +1,11 @@
-+++
-date = "2015-10-29T22:42:48-07:00"
-draft = false
-title = "How to Survive the Alien-Sandwich Apocalypse with Constraints"
-
-+++
+---
+path: "/babbles/how-to-survive-the-alien-sandwich-apocalypse"
+date: "2015-10-29T22:42:48-07:00"
+title: "How to Survive the Alien-Sandwich Apocalypse with Constraints"
+---
 
 > Imagine you need to instruct an alien how to make a peanut butter and jelly sandwich. The alien understands English and basic concepts, but doesn't know any of the steps required to make a sandwich. You are in a kitchen with them, but cannot physically help.
-
+>
 > Go.
 
 You may have some questions, such as (but not limited to):

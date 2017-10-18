@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "module": "commonjs",
+    "target": "esnext",
+
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    "jsx": "react",
+    "lib": ["dom", "es2015", "es2017"],
+
+    "plugins": [
+      {
+        "name": "ts-graphql-plugin",
+        "schema": {
+          "http": {
+            "url": "http://localhost:8000/___graphql"
+          }
+        },
+        "tag": "graphql" 
+      }
+    ]
+  },
+  "include": [
+    "./src/**/*",
+    "./typings/**/*"
+  ]
+}

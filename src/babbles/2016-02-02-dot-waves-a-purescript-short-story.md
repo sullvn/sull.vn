@@ -1,8 +1,8 @@
-+++
-date = "2016-02-02T00:37:48-08:00"
-draft = false
-title = "Dot Waves: A PureScript Short Story"
-+++
+---
+path: "/babbles/dot-waves-a-purescript-short-story"
+date: "2016-02-02T00:37:48-08:00"
+title: "Dot Waves: A PureScript Short Story"
+---
 
 If you haven't checked out [PureScript](http://www.purescript.org/), then you totally should. It's a spiritual child to Haskell, but currently focused for compiling to Javascript. Readable Javascript at that!
 
@@ -14,9 +14,7 @@ Let's go ahead and make some dots. Enjoy -- but not too much, please.
 
 ## Uno Dot
 
-<p data-height="350" data-theme-id="21896" data-slug-hash="PZRLQV" data-default-tab="result" data-user="bitantics" data-preview="true" class="codepen">
-  See the Pen <a href="http://codepen.io/bitantics/pen/PZRLQV/">Single Pulsating Dot</a> by Kevin Sullivan (<a href="http://codepen.io/bitantics">@bitantics</a>) on <a href="http://codepen.io">CodePen</a>.
-</p>
+<p data-height="567" data-theme-id="21896" data-slug-hash="PZRLQV" data-default-tab="result" data-user="awfulaxolotl" data-embed-version="2" data-pen-title="Single Pulsating Dot" class="codepen">See the Pen <a href="https://codepen.io/awfulaxolotl/pen/PZRLQV/">Single Pulsating Dot</a> by Kevin Sullivan (<a href="https://codepen.io/awfulaxolotl">@awfulaxolotl</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 
 The best way to start is to start small. So let's start with a single pulsating dot on a canvas.
 
@@ -123,9 +121,7 @@ And that's how you render a pulsating dot, folks. Checkout the [full source](htt
 
 ## More Dots, Please
 
-<p data-height="400" data-theme-id="21896" data-slug-hash="wMmOxL" data-default-tab="result" data-user="bitantics" data-preview="true" class="codepen">
-  See the Pen <a href="http://codepen.io/bitantics/pen/wMmOxL/">Rectangle of Dots</a> by Kevin Sullivan (<a href="http://codepen.io/bitantics">@bitantics</a>) on <a href="http://codepen.io">CodePen</a>.
-</p>
+<p data-height="575" data-theme-id="21896" data-slug-hash="wMmOxL" data-default-tab="result" data-user="awfulaxolotl" data-embed-version="2" data-pen-title="Rectangle of Dots" class="codepen">See the Pen <a href="https://codepen.io/awfulaxolotl/pen/wMmOxL/">Rectangle of Dots</a> by Kevin Sullivan (<a href="https://codepen.io/awfulaxolotl">@awfulaxolotl</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 
 You aren't happy with one dot? *You want more?!*
 
@@ -259,9 +255,7 @@ That's it for this chapter, but feel free to checkout the [final code](https://g
 
 ## Make Some Waves
 
-<p data-height="400" data-theme-id="21896" data-slug-hash="gPeEBE" data-default-tab="result" data-user="bitantics" data-preview="true" class="codepen">
-  See the Pen <a href="http://codepen.io/bitantics/pen/gPeEBE/">Diagonal Waves</a> by Kevin Sullivan (<a href="http://codepen.io/bitantics">@bitantics</a>) on <a href="http://codepen.io">CodePen</a>.
-</p>
+<p data-height="300" data-theme-id="21896" data-slug-hash="bEvZzb" data-default-tab="html,result" data-user="awfulaxolotl" data-embed-version="2" data-pen-title="Colored Waves" class="codepen">See the Pen <a href="https://codepen.io/awfulaxolotl/pen/bEvZzb/">Colored Waves</a> by Kevin Sullivan (<a href="https://codepen.io/awfulaxolotl">@awfulaxolotl</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 
 So far this short story has been a lie. The title promised dot waves; not pulsating dots! Without a doubt, it's the greatest tragedy of our time. Let's fix it and make some waves!
 
@@ -298,10 +292,8 @@ And, well, that's just about it! The offsetted time and the refactoring make up 
 
 ## Wax On; Wax Off
 
-<p data-height="400" data-theme-id="21896" data-slug-hash="jWzJJW" data-default-tab="result" data-user="bitantics" data-preview="true" class="codepen">
-  See the Pen <a href="http://codepen.io/bitantics/pen/jWzJJW/">Polished Look & Feel</a> by Kevin Sullivan (<a href="http://codepen.io/bitantics">@bitantics</a>) on <a href="http://codepen.io">CodePen</a>.
-</p>
-<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+<p data-height="522" data-theme-id="21896" data-slug-hash="jWzJJW" data-default-tab="result" data-user="awfulaxolotl" data-embed-version="2" data-pen-title="Polished Look & Feel" class="codepen">See the Pen <a href="https://codepen.io/awfulaxolotl/pen/jWzJJW/">Polished Look & Feel</a> by Kevin Sullivan (<a href="https://codepen.io/awfulaxolotl">@awfulaxolotl</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
 So we have our dots, our waves, and now we just need to make it look good. I'm thinking of a sort of 80's Miami nightlife feel, you follow me? No? Well you don't really have a choice, Ms. Passive Reader. Sorry.
 

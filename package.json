@@ -1,30 +1,37 @@
 {
   "name": "axolotl.industries",
-  "version": "0.0.0",
-  "description": "https://axolotl.industries",
-  "main": "config.toml",
-  "repository": "https://github.com/bitantics/axolotl.industries",
-  "author": "Kevin Sullivan <kevin@bitantics.com>",
+  "version": "1.0.0",
+  "description": "The best blog of all time. https://axolotl.industries",
+  "author": "Kevin Sullivan <kevin.sullivan@axolotl.industries>",
   "license": "MIT",
   "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "serve": "gatsby serve",
     "deploy": "firebase deploy",
-    "deploy:login": "firebase login",
-    "build": "npm run build:style && npm run build:html",
-    "build:html": "hugo",
-    "build:style": "postcss ./style/axolotl.industries.css --config postcss.config.js --dir ./static/style --no-map",
-    "start": "npm run watch:style & hugo serve --buildDrafts --bind 0.0.0.0",
-    "postcss": "postcss",
-    "watch:style": "npm run build:style -- --watch"
+    "deploy:login": "firebase login"
   },
   "dependencies": {
-    "normalize.css": "^7.0.0"
+    "gatsby-link": "^1.6.20",
+    "glamorous": "^4.9.7",
+    "polished": "^1.8.0",
+    "react-typekit": "^1.1.0"
   },
   "devDependencies": {
-    "cssnano": "^3.10.0",
-    "firebase-tools": "^3.9.1",
-    "postcss": "^6.0.1",
-    "postcss-cli": "^4.0.0",
-    "postcss-cssnext": "^2.11.0",
-    "postcss-import": "^10.0.0"
+    "@types/react": "^15",
+    "@types/react-helmet": "^5.0.3",
+    "firebase-tools": "^3.13.1",
+    "gatsby": "^1.9.52",
+    "gatsby-cli": "^1.1.7",
+    "gatsby-plugin-catch-links": "^1.0.9",
+    "gatsby-plugin-glamor": "^1.6.8",
+    "gatsby-plugin-react-helmet": "^1.0.6",
+    "gatsby-plugin-typescript": "^1.4.8",
+    "gatsby-plugin-typography": "^1.7.10",
+    "gatsby-remark-prismjs": "^1.2.8",
+    "gatsby-source-filesystem": "^1.5.2",
+    "gatsby-transformer-remark": "^1.7.15",
+    "ts-graphql-plugin": "^1.1.1",
+    "typescript": "^2.5.3"
   }
 }

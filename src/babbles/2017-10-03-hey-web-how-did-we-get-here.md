@@ -1,8 +1,8 @@
-+++
-date = "2017-10-03T09:04:30-07:00"
-draft = false
-title = "Hey Web, How Did We Get Here?"
-+++
+---
+path: "/babbles/hey-web-how-did-we-get-here"
+date: "2017-10-03T09:04:30-07:00"
+title: "Hey Web, How Did We Get Here?"
+---
 
 What a strange place.
 
