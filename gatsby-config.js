@@ -3,6 +3,7 @@ module.exports = {
     title: 'Gatsby Test',
   },
   plugins: [
+    'gatsby-plugin-glamor',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-typescript',
