@@ -9,8 +9,8 @@ import Base from '../templates/Base'
 import TextLink from '../components/TextLink'
 import {
   green, purple, red,
-  articleTextWidth, contentStartSpacing, largeHeaderSize,
-  deepTextShadow,
+  articleTextWidth, contentStartSpacing, largeHeaderSize, deepTextShadow,
+  Theme,
 } from '../style'
 const waveTexture = require( '../assets/wave-texture.jpg' )
 
@@ -27,7 +27,9 @@ export default function IndexPage(): JSX.Element {
             <H>I</H><H>n</H><H>d</H><H>u</H><H>s</H><H>t</H><H>r</H><H>i</H><H>e</H><H>s</H>
           </Word>
         </H1>
-        <Img css={ imgStyle } src={ waveTexture } />
+        <TextureBackground>
+          <Img css={ imgStyle } src={ waveTexture } />
+        </TextureBackground>
         <P>Oh hey there! I'm Kevin Sullivan.</P>
         <P>
           I do stuff at the intersection of technology and creativity.
@@ -75,6 +77,11 @@ const P = glamorous.p({
   margin: '0 auto 4em',
   maxWidth: articleTextWidth,
 })
+
+// A direct parent is needed on the texture for it to blend correctly
+const TextureBackground = glamorous.div(({ theme }: { theme: Theme }) => ({
+  backgroundColor: theme.bgColor,
+}))
 
 const H = glamorous.span({
   ':nth-of-type( 3n )': {
