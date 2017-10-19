@@ -7,6 +7,7 @@ module.exports = {
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-typescript',
+    'gatsby-plugin-offline',
     {
       resolve: `gatsby-transformer-remark`,
       options: {
