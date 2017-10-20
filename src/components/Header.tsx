@@ -20,6 +20,9 @@ export default function Header(): JSX.Element {
         <HeaderLink to="/babbles">
           <Sprinkles>Babbles</Sprinkles>
         </HeaderLink>
+        <HeaderLink to="/resume">
+          <Sprinkles>Resume</Sprinkles>
+        </HeaderLink>
       </Nav>
     </StyledHeader>
   )
