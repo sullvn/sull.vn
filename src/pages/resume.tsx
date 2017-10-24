@@ -141,7 +141,9 @@ const Resume = glamorous.article({
   margin: `calc(${ contentStartSpacing } / 2) 0`,
 
   [ `@media(max-width: ${ baseWidth })` ]: {
-    grid: 'repeat(12, auto) / repeat(2, 1fr)',
+    gridTemplateRows: 'repeat(12, auto)',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+
     maxWidth: articleTextWidth,
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -227,8 +229,9 @@ const Links = glamorous.nav({
 const Link = glamorous.a({
   display: 'block',
 
+  color: 'inherit',
   fontSize: '14px',
   fontFamily: SYSTEM_FONT_FAMILY,
   textAlign: 'center',
-  color: 'inherit',
+  textDecoration: 'none',
 })
