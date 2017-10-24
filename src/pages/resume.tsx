@@ -17,7 +17,7 @@ export default function ResumePage(): JSX.Element {
           of technology and creativity.
         </Purpose>
 
-        <Job columns="1/2" rows="2/3">
+        <Job>
           <Company>
             Aclima
           </Company>
@@ -25,26 +25,26 @@ export default function ResumePage(): JSX.Element {
             2015 - Now
           </Duration>
         </Job>
-        <Task columns="2/3" rows="2/3">
+        <Task>
           <Role>Engineer.</Role> Creating interactive
           geospatial visuals for hyper-dense
           environmental data. Includes custom WebGL
           shaders for Deck.GL.
         </Task>
-        <Task columns="3/4" rows="2/3">
+        <Task>
           Architected an in-browser metadata graph engine
           for flexible querying and display. Also setup a 
           versatile authentication platform for all of our
           user interfaces.
         </Task>
-        <Task columns="4/5" rows="2/3">
+        <Task>
           State of the art practices for fast, correct, and
           maintainable user interfaces. Includes static type
           systems, isomorphic rendering, continuous deployment,
           and more.
         </Task>
 
-        <Job columns="1/2" rows="3/4">
+        <Job>
           <Company>
             Amazon
           </Company>
@@ -52,12 +52,12 @@ export default function ResumePage(): JSX.Element {
             2014 - 2015
           </Duration>
         </Job>
-        <Task columns="2/3" rows="3/4">
+        <Task>
           <Role>Engineer.</Role> Worked on a generative testing system for a point-of-sales
           mobile app and hardware.
         </Task>
 
-        <Job columns="3/4" rows="3/4">
+        <Job>
           <Company>
             PopularPays
           </Company>
@@ -65,12 +65,12 @@ export default function ResumePage(): JSX.Element {
             2014
           </Duration>
         </Job>
-        <Task columns="4/5" rows="3/4">
+        <Task>
           <Role>Consulting.</Role> Started a social graph web crawler and complementary
           fraud detection system using PostgreSQL.
         </Task>
 
-        <Job columns="1/2" rows="4/5">
+        <Job>
           <Company>
             StudyCloud
           </Company>
@@ -78,11 +78,11 @@ export default function ResumePage(): JSX.Element {
             2013
           </Duration>
         </Job>
-        <Task columns="2/3" rows="4/5">
+        <Task>
           <Role>Intern.</Role> Frontend engineering for a new learning management system design.
         </Task>
 
-        <Job columns="3/4" rows="4/5">
+        <Job>
           <Company>
             WolframAlpha
           </Company>
@@ -90,11 +90,11 @@ export default function ResumePage(): JSX.Element {
             2011 - 2012
           </Duration>
         </Job>
-        <Task columns="4/5" rows="4/5">
+        <Task>
           <Role>Intern.</Role> Frontend engineering, prototyping, and authentication system.
         </Task>
 
-        <Job columns="1/3" rows="5/6">
+        <Job columns="1/3">
           <Company>
             University of Illinois at Urbana-Champaign
           </Company>
@@ -102,16 +102,16 @@ export default function ResumePage(): JSX.Element {
             Class of 2014
           </Duration>
         </Job>
-        <Task columns="3/4" rows="5/6">
+        <Task>
           <Role>Computer Science major.</Role> Leader of WebMonkeys SIG for ACM.
         </Task>
-        <Task columns="4/5" rows="5/6">
+        <Task>
           Projects include architecting a basic processor, implementing an ML
           language, memory allocator, TCP stack, routing protocols, game AI,
           computer virus, and more.
         </Task>
 
-        <Links columns="1/5" rows="6/7">
+        <Links columns="1/5">
           <Link href="mailto:kevin.sullivan@axolotl.industries">
             kevin.sullivan@axolotl.industries
           </Link>
