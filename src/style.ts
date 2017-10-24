@@ -19,6 +19,7 @@ export const fontPalatino = '"Palatino Linotype", "Book Antiqua", Palatino, seri
 
 
 // Sizes
+export const baseWidth           = '50rem'
 export const articleTextWidth    = '30rem'
 export const borderWidth         = '.2rem'
 export const contentStartSpacing = '8rem'

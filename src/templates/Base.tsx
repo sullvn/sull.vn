@@ -11,7 +11,7 @@ import { transparentize } from 'polished'
 import Header from '../components/Header'
 import Tombstone from '../components/Tombstone'
 import {
-  black,
+  baseWidth, black,
   doubleFade, borderWidth, fontFutura,
   Theme, darkTheme,
 } from '../style'
@@ -78,7 +78,7 @@ const bodyStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   minHeight: '100vh',
-  maxWidth: '50em',
+  maxWidth: baseWidth,
 
   margin: '0 auto',
   padding: '1em',

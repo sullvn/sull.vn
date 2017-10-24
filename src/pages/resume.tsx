@@ -3,7 +3,7 @@ import Helmet from 'react-helmet'
 import glamorous from 'glamorous'
 
 import Base from '../templates/Base'
-import { contentStartSpacing, lightTheme } from '../style'
+import { articleTextWidth, baseWidth, contentStartSpacing, lightTheme } from '../style'
 
 
 export default function ResumePage(): JSX.Element {
@@ -17,7 +17,7 @@ export default function ResumePage(): JSX.Element {
           of technology and creativity.
         </Purpose>
 
-        <Job>
+        <Job smallRow="3/6">
           <Company>
             Aclima
           </Company>
@@ -59,7 +59,7 @@ export default function ResumePage(): JSX.Element {
 
         <Job>
           <Company>
-            PopularPays
+            Popular<wbr />Pays
           </Company>
           <Duration>
             2014
@@ -72,7 +72,7 @@ export default function ResumePage(): JSX.Element {
 
         <Job>
           <Company>
-            StudyCloud
+            Study<wbr />Cloud
           </Company>
           <Duration>
             2013
@@ -84,7 +84,7 @@ export default function ResumePage(): JSX.Element {
 
         <Job>
           <Company>
-            WolframAlpha
+            Wolfram<wbr />Alpha
           </Company>
           <Duration>
             2011 - 2012
@@ -94,14 +94,14 @@ export default function ResumePage(): JSX.Element {
           <Role>Intern.</Role> Frontend engineering, prototyping, and authentication system.
         </Task>
 
-        <Job columns="1/3">
+        <Education>
           <Company>
             University of Illinois at Urbana-Champaign
           </Company>
           <Duration>
             Class of 2014
           </Duration>
-        </Job>
+        </Education>
         <Task>
           <Role>Computer Science major.</Role> Leader of WebMonkeys SIG for ACM.
         </Task>
@@ -111,7 +111,7 @@ export default function ResumePage(): JSX.Element {
           computer virus, and more.
         </Task>
 
-        <Links columns="1/5">
+        <Links>
           <Link href="mailto:kevin.sullivan@axolotl.industries">
             kevin.sullivan@axolotl.industries
           </Link>
@@ -138,34 +138,46 @@ const Resume = glamorous.article({
   grid: 'repeat(6, 1fr) / repeat(4, 1fr)',
   gridGap: '2rem 1rem',
 
-  margin: `calc(${ contentStartSpacing } / 2) 0`
+  margin: `calc(${ contentStartSpacing } / 2) 0`,
+
+  [ `@media(max-width: ${ baseWidth })` ]: {
+    grid: 'repeat(12, auto) / repeat(2, 1fr)',
+    maxWidth: articleTextWidth,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
 })
 
 const Name = glamorous.h1({
   gridColumn: '1 / 4',
-  gridRow: '1 / 2',
 
   fontSize: '72px',
   margin: 0,
   lineHeight: .8,
+
+  [ `@media(max-width: ${ baseWidth })` ]: {
+    gridColumn: '1 / 3',
+  },
 })
 
 const Purpose = glamorous.p({
-  gridColumn: '4 / 5',
-  gridRow: '1 / 2',
-
   fontSize: '14px',
   fontFamily: SYSTEM_FONT_FAMILY,
   lineHeight: 1.45,
   margin: 0,
+
+  [ `@media(max-width: ${ baseWidth })` ]: {
+    gridColumn: '1 / 3',
+  },
 })
 
 const Job = glamorous.div({
   display: 'flex',
   flexDirection: 'column',
-}, ({ columns, rows }) => ({
-  gridColumn: columns,
-  gridRow: rows,
+}, ({ smallRow }) => ({
+  [ `@media(max-width: ${ baseWidth })` ]: {
+    gridRow: smallRow,
+  },
 }))
 
 const Company = glamorous.h2({
@@ -183,21 +195,34 @@ const Task = glamorous.p({
   fontFamily: SYSTEM_FONT_FAMILY,
   lineHeight: 1.45,
   margin: 0,
-}, ({ columns, rows }) => ({
-  gridColumn: columns,
-  gridRow: rows,
-}))
+})
 
 const Role = glamorous.b({
+})
+
+const Education = glamorous.div({
+  display: 'flex',
+  flexDirection: 'column',
+
+  gridColumn: '1 / 3',
+
+  [ `@media(max-width: ${ baseWidth })` ]: {
+    gridColumn: '1 / 2',
+    gridRow: '10 / 12',
+  },
 })
 
 const Links = glamorous.nav({
   display: 'flex',
   justifyContent: 'space-around',
-}, ({ columns, rows }) => ({
-  gridColumn: columns,
-  gridRow: rows,
-}))
+
+  gridColumn: '1/5',
+
+  [ `@media(max-width: ${ baseWidth })` ]: {
+    flexDirection: 'column',
+    gridColumn: '1 / 3',
+  },
+})
 
 const Link = glamorous.a({
   display: 'block',
