@@ -10,11 +10,11 @@ Today’s websites can be email clients, 3D games, graphic design applications, 
 
 What happened to just text?
 
-I constantly use apps on the web. I read news on the web. I communicate with other on web. Hell, I make my living on the web. And yet, I’m not sure if I like it. It just… seems like a mistake sometimes.
+I constantly use apps on the web. I read news on the web. I communicate with others on web. Hell, I make my living on the web. And yet I’m not even sure if I like it. It just, well, seems like a mistake sometimes.
 
-As it turns out, I’m not alone. The most recent word on this has been ["It’s time to kill the web"](https://blog.plan99.net/its-time-to-kill-the-web-974a9fe80c89) by Mike Hearn. There are dozens of us… dozens!
+As it turns out, I’m not alone. The most recent chatter on this has been ["It’s time to kill the web"](https://blog.plan99.net/its-time-to-kill-the-web-974a9fe80c89) by Mike Hearn. There are dozens of us... dozens!
 
-Personally, I don’t want to kill the web just yet. Think of the cat GIFs!
+Although I agree with Mike's points, I don’t want to kill the web. Well, at least just yet. Think of the cat GIFs!
 
 Perhaps we can save it. And to do that, let's reflect on where the web came from and what makes it special.
 
@@ -23,7 +23,7 @@ Perhaps we can save it. And to do that, let's reflect on where the web came from
 
 I didn’t know until recently that the The World Wide Web is actually a version 2! It’s original design was meant to fix a single flaw of its predecessor, [ENQUIRE](https://www.w3.org/DesignIssues/TimBook-old/History.html). 
 
-ENQUIRE was the first attempt at a [hypertext](https://en.wikipedia.org/wiki/Hypertext) system by [Sir Tim Berners-Lee](https://en.wikipedia.org/wiki/Tim_Berners-Lee) at CERN. Being a good computer scientist, he wanted wasn’t happy with any old information system. He wanted to record the connections between things in addition to traditional prose. “Things” being people, initiatives, software, hardware, and anything else someone with a “bad memory” at a world-class physics laboratory might want.
+ENQUIRE was the first attempt at a [hypertext](https://en.wikipedia.org/wiki/Hypertext) system by [Sir Tim Berners-Lee](https://en.wikipedia.org/wiki/Tim_Berners-Lee) at CERN. Being a good computer scientist, he wanted wasn’t happy with any old information system. He wanted to record the connections between things in addition to traditional prose. "Things" being people, initiatives, software, hardware, and anything else someone with a "bad memory" at a world-class physics laboratory might want.
 
 Beautiful. But it had one problem: ENQUIRE enforced [two-way linking between pages](https://www.w3.org/DesignIssues/Topology.html). For example, if a person was linked to a program then the inverse automatically became true as well. That may sound great, but sometimes you don’t actually want to see all links coming to something. Too much information can be worse than none.
 
@@ -58,7 +58,6 @@ And we haven’t even gotten started. Web browsers have evolved from being able 
 
 to also being able to:
 
-
 * Embed plugins like Flash, Java, and ActiveX
 * View vector graphics
 * Play audio
@@ -74,7 +73,7 @@ to also being able to:
 * Push notifications outside of browser
 * Web sockets
 
-... hold on there's more ...
+...hold on there's more...
 
 * Threading through web workers
 * Record audio, video, and pictures through the device
@@ -113,7 +112,6 @@ From what I can tell, the web’s success isn’t from a coherent plan. It’s m
 
 URLs, and their more generic father the [URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier), are way more than just text strings at the top of your browser. They are:
 
-
 - **Unambiguous.** A link should only ever point to one place.
 - **Readable.** URLs don’t have to be readable but they usually are. Let’s not take this for granted! *I'm looking at you, Google.*
 - **Direct.** Links can point to specific page locations, getting straight to the relevant content.
@@ -129,11 +127,9 @@ Even desktop operating systems - the traditional platform - are tapping into URL
 
 You want to read about Pokemon on Wikipedia? That Vimeo video? Prototype apps in Figma? Post dank memes on Tumblr? Read enraging comments on Reddit? Play Quake with your friends? Render the entire Earth in 3D?
 
-
 > Sure, go to this URL.
 
 You want to use that program?
-
 
 > Okay, well… ummm… you’re on MacOS right? Maybe try the App Store, but their selection sucks. You should probably just search that on Google. Yeah that link looks legit, try that one. Okay sure, this looks good, where’s the download link? That’s it? Okay. Hrmm this is taking a moment, maybe I’ll see if Francis posted those Tahoe photos on Facebook. Huh, the lake was really clear that day wasn’t it. Did he actually bring — Ah it’s done! Alright, click the downloaded **.dmg** file. Click **next** a few times and hold on for a moment. It’s installing! Okay okay, it’s done.
 
@@ -161,7 +157,27 @@ Sure, that’s not entirely true in practice. Censorship, compatibility issues, 
 Standardization also ensures developers have a consistent API. This is huge. Why develop content for wildly different devices when you could just put it on the web, making it a URL away? Cross-platform development just doesn’t make sense if the web will do the trick.
 
 
-## Reason #4 - The Demilitarized Zone of Tech
+## Reason #4 - Dat HTML
+
+The web's root as hypertext has given it an incredible quality. When everything's a document you can treat everything like a document.
+
+Okay, okay, that's obvious. What I mean is that web sites can be easily consumed, parsed, played with, and extended in countless ways. HTML and the DOM -- it's Javascript reflection -- have offered an unprecedent platform for flexibility.
+
+In contrast, native apps are opaque black boxes. Their direct output of raster data to framebuffers contributes to their speed, but it also drastically limits how
+people can manipulate them.
+
+Imagine being able to do the following with desktop programs or mobile apps:
+
+1. Universal ad blocking
+2. Change UIs of every app at will. Reorder sections, hide elements, and embed entirely new parts
+3. Save apps at arbitrary states as resolution-independent documents
+4. Built-in world-class debugging and introspection for all apps
+5. Robots for web scraping and automation
+
+The web enables all of this. Can developers circumvent this? Sure - canvas rendering let's creators default back to opaque raster rendering. In practice this isn't an issue - only the most bleeding-edge web apps need to escape the DOM to Pure Pixel-Land.
+
+
+## Reason #5 - The Demilitarized Zone of Tech
 
 The last reason isn't actually due to technology. It's all about being in the right place at the right time.
 
