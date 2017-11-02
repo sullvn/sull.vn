@@ -29,7 +29,7 @@ export const largeHeaderSize = '70px'
 // Selectors
 export const heading = 'h1, h2, h3, h4, h5, h6'
 export const textContent = 'blockquote, dd, dl, dt, hr, li, ol, p, ul'
-export const visualContent = 'img, figure, pre, svg, pre[class*="language-"]'
+export const visualContent = 'img, figure, pre, svg, pre[class*="language-"], .katex-display'
 
 
 // Themes

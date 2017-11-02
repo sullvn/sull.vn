@@ -14,6 +14,7 @@ module.exports = {
         plugins: [ 
           'gatsby-remark-prismjs',
           'gatsby-remark-smartypants',
+          'gatsby-remark-katex',
         ],
       },
     },

@@ -44,9 +44,11 @@ Let’s try to conquer this creep.
 
 I’ve been getting deeper into the [ML family of languages](https://en.wikipedia.org/wiki/ML_(programming_language)) for a while and recently read through Bartosz Milewski’s [“Category Theory for Programmers”](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/). They both made me really appreciate some of the mathematical models behind how we code.
 
-And right at the start is the [semigroup](https://en.wikipedia.org/wiki/Semigroup) — the definition of associative composition. To recap it’s a set of elements, $$S$$, and an operation, $$\cdot$$ , where the following holds:
+And right at the start is the [semigroup](https://en.wikipedia.org/wiki/Semigroup) — the definition of associative composition. To recap it’s a set of elements, $S$, and an operation, $\cdot$ , where the following holds:
 
-$$a \cdot (b \cdot c) = (a \cdot b) \cdot c\quad\forall a, b, c \in S$$
+$$
+a \cdot (b \cdot c) = (a \cdot b) \cdot c\quad\forall a, b, c \in S
+$$
 
 I had never heard of this before getting into functional programming. It’s a little strange that such a simple pattern isn’t part of the common programming vernacular!
  
@@ -129,10 +131,14 @@ Therefore, in theory, any UNIX command can compose with any other one. In practi
 
 ### React
 
-React.js has taken the web app programming by storm. Many quote the virtual DOM as it’s special sauce, but I disagree. It’s special flavor is declarative programming. It’s so simple I can describe the essence of the entire API as two functions:
+[React](https://reactjs.org/) has taken the web app programming by storm. Many quote the virtual DOM as it’s special sauce, but I disagree. It’s special flavor is declarative programming. It’s so simple I can describe the essence of the entire API as two functions:
 
-component: Data → VirtualHTML
-render: VirtualHTML → HTML
+$$
+\begin{aligned}
+component &\colon Data \to VirtualHTML \\
+render &\colon VirtualHTML \to HTML
+\end{aligned}
+$$
 
 That’s it. The power comes from virtual HTML and components being data themselves.
 
@@ -176,7 +182,7 @@ And guess what? React components are a semigroup with either one of these functi
 
 ### GraphQL
 
-GraphQL is another Facebook technology which has taken the UI programming world by storm. It’s a query language designed to be the data parallel to React’s visual logic.
+[GraphQL](http://graphql.org/) is another Facebook technology which has taken the UI programming world by storm. It’s a query language designed to be the data parallel to React’s visual logic.
 
 ```graphql
 # Some basic client information
@@ -225,13 +231,15 @@ It should get interesting if we explore the implications of designing systems wi
 
 To do so we’ll have to fix one thing. Looking back at the semigroup definition:
 
-$$a \cdot (b \cdot c) = (a \cdot b) \cdot c\quad\forall a, b, c \in S$$
+$$
+a \cdot (b \cdot c) = (a \cdot b) \cdot c\quad\forall a, b, c \in S
+$$
 
-It’s only defined for elements in $$S$$. This is a problem if we want to do something like:
+It’s only defined for elements in $S$. This is a problem if we want to do something like:
 
     search bar + results list + Twitter API = Twitter feed app
 
-What kind of set $$S$$ contains all three of those parts *and* knows an associative binary operator to combine them?
+What kind of set $S$ contains all three of those parts *and* knows an associative binary operator to combine them?
 
 The answer I’ll offer is this:
 
@@ -269,7 +277,7 @@ To do so, checkout how we would smash each part together — the semigroups:
 ![](https://d2mxuefqeaa7sj.cloudfront.net/s_63C9105B3EA1CBB70331B6BCBE609976BDC69E9326CD0C87B114339FF137C1E0_1509603883184_Open+Pizza+Lunchable.png)
 
 - **Visuals:** With React.js we usually just do what is explained above. A user-interface tree is composed of nesting and wrapping. GraphQL makes this even more true — each component’s data dependencies can be combined together into a single query. Therefore each component can live in it’s own isolated world waiting to be composed into a larger app.
-- **State:** Redux serves us well in the React world. State can be split into smaller state trees and individual reducing logic. This logic is a semigroup with `[combineReducers](http://redux.js.org/docs/api/combineReducers.html)` !
+- **State:** Redux serves us well in the React world. State can be split into smaller state trees and individual reducing logic. This logic is a semigroup with [`combineReducers`](http://redux.js.org/docs/api/combineReducers.html)!
 - **Stimuli:** The best example of composition I know of here is [child events in Purescript Pux](http://purescript-pux.org/docs/events/#Nesting_events).
 
 If those make up an app, then we can start to compose entire apps together! Nifty. When I get a chance I really want to experiment making a proof-of-concept of this. Perhaps by recreating the Twitter app equation out of small, self-contained parts.

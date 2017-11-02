@@ -3813,6 +3813,15 @@ gatsby-react-router-scroll@^1.0.2:
     scroll-behavior "^0.9.1"
     warning "^3.0.0"
 
+gatsby-remark-katex@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/gatsby-remark-katex/-/gatsby-remark-katex-1.0.6.tgz#33f0c36cc46bc6d8908c4ca463b9b14939896f16"
+  dependencies:
+    babel-runtime "^6.26.0"
+    katex "^0.7.1"
+    remark-math "^0.2.4"
+    unist-util-visit "^1.1.1"
+
 gatsby-remark-prismjs@^1.2.8:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/gatsby-remark-prismjs/-/gatsby-remark-prismjs-1.2.8.tgz#0ca9732c8c5034d1331f420ff75aa380fbc22c91"
@@ -5480,6 +5489,12 @@ jws@^3.0.0, jws@^3.1.4:
     jwa "^1.1.4"
     safe-buffer "^5.0.1"
 
+katex@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.7.1.tgz#06bb5298efad05e1e7228035ba8e1591f3061b8f"
+  dependencies:
+    match-at "^0.1.0"
+
 kebab-case@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/kebab-case/-/kebab-case-1.0.0.tgz#3f9e4990adcad0c686c0e701f7645868f75f91eb"
@@ -5906,6 +5921,10 @@ markdown-escapes@^1.0.0:
 markdown-table@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-1.1.1.tgz#4b3dd3a133d1518b8ef0dbc709bf2a1b4824bc8c"
+
+match-at@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/match-at/-/match-at-0.1.1.tgz#25d040d291777704d5e6556bbb79230ec2de0540"
 
 math-expression-evaluator@^1.2.14:
   version "1.2.17"
@@ -8075,6 +8094,12 @@ relay-runtime@1.3.0:
     fbjs "^0.8.1"
     relay-debugger-react-native-runtime "^0.0.9"
 
+remark-math@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/remark-math/-/remark-math-0.2.4.tgz#f027cf7f984108777c23425905bf0cbfeeeddda1"
+  dependencies:
+    trim-trailing-lines "^1.1.0"
+
 remark-parse@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/remark-parse/-/remark-parse-3.0.1.tgz#1b9f841a44d8f4fbf2246850265459a4eb354c80"
@@ -9546,7 +9571,7 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-trim-trailing-lines@^1.0.0:
+trim-trailing-lines@^1.0.0, trim-trailing-lines@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/trim-trailing-lines/-/trim-trailing-lines-1.1.0.tgz#7aefbb7808df9d669f6da2e438cac8c46ada7684"
 

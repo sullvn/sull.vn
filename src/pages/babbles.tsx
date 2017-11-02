@@ -5,6 +5,7 @@ import {
   Section, H1, Ul, Time, Span,
   CSSProperties,
 } from 'glamorous'
+import 'katex/dist/katex.min.css'
 
 import Base from '../templates/Base'
 import TextLink from '../components/TextLink'
