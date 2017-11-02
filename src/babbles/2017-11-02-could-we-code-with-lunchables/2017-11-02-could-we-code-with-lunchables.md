@@ -10,7 +10,7 @@ They are the future of programming. You’re hearing it here first.
 
 Behold!
 
-![](https://d2mxuefqeaa7sj.cloudfront.net/s_63C9105B3EA1CBB70331B6BCBE609976BDC69E9326CD0C87B114339FF137C1E0_1509603815595_Closed+Pizza+Lunchable.png)
+![](lunchable-closed.png)
 
 
 # But Actually
@@ -274,7 +274,7 @@ Let’s smash some apps together.
 
 To do so, checkout how we would smash each part together — the semigroups:
 
-![](https://d2mxuefqeaa7sj.cloudfront.net/s_63C9105B3EA1CBB70331B6BCBE609976BDC69E9326CD0C87B114339FF137C1E0_1509603883184_Open+Pizza+Lunchable.png)
+![](lunchable-open.png)
 
 - **Visuals:** With React.js we usually just do what is explained above. A user-interface tree is composed of nesting and wrapping. GraphQL makes this even more true — each component’s data dependencies can be combined together into a single query. Therefore each component can live in it’s own isolated world waiting to be composed into a larger app.
 - **State:** Redux serves us well in the React world. State can be split into smaller state trees and individual reducing logic. This logic is a semigroup with [`combineReducers`](http://redux.js.org/docs/api/combineReducers.html)!

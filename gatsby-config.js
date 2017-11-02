@@ -15,6 +15,14 @@ module.exports = {
           'gatsby-remark-prismjs',
           'gatsby-remark-smartypants',
           'gatsby-remark-katex',
+          {
+            resolve: 'gatsby-remark-images',
+            options: {
+              maxWidth: 864,
+              linkImagesToOriginal: false,
+              backgroundColor: '#fffbf4',
+            },
+          },
         ],
       },
     },
