@@ -74,7 +74,7 @@ It doesn’t matter in which order you regret things together — you’ll alway
 
 ### From Code
 
-And as a coder you expect some things to merge together consistently. User permissions, configuration files, and pure functions through composition. Here’s an example with config files:
+And as a coder, there are some types of data you expect to merge together consistently. Some examples are user permissions, configurations, and pure functions through composition. Here’s some configs getting merged:
 
 ```javascript
 default = {
@@ -272,7 +272,7 @@ So we have a structure. Can we combine these together? In other words, can well-
 
 Let’s smash some apps together.
 
-To do so, checkout how we would smash each part together — the semigroups:
+To do so, check out how we would smash each part together — the semigroups:
 
 ![](lunchable-open.png)
 
@@ -286,13 +286,13 @@ I do see one problem though, and that’s in glue code. Let’s go back to the T
 
     search bar + results list + Twitter API = Twitter feed app
 
-The semigroup needs to know how the results list relates to the Twitter API (its data source) and the search bar (an interim filtering step).
+The semigroup needs to know how the results list relates to the Twitter API (its data source) and the search bar (an interim filtering step). The only problem is there's no place for this information to go.
 
-The semigroup’s operator might need to be augmented with a configuration argument. This would mean our semigroup is not a semigroup at all.
+We *could* augment the binary operator to accept a third argument to configure the merging. It's just that this would make the binary operator a ternary one, thus breaking the definition of semigroup altogether.
 
-Oh.
+So our semigroup would no longer be a semigroup. Oh.
 
-Nah, just kidding. I haven’t really proved this, but I’m guessing you can just make the “configuration argument” a substructure in the app. This configuration part of your app defines how all the other parts link together. And if the configuration acts as a semigroup then you can still smash apps together in their entirety - configuration and all! [Smashing](https://www.youtube.com/watch?v=l7AhN70a74A).
+I haven’t really proved this, but I’m guessing you can just make the “configuration argument” a substructure in the app. This configuration part of your app defines how all the other parts link together. And if the configuration acts as a semigroup then you can still smash apps together in their entirety - configuration and all! [Smashing](https://www.youtube.com/watch?v=l7AhN70a74A).
 
 This revised picture looks like this:
 
