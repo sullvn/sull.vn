@@ -15,7 +15,7 @@ interface Disc3DProps {
 
 
 const sides = 40
-const radiusEm = 2
+const radiusEm = 2.5
 const depthEm = .3
 const edgeFaceWidthEm = (
   (2 * radiusEm)

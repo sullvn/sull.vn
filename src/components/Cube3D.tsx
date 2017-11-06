@@ -12,7 +12,7 @@ interface Cube3DProps {
   className?: string
 }
 
-const faceWidth = '3em'
+const faceWidth = '4em'
 
 
 export default function Cube3D( props: Cube3DProps ): JSX.Element {
@@ -54,7 +54,7 @@ const Container = glamorous.div({
   width: `calc( 2 * ${ faceWidth })`,
   height: `calc( 2 * ${ faceWidth })`,
 
-  perspective: '12em',
+  perspective: '20em',
 })
 
 
@@ -65,7 +65,7 @@ const Cube = glamorous.div({
 
   transformStyle: 'preserve-3d',
 
-  animation: `60s linear 0s infinite normal ${ keyframes({
+  animation: `121s linear 0s infinite normal ${ keyframes({
     from: {
       transform: 'rotateZ(.13turn) rotateX(.4turn) rotateY(.8turn)',
     },

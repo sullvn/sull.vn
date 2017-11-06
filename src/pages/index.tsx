@@ -6,6 +6,8 @@ import {
 } from 'glamorous'
 
 import Base from '../templates/Base'
+import Cube3D from '../components/Cube3D'
+import Disc3D from '../components/Disc3D'
 import TextLink from '../components/TextLink'
 import {
   green, purple, red,
@@ -27,9 +29,19 @@ export default function IndexPage(): JSX.Element {
             <H>I</H><H>n</H><H>d</H><H>u</H><H>s</H><H>t</H><H>r</H><H>i</H><H>e</H><H>s</H>
           </Word>
         </H1>
-        <TextureBackground>
+        <Texture>
           <Img css={ imgStyle } src={ waveTexture } />
-        </TextureBackground>
+          <Disc3D css={{
+            position: 'absolute',
+            left: '12%',
+            bottom: '25%',
+          }} />
+          <Cube3D css={{
+            position: 'absolute',
+            left: '30%',
+            bottom: '40%',
+          }} />
+        </Texture>
         <P>Oh hey there! I'm Kevin Sullivan.</P>
         <P>
           I do stuff at the intersection of technology and creativity.
@@ -65,7 +77,6 @@ const h1Style: CSSProperties = {
 
 const imgStyle: CSSProperties = {
   paddingLeft: '30px',
-  marginBottom: contentStartSpacing,
 
   mixBlendMode: 'lighten',
 }
@@ -79,7 +90,10 @@ const P = glamorous.p({
 })
 
 // A direct parent is needed on the texture for it to blend correctly
-const TextureBackground = glamorous.div(({ theme }: { theme: Theme }) => ({
+const Texture = glamorous.div({
+  position: 'relative',
+  marginBottom: contentStartSpacing,
+}, ({ theme }: { theme: Theme }) => ({
   backgroundColor: theme.bgColor,
 }))
 
