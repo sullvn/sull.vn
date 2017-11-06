@@ -15,9 +15,11 @@
     "gatsby-link": "^1.6.20",
     "glamorous": "^4.9.7",
     "polished": "^1.8.0",
+    "ramda": "^0.25.0",
     "react-typekit": "^1.1.0"
   },
   "devDependencies": {
+    "@types/ramda": "^0.25.2",
     "@types/react": "^15",
     "@types/react-helmet": "^5.0.3",
     "firebase-tools": "^3.13.1",

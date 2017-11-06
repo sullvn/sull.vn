@@ -63,7 +63,6 @@ const Cube = glamorous.div({
   top: '50%',
   left: '50%',
 
-  transform: 'rotateX(30deg) rotateY(30deg)',
   transformStyle: 'preserve-3d',
 
   animation: `60s linear 0s infinite normal ${ keyframes({
