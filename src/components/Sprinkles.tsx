@@ -21,7 +21,6 @@ const sprinklesTopLeft = keyframes({
 
     top: '-.8em',
     left: '30%',
-    transform: 'rotateZ(120deg)',
   },
   '43%': {
     content: '"▱"',
@@ -29,7 +28,6 @@ const sprinklesTopLeft = keyframes({
 
     top: '-.6em',
     left: '-.3em',
-    transform: 'rotateZ(160deg)',
   },
   '56%': {
     content: '"◇"',
@@ -37,7 +35,6 @@ const sprinklesTopLeft = keyframes({
 
     top: '-.3em',
     left: '-.6em',
-    transform: 'rotateZ(205deg)',
   },
   '83%': {
     content: '"◜"',
@@ -45,7 +42,6 @@ const sprinklesTopLeft = keyframes({
 
     top: '.5em',
     left: '10%',
-    transform: 'rotateZ(35deg)',
   },
 })
 
@@ -56,7 +52,6 @@ const sprinklesBottomRight = keyframes({
 
     right: '30%',
     bottom: '-1em',
-    transform: 'rotateZ(245deg)',
   },
   '12%': {
     content: '"○"',
@@ -64,7 +59,6 @@ const sprinklesBottomRight = keyframes({
 
     right: 0,
     bottom: '.3em',
-    transform: 'rotateZ(315deg)',
   },
   '30%': {
     content: '"□"',
@@ -72,7 +66,6 @@ const sprinklesBottomRight = keyframes({
 
     right: '-.3em',
     bottom: '-.7em',
-    transform: 'rotateZ(5deg)',
   },
   '47%': {
     content: '"▲"',
@@ -80,7 +73,6 @@ const sprinklesBottomRight = keyframes({
 
     right: '-.4em',
     bottom: '.3em',
-    transform: 'rotateZ(200deg)',
   },
   '68%': {
     content: '"■"',
@@ -88,7 +80,6 @@ const sprinklesBottomRight = keyframes({
 
     right: '45%',
     bottom: '-.6em',
-    transform: 'rotateZ(134deg)',
   },
   '92%': {
     content: '"△"',
@@ -96,7 +87,6 @@ const sprinklesBottomRight = keyframes({
 
     right: '15%',
     bottom: '-.9em',
-    transform: 'rotateZ(320deg)',
   },
 })
 
@@ -116,6 +106,7 @@ const Sprinkles = glamorous.span( sprinklesClassName, {
   ':hover': {
     '::before': {
       animation: `${ sprinklesTopLeft } .8s .5s step-start infinite`,
+      transform: 'rotateZ(-140deg)',
 
       display: 'block',
       left: 0,
@@ -123,6 +114,8 @@ const Sprinkles = glamorous.span( sprinklesClassName, {
     },
     '::after': {
       animation: `${ sprinklesBottomRight } 1.3s .5s step-start infinite`,
+      transform: 'rotateZ(25deg)',
+
 
       display: 'block',
       right: 0,
