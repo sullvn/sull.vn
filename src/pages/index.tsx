@@ -77,7 +77,7 @@ const P = glamorous.p({
   fontSize: '30px',
   lineHeight: 1.45,
 
-  margin: '0 auto 4em',
+  margin: '0 auto 2em',
   maxWidth: articleTextWidth,
 })
 
