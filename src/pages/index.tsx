@@ -1,8 +1,7 @@
 import * as React from 'react'
 import {
   default as glamorous,
-  H1, Img, Section,
-  CSSProperties,
+  H1, Section, CSSProperties,
 } from 'glamorous'
 
 import Base from '../templates/Base'
@@ -30,7 +29,6 @@ export default function IndexPage(): JSX.Element {
           </Word>
         </H1>
         <Texture>
-          <Img css={ imgStyle } src={ waveTexture } />
           <Disc3D css={{
             position: 'absolute',
             left: '12%',
@@ -75,12 +73,6 @@ const h1Style: CSSProperties = {
   zIndex: 1,
 }
 
-const imgStyle: CSSProperties = {
-  paddingLeft: '30px',
-
-  mixBlendMode: 'lighten',
-}
-
 const P = glamorous.p({
   fontSize: '30px',
   lineHeight: 1.45,
@@ -92,7 +84,13 @@ const P = glamorous.p({
 // A direct parent is needed on the texture for it to blend correctly
 const Texture = glamorous.div({
   position: 'relative',
+  height: '210px',
+  paddingLeft: '30px',
   marginBottom: contentStartSpacing,
+
+  background: `no-repeat center/cover url(${ waveTexture })`,
+  backgroundBlendMode: 'lighten',
+  backgroundClip: 'content-box',
 }, ({ theme }: { theme: Theme }) => ({
   backgroundColor: theme.bgColor,
 }))
