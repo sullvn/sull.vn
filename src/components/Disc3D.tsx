@@ -31,8 +31,8 @@ export default function Disc3D( props: Disc3DProps ): JSX.Element {
         { range( 0, sides ).map( n => (
           <EdgeFace key={ n } side={ n } />
         )) }
-        <SideFace transform={ `translateZ( ${ .1 * depthEm }em )` } />
-        <SideFace transform={ `translateZ( ${ .9 * depthEm }em )` } />
+        <SideFace transform={ `translateZ( ${ 0.05 }em )` } />
+        <SideFace transform={ `translateZ( ${ depthEm - 0.05 }em )` } />
       </Disc>
     </Container>
   )
