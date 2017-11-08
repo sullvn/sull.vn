@@ -88,7 +88,7 @@ const Texture = glamorous.div({
   paddingLeft: '30px',
   marginBottom: contentStartSpacing,
 
-  background: `no-repeat center/cover url(${ waveTexture })`,
+  background: `no-repeat left/cover url(${ waveTexture })`,
   backgroundBlendMode: 'lighten',
   backgroundClip: 'content-box',
 }, ({ theme }: { theme: Theme }) => ({
