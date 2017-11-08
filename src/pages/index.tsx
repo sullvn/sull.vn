@@ -13,7 +13,9 @@ import {
   articleTextWidth, contentStartSpacing, largeHeaderSize, deepTextShadow,
   Theme,
 } from '../style'
+
 const waveTexture = require( '../assets/wave-texture.jpg' )
+const portraitImage = require( '../assets/portrait.png' )
 
 
 export default function IndexPage(): JSX.Element {
@@ -39,6 +41,7 @@ export default function IndexPage(): JSX.Element {
             left: '30%',
             bottom: '40%',
           }} />
+          <Portrait src={ portraitImage } />
         </Texture>
         <P>Oh hey there! I'm Kevin Sullivan.</P>
         <P>
@@ -85,7 +88,7 @@ const P = glamorous.p({
 const Texture = glamorous.div({
   position: 'relative',
   height: '210px',
-  paddingLeft: '30px',
+  padding: '0 30px 0 20px',
   marginBottom: contentStartSpacing,
 
   background: `no-repeat left/cover url(${ waveTexture })`,
@@ -94,6 +97,15 @@ const Texture = glamorous.div({
 }, ({ theme }: { theme: Theme }) => ({
   backgroundColor: theme.bgColor,
 }))
+
+const Portrait = glamorous.img({
+  position: 'absolute',
+  right: 0,
+  bottom: '-100px',
+
+  height: '350px',
+  margin: 0,
+})
 
 const H = glamorous.span({
   ':nth-of-type( 3n )': {
