@@ -38,6 +38,7 @@
     "gatsby-source-filesystem": "^1.5.2",
     "gatsby-transformer-remark": "^1.7.15",
     "ts-graphql-plugin": "^1.1.1",
+    "tslint": "^5.8.0",
     "typescript": "^2.5.3"
   }
 }
