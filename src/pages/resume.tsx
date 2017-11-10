@@ -28,8 +28,9 @@ export default function ResumePage(): JSX.Element {
         <Task>
           <Role>Engineer.</Role> Creating interactive
           geospatial visuals for hyper-dense
-          environmental data. Includes custom WebGL
-          shaders for Deck.GL.
+          environmental data in WebGL. Featured work at
+          the United Nations and New York Times: Cities for
+          Tomorrow.
         </Task>
         <Task>
           Architected an in-browser metadata graph engine
