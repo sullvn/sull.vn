@@ -45,8 +45,7 @@ export default function IndexPage(): JSX.Element {
         </Texture>
         <P>Oh hey there! I'm Kevin Sullivan.</P>
         <P>
-          I do stuff at the intersection of technology and creativity.
-          Sometimes <TextLink href="/babbles">I write about that</TextLink>.
+          I do stuff at the intersection of technology and creativity. <TextLink href="/babbles">Sometimes I write about that</TextLink>.
         </P>
         <P>
           I create interfaces at <TextLink href="https://aclima.io">Aclima</TextLink> with
@@ -56,8 +55,7 @@ export default function IndexPage(): JSX.Element {
           You can find me on <TextLink href="https://github.com/awfulaxolotl">Github</TextLink>, <TextLink href="https://keybase.io/awfulaxolotl">Keybase</TextLink>, or <TextLink href="mailto:kevin.sullivan@axolotl.industries">email</TextLink>. Say hello!
         </P>
         <P>
-          Oh yeah, this website has nothing to do with cave salamanders.
-          Not even one bit. No refunds.
+          What you can't find here are any cave salamanders. No refunds – sorry, not sorry!
         </P>
       </Section>
     </Base>
@@ -101,9 +99,9 @@ const Texture = glamorous.div({
 const Portrait = glamorous.img({
   position: 'absolute',
   right: 0,
-  bottom: '-100px',
+  bottom: '-30px',
 
-  height: '350px',
+  height: '300px',
   margin: 0,
 })
 
