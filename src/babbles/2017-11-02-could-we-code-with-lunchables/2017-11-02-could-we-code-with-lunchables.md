@@ -44,7 +44,7 @@ Let’s try to conquer this creep.
 
 I’ve been getting deeper into the [ML family of languages](https://en.wikipedia.org/wiki/ML_(programming_language)) for a while and recently read through Bartosz Milewski’s [“Category Theory for Programmers”](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/). They both made me really appreciate some of the mathematical models behind how we code.
 
-And right at the start is the [semigroup](https://en.wikipedia.org/wiki/Semigroup) — the definition of associative composition. To recap it’s a set of elements, $S$, and an operation, $\cdot$ , where the following holds:
+And right at the start is the [semigroup](https://en.wikipedia.org/wiki/Semigroup) — the definition of associative composition. It’s formally defined to be a set of elements, $S$, and an operation, $\cdot$ , where the following holds:
 
 $$
 a \cdot (b \cdot c) = (a \cdot b) \cdot c\quad\forall a, b, c \in S
