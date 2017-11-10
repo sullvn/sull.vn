@@ -13,7 +13,7 @@ export default function ResumePage(): JSX.Element {
       <Resume>
         <Name>Kevin Sullivan</Name>
         <Purpose>
-          Hanging out at the intersection
+          Empowering others at the intersection
           of technology and creativity.
         </Purpose>
 
