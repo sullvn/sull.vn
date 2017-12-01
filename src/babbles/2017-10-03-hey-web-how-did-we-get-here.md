@@ -125,8 +125,6 @@ Even desktop operating systems - the traditional platform - are tapping into URL
 
 ## Reason #2 - The Insta-factor
 
-<img src="https://imgs.xkcd.com/comics/installing_2x.png" style="float: right; max-width: 15rem; margin: 0 0 0 2em;" />
-
 You want to read about Pokemon on Wikipedia? That Vimeo video? Prototype apps in Figma? Post dank memes on Tumblr? Read enraging comments on Reddit? Play Quake with your friends? Render the entire Earth in 3D?
 
 > Sure, go to this URL.
@@ -137,8 +135,12 @@ You want to use that program?
 
 The impact of *now* cannot be overstated. The web’s humble origins from purely linked documents set our expectations:
 
-*Go to that URL, get that thing.* 
+<img
+  src="https://imgs.xkcd.com/comics/installing_2x.png"
+  style="float: right; max-width: 13rem; margin: 2em 0 2em 2em; mix-blend-mode: darken;"
+/>
 
+*Go to that URL, get that thing.* 
 
 It’s just absolutely insane how much engineering work has gone into keeping that expectation even as content has rapidly advanced. Entire desktop-tier apps can now load in the browser in a few seconds with zero interaction from the user.
 
