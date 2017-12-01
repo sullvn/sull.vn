@@ -38,7 +38,7 @@ I have a confession.
 
 At least 80% of the code I write is glue code — the code which simply integrates systems and third-party libraries together. Very little is original thought. I’m a fraud. *But Mom, you said I am special!*
 
-And I wager I’m not alone on this. More work will be spent composing the work of others as we work at higher abstractions. This is good! But it does mean the creep of accidental complexity in the quest to avoid essential complexity.
+And I wager I’m not alone on this. More work will be spent composing the work of others as we work at higher abstractions. This is good! But it does mean creep of accidental complexity in the quest to avoid essential complexity.
 
 Let’s try to conquer this creep.
 

@@ -6,7 +6,7 @@ title: "Hey Web, How Did We Get Here?"
 
 What a strange place.
 
-Today’s websites can be email clients, 3D games, graphic design applications, word processors, crypto-currency miners, and the list goes on.
+Today’s websites can be email clients, 3D games, graphic design applications, word processors, crypto-currency miners, and more - the list just goes on.
 
 What happened to just text?
 
@@ -21,11 +21,11 @@ Perhaps we can save it. And to do that, let's reflect on where the web came from
 
 # Get in the DeLorean
 
-I didn’t know until recently that the The World Wide Web is actually a version 2! It’s original design was meant to fix a single flaw of its predecessor, [ENQUIRE](https://www.w3.org/DesignIssues/TimBook-old/History.html). 
+I didn’t know until recently that the World Wide Web is actually a version 2! It’s original design was meant to fix a single flaw of its predecessor, [ENQUIRE](https://www.w3.org/DesignIssues/TimBook-old/History.html). 
 
-ENQUIRE was the first attempt at a [hypertext](https://en.wikipedia.org/wiki/Hypertext) system by [Sir Tim Berners-Lee](https://en.wikipedia.org/wiki/Tim_Berners-Lee) at CERN. Being a good computer scientist, he wanted wasn’t happy with any old information system. He wanted to record the connections between things in addition to traditional prose. "Things" being people, initiatives, software, hardware, and anything else someone with a "bad memory" at a world-class physics laboratory might want.
+ENQUIRE was the first attempt at a [hypertext](https://en.wikipedia.org/wiki/Hypertext) system by [Sir Tim Berners-Lee](https://en.wikipedia.org/wiki/Tim_Berners-Lee) at CERN. Being a good computer scientist, he wasn’t happy with any old information system. He wanted to record the connections between things in addition to traditional prose. "Things" being people, initiatives, software, hardware, and anything else someone with a "bad memory" at a world-class physics laboratory might want.
 
-Beautiful. But it had one problem: ENQUIRE enforced [two-way linking between pages](https://www.w3.org/DesignIssues/Topology.html). For example, if a person was linked to a program then the inverse automatically became true as well. That may sound great, but sometimes you don’t actually want to see all links coming to something. Too much information can be worse than none.
+Beautiful. But it had one problem: ENQUIRE enforced [two-way linking between pages](https://www.w3.org/DesignIssues/Topology.html). For example, if a person was linked to a program then the inverse automatically became true as well. That may sound great, but sometimes you don’t want to see all links coming to something. Too much information can be worse than none.
 
 And to make it worse, two-way linking made it impossible to integrate with other systems. How do you two-way link to something if it doesn’t link back?
 
@@ -120,10 +120,12 @@ These qualities are essential to the goal of hypertext. URLs are a concept many 
 
 It is such a powerful idea that other software systems have adopted it as well. For example, [Hypercard](https://blog.archive.org/2017/08/11/hypercard-on-the-archive-celebrating-30-years-of-hypercard/) is famous for apps being made out of unique, linkable, interactive pages. Sound interesting? Archive.org recently released emulated Hypercard apps for you to play with in your browser. [Try it out!](https://archive.org/details/hypercardstacks)
 
-Even desktop operating systems - the traditional platform - are tapping into URLs. An operating system it has to manage all kinds of different resources and expose them to programs. Unix did so by making everything a file. Redox is doing so by [making everything a URI](https://doc.redox-os.org/book/design/url_scheme_resource/everything_is_a_url.html). 
+Even desktop operating systems - the traditional platform - are tapping into URLs. An operating system has to manage all kinds of different resources and expose them to programs. Unix did so by making everything a file. Redox does so by [making everything a URI](https://doc.redox-os.org/book/design/url_scheme_resource/everything_is_a_url.html). 
 
 
 ## Reason #2 - The Insta-factor
+
+<img src="https://imgs.xkcd.com/comics/installing_2x.png" style="float: right; max-width: 15rem; margin: 0 0 0 2em;" />
 
 You want to read about Pokemon on Wikipedia? That Vimeo video? Prototype apps in Figma? Post dank memes on Tumblr? Read enraging comments on Reddit? Play Quake with your friends? Render the entire Earth in 3D?
 
@@ -135,11 +137,12 @@ You want to use that program?
 
 The impact of *now* cannot be overstated. The web’s humble origins from purely linked documents set our expectations:
 
-*Go to that URL, get that thing.*
+*Go to that URL, get that thing.* 
 
-It’s just absolutely insane how much engineering work has gone into keeping that expectation as content has rapidly advanced. Entire desktop-tier apps can now load in the browser in a few seconds with zero interaction from the user.
 
-In a way, the web abstracts out the machine and brings us back to dumb computer terminals of the mainframe days. The concept of “installed” isn’t applicable anymore. It doesn’t really matter if everything is instantly accessible at a URL!
+It’s just absolutely insane how much engineering work has gone into keeping that expectation even as content has rapidly advanced. Entire desktop-tier apps can now load in the browser in a few seconds with zero interaction from the user.
+
+In a way, the web abstracts out the machine and brings us back to dumb computer terminals of the mainframe days. The concept of “installed” isn’t applicable anymore. Does it even matter if everything is instantly accessible at a URL?
 
 Google has even gone full in on this idea with [Chrome OS](https://www.google.com/chromebook/), blurring the lines between what’s the web and what’s on the machine. [And it turns out to be doing very, very well.](https://techcrunch.com/2017/04/27/as-chromebook-sales-soar-in-schools-apple-and-microsoft-fight-back/)
 
@@ -163,8 +166,7 @@ The web's root as hypertext has given it an incredible quality. When everything'
 
 Okay, okay, that's obvious. What I mean is that web sites can be easily consumed, parsed, played with, and extended in countless ways. HTML and the DOM -- it's Javascript reflection -- have offered an unprecedent platform for flexibility.
 
-In contrast, native apps are opaque black boxes. Their direct output of raster data to framebuffers contributes to their speed, but it also drastically limits how
-people can manipulate them.
+In contrast, native apps are opaque black boxes. Their direct output of raster data to framebuffers contributes to their speed, but it also drastically limits how people can manipulate them.
 
 Imagine being able to do the following with desktop programs or mobile apps:
 
@@ -174,7 +176,7 @@ Imagine being able to do the following with desktop programs or mobile apps:
 4. Built-in world-class debugging and introspection for all apps
 5. Robots for web scraping and automation
 
-The web enables all of this. Can developers circumvent this? Sure - canvas rendering let's creators default back to opaque raster rendering. In practice this isn't an issue - only the most bleeding-edge web apps need to escape the DOM to Pure Pixel-Land.
+The web enables all of this. Can developers circumvent this? Sure - canvas rendering lets creators default back to opaque raster rendering. In practice this isn't an issue - only the most bleeding-edge web apps need to escape the DOM to Pure Pixel-Land.
 
 
 ## Reason #5 - The Demilitarized Zone of Tech
