@@ -1,21 +1,23 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
-import {
-  Article, Hgroup, H1, Time,
-  CSSProperties,
-} from 'glamorous'
+import { Article, Hgroup, H1, Time, CSSProperties } from 'glamorous'
 import { transparentize } from 'polished'
 
 import Base from './Base'
 import { textLinkCSS } from '../components/TextLink'
 import {
-  black, fontFutura,
-  halfFade, doubleFade,
-  articleTextWidth, borderWidth, contentStartSpacing,
-  heading, textContent, visualContent,
+  black,
+  fontFutura,
+  halfFade,
+  doubleFade,
+  articleTextWidth,
+  borderWidth,
+  contentStartSpacing,
+  heading,
+  textContent,
+  visualContent,
   lightTheme,
 } from '../style'
-
 
 interface BabbleProps {
   data: {
@@ -29,24 +31,22 @@ interface BabbleProps {
   }
 }
 
-
-export default function Babble({ data }: BabbleProps ) {
+export default function Babble({ data }: BabbleProps) {
   const { markdownRemark: babble } = data
 
   return (
-    <Base theme={ lightTheme }>
-      <Helmet title={ babble.frontmatter.title } />
-      <Article css={ articleStyle }>
-        <Hgroup css={ hgroupStyle }>
-          <H1 css={ h1Style }>{ babble.frontmatter.title }</H1>
-          <Time css={ timeStyle }>{ babble.frontmatter.date }</Time>
+    <Base theme={lightTheme}>
+      <Helmet title={babble.frontmatter.title} />
+      <Article css={articleStyle}>
+        <Hgroup css={hgroupStyle}>
+          <H1 css={h1Style}>{babble.frontmatter.title}</H1>
+          <Time css={timeStyle}>{babble.frontmatter.date}</Time>
         </Hgroup>
         <div dangerouslySetInnerHTML={{ __html: babble.html }} />
       </Article>
     </Base>
-  );
+  )
 }
-
 
 const articleStyle: CSSProperties = {
   margin: '5em auto 0',
@@ -55,25 +55,25 @@ const articleStyle: CSSProperties = {
 
   '& a[href]': textLinkCSS,
 
-  [ `& ${ textContent }, ${ heading }` ]: {
+  [`& ${textContent}, ${heading}`]: {
     maxWidth: articleTextWidth,
     marginLeft: 'auto',
     marginRight: 'auto',
   },
 
-  [ `& ${ heading }` ]: {
+  [`& ${heading}`]: {
     marginTop: '3em',
 
-    [ `& + h1, + h2, + h3, + h4, + h5, + h6` ]: {
+    [`& + h1, + h2, + h3, + h4, + h5, + h6`]: {
       marginTop: 0,
-    }
+    },
   },
 
   '& li': {
     marginLeft: '1.45em',
   },
 
-  [ `& ${ visualContent }` ]: {
+  [`& ${visualContent}`]: {
     margin: '5em auto',
   },
 
@@ -81,21 +81,22 @@ const articleStyle: CSSProperties = {
     padding: '0 1em',
 
     fontStyle: 'italic',
-    borderLeft: `${ borderWidth } solid ${ transparentize( doubleFade, black ) }`,
+    borderLeft: `${borderWidth} solid ${transparentize(doubleFade, black)}`,
   },
 }
 
-const hgroupStyle: CSSProperties = {
-  margin: `${ contentStartSpacing } 0`,
+const hgroupStyle: CSSProperties = Object.assign(
+  {
+    margin: `${contentStartSpacing} 0`,
 
-  fontWeight: 'bold',
-  fontFamily: fontFutura,
-  textAlign: 'center',
+    textAlign: 'center',
 
-  [ `@media(max-width: ${ articleTextWidth })` ]: {
-    textAlign: 'left',
+    [`@media(max-width: ${articleTextWidth})`]: {
+      textAlign: 'left',
+    },
   },
-}
+  fontFutura,
+)
 
 const h1Style: CSSProperties = {
   margin: 0,
@@ -109,7 +110,6 @@ const timeStyle: CSSProperties = {
   textTransform: 'uppercase',
   opacity: halfFade,
 }
-
 
 export const pageQuery = graphql`
   query BabbleByPath($path: String!) {

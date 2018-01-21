@@ -1,19 +1,19 @@
 import * as React from 'react'
 import {
   default as glamorous,
-  Nav, Header as StyledHeader,
-  CSSProperties
+  Nav,
+  Header as StyledHeader,
+  CSSProperties,
 } from 'glamorous'
 import Link from 'gatsby-link'
 
-import { doubleFade, articleTextWidth } from '../style'
+import { doubleFade, articleTextWidth, fontFutura } from '../style'
 import Sprinkles from './Sprinkles'
-
 
 export default function Header(): JSX.Element {
   return (
-    <StyledHeader css={ headerStyle }>
-      <Nav css={ navStyle }>
+    <StyledHeader css={headerStyle}>
+      <Nav css={navStyle}>
         <HeaderLink to="/">
           <Sprinkles>Axolotl Industries</Sprinkles>
         </HeaderLink>
@@ -28,10 +28,7 @@ export default function Header(): JSX.Element {
   )
 }
 
-
-const headerStyle: CSSProperties = {
-  fontWeight: 'bold',
-}
+const headerStyle: CSSProperties = fontFutura
 
 const navStyle: CSSProperties = {
   display: 'flex',
@@ -39,14 +36,14 @@ const navStyle: CSSProperties = {
 
   textTransform: 'uppercase',
 
-  [ `@media(max-width: ${ articleTextWidth })` ]: {
+  [`@media(max-width: ${articleTextWidth})`]: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     fontSize: '1rem',
   },
 }
 
-const HeaderLink = glamorous( Link )({
+const HeaderLink = glamorous(Link)({
   color: 'inherit',
   opacity: 1 - doubleFade,
   textDecoration: 'none',
@@ -65,7 +62,7 @@ const HeaderLink = glamorous( Link )({
     marginRight: 0,
   },
 
-  [ `@media(max-width: ${ articleTextWidth })` ]: {
+  [`@media(max-width: ${articleTextWidth})`]: {
     margin: '0',
   },
 })
