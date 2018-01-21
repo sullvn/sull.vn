@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: 'Gatsby Test',
+    title: 'Axolotl Industries',
   },
   plugins: [
     'gatsby-plugin-glamor',
@@ -11,7 +11,7 @@ module.exports = {
     {
       resolve: `gatsby-transformer-remark`,
       options: {
-        plugins: [ 
+        plugins: [
           'gatsby-remark-prismjs',
           'gatsby-remark-smartypants',
           'gatsby-remark-katex',
@@ -29,7 +29,7 @@ module.exports = {
     {
       resolve: 'gatsby-source-filesystem',
       options: {
-        path: `${ __dirname }/src/babbles`,
+        path: `${__dirname}/src/babbles`,
         name: 'babbles',
       },
     },
