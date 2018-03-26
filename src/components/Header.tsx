@@ -44,6 +44,7 @@ const navStyle: CSSProperties = {
 }
 
 const HeaderLink = glamorous(Link)({
+  fontSize: '1.2rem',
   color: 'inherit',
   opacity: 1 - doubleFade,
   textDecoration: 'none',

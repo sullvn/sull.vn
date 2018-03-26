@@ -26,6 +26,7 @@ export const fontSystem: CSSProperties = {
 }
 
 // Sizes
+export const baseFontSize = '14px'
 export const baseWidth = '50rem'
 export const articleTextWidth = '30rem'
 export const borderWidth = '.2rem'

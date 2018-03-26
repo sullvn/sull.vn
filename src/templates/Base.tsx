@@ -14,6 +14,7 @@ import { transparentize } from 'polished'
 import Header from '../components/Header'
 import Tombstone from '../components/Tombstone'
 import {
+  baseFontSize,
   baseWidth,
   black,
   doubleFade,
@@ -54,6 +55,7 @@ export default function Base(props: BaseProps): JSX.Element {
           <style>{`
             html {
               background: ${theme.bgColor};
+              font-size: ${baseFontSize};
             }
           `}</style>
         </Helmet>
@@ -98,7 +100,6 @@ const footerStyle: CSSProperties = {
 const StyledBase = glamorous.div(
   {
     fontFamily: fontSystem.fontFamily,
-    fontSize: '14px',
 
     transition: '1s linear background',
 
@@ -115,10 +116,6 @@ const StyledBase = glamorous.div(
       background: 'none',
       borderLeft: `${borderWidth} solid ${transparentize(doubleFade, black)}`,
       borderRadius: 0,
-
-      '& code': {
-        fontSize: '0.9em',
-      },
     },
   },
   ({ theme }: { theme: Theme }) => ({
