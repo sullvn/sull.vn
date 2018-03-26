@@ -27,7 +27,6 @@
     "gatsby-cli": "^1.1.7",
     "gatsby-plugin-catch-links": "^1.0.9",
     "gatsby-plugin-glamor": "^1.6.8",
-    "gatsby-plugin-offline": "^1.0.10",
     "gatsby-plugin-react-helmet": "^1.0.6",
     "gatsby-plugin-typescript": "^1.4.8",
     "gatsby-plugin-typography": "^1.7.10",
