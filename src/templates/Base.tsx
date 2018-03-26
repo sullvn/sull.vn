@@ -53,9 +53,12 @@ export default function Base(props: BaseProps): JSX.Element {
 
           <meta name="theme-color" content={theme.bgColor} />
           <style>{`
+            :root {
+              font-size: ${baseFontSize};
+            }
+
             html {
               background: ${theme.bgColor};
-              font-size: ${baseFontSize};
             }
           `}</style>
         </Helmet>
