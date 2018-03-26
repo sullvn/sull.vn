@@ -3,9 +3,7 @@ import glamorous from 'glamorous'
 
 import { green, purple, red } from '../style'
 
-
 export const sprinklesClassName = 'sprinkles'
-
 
 const sprinklesTopLeft = keyframes({
   'from, to': {
@@ -90,8 +88,7 @@ const sprinklesBottomRight = keyframes({
   },
 })
 
-
-const Sprinkles = glamorous.span( sprinklesClassName, {
+const Sprinkles = glamorous.span(sprinklesClassName, {
   position: 'relative',
 
   '::before, &::after': {
@@ -103,9 +100,15 @@ const Sprinkles = glamorous.span( sprinklesClassName, {
     fontSize: '1.5em',
   },
 
+  '@media (hover: none)': {
+    '::before, &::after': {
+      display: 'none !important',
+    },
+  },
+
   ':hover': {
     '::before': {
-      animation: `${ sprinklesTopLeft } .8s .5s step-start infinite`,
+      animation: `${sprinklesTopLeft} .8s .5s step-start infinite`,
       transform: 'rotateZ(-140deg)',
 
       display: 'block',
@@ -113,9 +116,8 @@ const Sprinkles = glamorous.span( sprinklesClassName, {
       top: 0,
     },
     '::after': {
-      animation: `${ sprinklesBottomRight } 1.3s .5s step-start infinite`,
+      animation: `${sprinklesBottomRight} 1.3s .5s step-start infinite`,
       transform: 'rotateZ(25deg)',
-
 
       display: 'block',
       right: 0,
