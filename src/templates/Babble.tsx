@@ -51,8 +51,6 @@ export default function Babble({ data }: BabbleProps) {
 const articleStyle: CSSProperties = {
   margin: '5em auto 0',
 
-  fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, serif',
-
   '& a[href]': textLinkCSS,
 
   [`& ${textContent}, ${heading}`]: {

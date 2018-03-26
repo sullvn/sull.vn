@@ -98,7 +98,7 @@ const footerStyle: CSSProperties = {
 const StyledBase = glamorous.div(
   {
     fontFamily: fontSystem.fontFamily,
-    fontSize: '18px',
+    fontSize: '14px',
 
     transition: '1s linear background',
 
@@ -109,15 +109,16 @@ const StyledBase = glamorous.div(
     },
 
     '& pre[class*="language-"]': {
-      fontSize: '.8em',
-      lineHeight: '1.5',
-
       padding: '1.5em',
 
       color: 'inherit',
       background: 'none',
       borderLeft: `${borderWidth} solid ${transparentize(doubleFade, black)}`,
       borderRadius: 0,
+
+      '& code': {
+        fontSize: '0.9em',
+      },
     },
   },
   ({ theme }: { theme: Theme }) => ({

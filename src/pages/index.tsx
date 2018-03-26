@@ -103,7 +103,7 @@ const h1Style: CSSProperties = {
 }
 
 const P = glamorous.p({
-  fontSize: '30px',
+  fontSize: '1.5em',
   fontWeight: 'bold',
 
   lineHeight: 1.45,
