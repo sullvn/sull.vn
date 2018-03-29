@@ -12,22 +12,7 @@
     "noUnusedParameters": true,
 
     "jsx": "react",
-    "lib": ["dom", "es2015", "es2017"],
-
-    "plugins": [
-      {
-        "name": "ts-graphql-plugin",
-        "schema": {
-          "http": {
-            "url": "http://localhost:8000/___graphql"
-          }
-        },
-        "tag": "graphql" 
-      }
-    ]
+    "lib": ["dom", "es2015", "es2017"]
   },
-  "include": [
-    "./src/**/*",
-    "./typings/**/*"
-  ]
+  "include": ["./src/**/*", "./typings/**/*"]
 }
