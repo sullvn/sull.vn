@@ -70,8 +70,12 @@ export default function IndexPage(): JSX.Element {
         </P>
         <P>
           You can find me on{' '}
-          <TextLink href="https://github.com/awfulaxolotl">Github</TextLink>,{' '}
-          <TextLink href="https://keybase.io/awfulaxolotl">Keybase</TextLink>,
+          <TextLink href="https://github.com/awfulaxolotl">GitHub</TextLink>,{' '}
+          <TextLink href="https://instagram.com/awfulaxolotl/">
+            Instagram
+          </TextLink>,{' '}
+          <TextLink href="https://keybase.io/awfulaxolotl">Keybase</TextLink>,{' '}
+          <TextLink href="https://twitter.com/awfulaxolotl">Twitter</TextLink>,
           or{' '}
           <TextLink href="mailto:kevin.sullivan@axolotl.industries">
             email
