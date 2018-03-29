@@ -23,7 +23,7 @@ export default function ResumePage(): JSX.Element {
 
         <Job smallRow="3/6">
           <Company>Aclima</Company>
-          <Duration>2015 - Now</Duration>
+          <Duration>2015 - 2018</Duration>
         </Job>
         <Task>
           <Role>Engineer.</Role> Creating interactive geospatial visuals for

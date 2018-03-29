@@ -69,11 +69,6 @@ export default function IndexPage(): JSX.Element {
           <TextLink href="/babbles">Sometimes I write about that</TextLink>.
         </P>
         <P>
-          I create interfaces at{' '}
-          <TextLink href="https://aclima.io">Aclima</TextLink> with dense
-          environmental sensor data.
-        </P>
-        <P>
           You can find me on{' '}
           <TextLink href="https://github.com/awfulaxolotl">Github</TextLink>,{' '}
           <TextLink href="https://keybase.io/awfulaxolotl">Keybase</TextLink>,
