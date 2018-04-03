@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
-import { Article, Hgroup, H1, Time, CSSProperties } from 'glamorous'
+import styled from 'react-emotion'
 import { transparentize } from 'polished'
 
 import Base from './Base'
@@ -37,10 +37,10 @@ export default function Babble({ data }: BabbleProps) {
   return (
     <Base theme={lightTheme}>
       <Helmet title={babble.frontmatter.title} />
-      <Article css={articleStyle}>
-        <Hgroup css={hgroupStyle}>
-          <H1 css={h1Style}>{babble.frontmatter.title}</H1>
-          <Time css={timeStyle}>{babble.frontmatter.date}</Time>
+      <Article>
+        <Hgroup>
+          <Title>{babble.frontmatter.title}</Title>
+          <Time>{babble.frontmatter.date}</Time>
         </Hgroup>
         <div dangerouslySetInnerHTML={{ __html: babble.html }} />
       </Article>
@@ -48,7 +48,7 @@ export default function Babble({ data }: BabbleProps) {
   )
 }
 
-const articleStyle: CSSProperties = {
+const Article = styled('article')({
   margin: '5em auto 0',
 
   '& a[href]': textLinkCSS,
@@ -81,33 +81,31 @@ const articleStyle: CSSProperties = {
     fontStyle: 'italic',
     borderLeft: `${borderWidth} solid ${transparentize(doubleFade, black)}`,
   },
-}
+})
 
-const hgroupStyle: CSSProperties = Object.assign(
-  {
-    margin: `${contentStartSpacing} 0`,
+const Hgroup = styled('hgroup')({
+  ...fontFutura,
+  margin: `${contentStartSpacing} 0`,
 
-    textAlign: 'center',
+  textAlign: 'center',
 
-    [`@media(max-width: ${articleTextWidth})`]: {
-      textAlign: 'left',
-    },
+  [`@media(max-width: ${articleTextWidth})`]: {
+    textAlign: 'left',
   },
-  fontFutura,
-)
+})
 
-const h1Style: CSSProperties = {
+const Title = styled('h1')({
   margin: 0,
   maxWidth: 'unset !important',
-}
+})
 
-const timeStyle: CSSProperties = {
+const Time = styled('time')({
   display: 'block',
   marginTop: '1em',
 
   textTransform: 'uppercase',
   opacity: halfFade,
-}
+})
 
 export const pageQuery = graphql`
   query BabbleByPath($path: String!) {

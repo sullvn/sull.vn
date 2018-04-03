@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-  default as glamorous,
-  Nav,
-  Header as StyledHeader,
-  CSSProperties,
-} from 'glamorous'
+import styled from 'react-emotion'
 import Link from 'gatsby-link'
 
 import { doubleFade, articleTextWidth, fontFutura } from '../style'
@@ -12,8 +7,8 @@ import Sprinkles from './Sprinkles'
 
 export default function Header(): JSX.Element {
   return (
-    <StyledHeader css={headerStyle}>
-      <Nav css={navStyle}>
+    <StyledHeader>
+      <Nav>
         <HeaderLink to="/">
           <Sprinkles>Axolotl Industries</Sprinkles>
         </HeaderLink>
@@ -28,9 +23,9 @@ export default function Header(): JSX.Element {
   )
 }
 
-const headerStyle: CSSProperties = fontFutura
+const StyledHeader = styled('header')(fontFutura)
 
-const navStyle: CSSProperties = {
+const Nav = styled('nav')({
   display: 'flex',
   justifyContent: 'flex-start',
 
@@ -41,9 +36,9 @@ const navStyle: CSSProperties = {
     alignItems: 'flex-start',
     fontSize: '1rem',
   },
-}
+})
 
-const HeaderLink = glamorous(Link)({
+const HeaderLink = styled(Link)({
   fontSize: '1.2rem',
   color: 'inherit',
   opacity: 1 - doubleFade,

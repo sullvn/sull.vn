@@ -1,14 +1,8 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
 import Typekit from 'react-typekit'
-import {
-  default as glamorous,
-  Div,
-  Main,
-  Footer,
-  CSSProperties,
-  ThemeProvider,
-} from 'glamorous'
+import styled from 'react-emotion'
+import { ThemeProvider } from 'emotion-theming'
 import { transparentize } from 'polished'
 
 import Header from '../components/Header'
@@ -65,21 +59,21 @@ export default function Base(props: BaseProps): JSX.Element {
 
         <Typekit kitId="obw1zlc" />
 
-        <Div css={bodyStyle}>
+        <Body>
           <Header />
 
-          <Main css={mainStyle}>{children as React.ReactElement<any>}</Main>
+          <Main>{children as React.ReactElement<any>}</Main>
 
-          <Footer css={footerStyle}>
+          <Footer>
             <Tombstone />
           </Footer>
-        </Div>
+        </Body>
       </StyledBase>
     </ThemeProvider>
   )
 }
 
-const bodyStyle: CSSProperties = {
+const Body = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   minHeight: '100vh',
@@ -87,20 +81,23 @@ const bodyStyle: CSSProperties = {
 
   margin: '0 auto',
   padding: '1em',
-}
+})
 
-const mainStyle: CSSProperties = {
+const Main = styled('main')({
   flex: 1,
-}
+})
 
-const footerStyle: CSSProperties = {
+const Footer = styled('footer')({
   display: 'flex',
   justifyContent: 'center',
 
   margin: '4rem 0 2rem',
-}
+})
 
-const StyledBase = glamorous.div(
+const StyledBase = styled('div')(
+  ({ theme }) => ({
+    color: theme.fgColor,
+  }),
   {
     fontFamily: fontSystem.fontFamily,
 
@@ -121,7 +118,4 @@ const StyledBase = glamorous.div(
       borderRadius: 0,
     },
   },
-  ({ theme }: { theme: Theme }) => ({
-    color: theme.fgColor,
-  }),
 )

@@ -1,4 +1,4 @@
-import { CSSProperties } from 'glamorous'
+import { CSSProperties } from 'react'
 
 // Colors
 export const white = '#fffbf4'

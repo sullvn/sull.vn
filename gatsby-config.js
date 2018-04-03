@@ -3,7 +3,7 @@ module.exports = {
     title: 'Axolotl Industries',
   },
   plugins: [
-    'gatsby-plugin-glamor',
+    'gatsby-plugin-emotion',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-typescript',

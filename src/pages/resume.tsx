@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
-import glamorous from 'glamorous'
+import styled from 'react-emotion'
 
 import Base from '../templates/Base'
 import {
@@ -116,7 +116,7 @@ export default function ResumePage(): JSX.Element {
 const SYSTEM_FONT_FAMILY =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif'
 
-const Resume = glamorous.article({
+const Resume = styled('article')({
   display: 'grid',
   grid: 'repeat(6, 1fr) / repeat(4, 1fr)',
   gridGap: '2rem 1rem',
@@ -133,7 +133,7 @@ const Resume = glamorous.article({
   },
 })
 
-const Name = glamorous.h1({
+const Name = styled('h1')({
   gridColumn: '1 / 4',
 
   fontSize: largeHeaderSize,
@@ -145,7 +145,7 @@ const Name = glamorous.h1({
   },
 })
 
-const Purpose = glamorous.p({
+const Purpose = styled('p')({
   fontSize: '14px',
   fontFamily: SYSTEM_FONT_FAMILY,
   lineHeight: 1.45,
@@ -156,38 +156,42 @@ const Purpose = glamorous.p({
   },
 })
 
-const Job = glamorous.div(
-  {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  ({ smallRow }) => ({
+interface JobProps {
+  smallRow?: React.CSSProperties['gridRow']
+}
+
+const Job = styled('div')(
+  ({ smallRow }: JobProps) => ({
     [`@media(max-width: ${baseWidth})`]: {
       gridRow: smallRow,
     },
   }),
+  {
+    display: 'flex',
+    flexDirection: 'column',
+  },
 )
 
-const Company = glamorous.h2({
+const Company = styled('h2')({
   textAlign: 'right',
   margin: 0,
 })
 
-const Duration = glamorous.time({
+const Duration = styled('time')({
   textAlign: 'right',
   margin: 0,
 })
 
-const Task = glamorous.p({
+const Task = styled('p')({
   fontSize: '14px',
   fontFamily: SYSTEM_FONT_FAMILY,
   lineHeight: 1.45,
   margin: 0,
 })
 
-const Role = glamorous.b({})
+const Role = styled('b')({})
 
-const Education = glamorous.div({
+const Education = styled('div')({
   display: 'flex',
   flexDirection: 'column',
 
@@ -199,7 +203,7 @@ const Education = glamorous.div({
   },
 })
 
-const Links = glamorous.nav({
+const Links = styled('nav')({
   display: 'flex',
   justifyContent: 'space-around',
 
@@ -211,7 +215,7 @@ const Links = glamorous.nav({
   },
 })
 
-const Link = glamorous.a({
+const Link = styled('a')({
   display: 'block',
 
   color: 'inherit',

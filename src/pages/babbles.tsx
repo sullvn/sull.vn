@@ -1,14 +1,6 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
-import {
-  default as glamorous,
-  Section,
-  H1,
-  Ul,
-  Time,
-  Span,
-  CSSProperties,
-} from 'glamorous'
+import styled from 'react-emotion'
 import 'katex/dist/katex.min.css'
 
 import Base from '../templates/Base'
@@ -48,15 +40,15 @@ export default function BabblesPage(props: BabblesPageProps): JSX.Element {
   return (
     <Base>
       <Helmet title="Babbles" />
-      <Section css={sectionStyle}>
-        <H1 css={h1Style}>Babbles</H1>
+      <Section>
+        <H1>Babbles</H1>
         <nav>
-          <Ul css={ulStyle}>
+          <Ul>
             {babbles.map(b => (
               <li key={b.id}>
                 <BabbleLink href={b.frontmatter.path}>
-                  <Span css={spanStyle}>{b.frontmatter.title}</Span>
-                  <Time css={timeStyle}>{b.frontmatter.date}</Time>
+                  <Title>{b.frontmatter.title}</Title>
+                  <Time>{b.frontmatter.date}</Time>
                 </BabbleLink>
               </li>
             ))}
@@ -67,22 +59,22 @@ export default function BabblesPage(props: BabblesPageProps): JSX.Element {
   )
 }
 
-const sectionStyle: CSSProperties = {
+const Section = styled('section')({
   marginTop: `calc(${contentStartSpacing} / 2)`,
   fontSize: '1.5em',
-}
+})
 
-const h1Style: CSSProperties = {
+const H1 = styled('h1')({
   fontSize: largeHeaderSize,
   marginBottom: `calc(${contentStartSpacing} / 2)`,
-}
+})
 
-const ulStyle: CSSProperties = {
+const Ul = styled('ul')({
   listStyle: 'none',
   margin: 0,
-}
+})
 
-const BabbleLink = glamorous(TextLink)({
+const BabbleLink = styled(TextLink)({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
@@ -108,16 +100,16 @@ const BabbleLink = glamorous(TextLink)({
   },
 })
 
-const spanStyle: CSSProperties = {
+const Title = styled('span')({
   margin: 0,
-}
+})
 
-const timeStyle: CSSProperties = {
+const Time = styled('time')({
   marginLeft: '2em',
   flexShrink: 0,
 
   opacity: fade,
-}
+})
 
 export const pageQuery = graphql`
   query BabblesQuery {

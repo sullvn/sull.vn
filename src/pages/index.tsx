@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { default as glamorous, H1, Section, CSSProperties } from 'glamorous'
+import styled from 'react-emotion'
 
 import Base from '../templates/Base'
 import Cube3D from '../components/Cube3D'
@@ -13,7 +13,6 @@ import {
   contentStartSpacing,
   largeHeaderSize,
   deepTextShadow,
-  Theme,
 } from '../style'
 
 const waveTexture = require('../assets/wave-texture.jpg')
@@ -22,8 +21,8 @@ const portraitImage = require('../assets/portrait.png')
 export default function IndexPage(): JSX.Element {
   return (
     <Base>
-      <Section css={sectionStyle}>
-        <H1 css={h1Style}>
+      <Section>
+        <H1>
           <Word>
             <H>A</H>
             <H>x</H>
@@ -48,14 +47,14 @@ export default function IndexPage(): JSX.Element {
         </H1>
         <Texture>
           <Disc3D
-            css={{
+            style={{
               position: 'absolute',
               left: '12%',
               bottom: '25%',
             }}
           />
           <Cube3D
-            css={{
+            style={{
               position: 'absolute',
               left: '30%',
               bottom: '40%',
@@ -90,18 +89,18 @@ export default function IndexPage(): JSX.Element {
   )
 }
 
-const sectionStyle: CSSProperties = {
+const Section = styled('section')({
   marginTop: `calc(${contentStartSpacing} / 2)`,
-}
+})
 
-const h1Style: CSSProperties = {
+const H1 = styled('h1')({
   fontSize: largeHeaderSize,
   marginBottom: '-.3em',
   position: 'relative',
   zIndex: 1,
-}
+})
 
-const P = glamorous.p({
+const P = styled('p')({
   fontSize: '1.5em',
   fontWeight: 'bold',
 
@@ -112,7 +111,7 @@ const P = glamorous.p({
 })
 
 // A direct parent is needed on the texture for it to blend correctly
-const Texture = glamorous.div(
+const Texture = styled('div')(
   {
     position: 'relative',
     height: '210px',
@@ -123,12 +122,12 @@ const Texture = glamorous.div(
     backgroundBlendMode: 'lighten',
     backgroundClip: 'content-box',
   },
-  ({ theme }: { theme: Theme }) => ({
+  ({ theme }) => ({
     backgroundColor: theme.bgColor,
   }),
 )
 
-const Portrait = glamorous.img({
+const Portrait = styled('img')({
   position: 'absolute',
   right: 0,
   bottom: '-30px',
@@ -137,7 +136,7 @@ const Portrait = glamorous.img({
   margin: 0,
 })
 
-const H = glamorous.span({
+const H = styled('span')({
   ':nth-of-type( 3n )': {
     textShadow: deepTextShadow(4, 4, green),
   },
@@ -149,7 +148,7 @@ const H = glamorous.span({
   },
 })
 
-const Word = glamorous.span({
+const Word = styled('span')({
   display: 'inline-block',
   marginRight: '.5em',
 

@@ -1,9 +1,6 @@
-import { keyframes } from 'glamor'
-import glamorous from 'glamorous'
+import styled, { keyframes } from 'react-emotion'
 
 import { green, purple, red } from '../style'
-
-export const sprinklesClassName = 'sprinkles'
 
 const sprinklesTopLeft = keyframes({
   'from, to': {
@@ -88,7 +85,7 @@ const sprinklesBottomRight = keyframes({
   },
 })
 
-const Sprinkles = glamorous.span(sprinklesClassName, {
+const Sprinkles = styled('span')({
   position: 'relative',
 
   '::before, &::after': {
