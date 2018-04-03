@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled from 'react-emotion'
 
-import { green, red, purple, quadrupleFade } from '../style'
+import { green, red, purple, quadrupleFade, foreground } from '../style'
 
 export default function Tombstone(): JSX.Element {
   return (
@@ -13,25 +13,21 @@ export default function Tombstone(): JSX.Element {
   )
 }
 
-const StyledSVG = styled('svg')(
-  ({ theme }) => ({
-    fill: theme.fgColor,
-  }),
-  {
-    opacity: 1 - quadrupleFade,
+const StyledSVG = styled('svg')({
+  fill: foreground,
+  opacity: 1 - quadrupleFade,
 
-    ':hover': {
-      opacity: 1,
+  ':hover': {
+    opacity: 1,
 
-      '& polygon': {
-        fill: green,
-      },
-      '& rect': {
-        fill: red,
-      },
-      '& circle': {
-        fill: purple,
-      },
+    '& polygon': {
+      fill: green,
+    },
+    '& rect': {
+      fill: red,
+    },
+    '& circle': {
+      fill: purple,
     },
   },
-)
+})

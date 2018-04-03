@@ -16,7 +16,6 @@ import {
   heading,
   textContent,
   visualContent,
-  lightTheme,
 } from '../style'
 
 interface BabbleProps {
@@ -35,7 +34,7 @@ export default function Babble({ data }: BabbleProps) {
   const { markdownRemark: babble } = data
 
   return (
-    <Base theme={lightTheme}>
+    <Base>
       <Helmet title={babble.frontmatter.title} />
       <Article>
         <Hgroup>

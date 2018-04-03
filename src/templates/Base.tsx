@@ -2,7 +2,6 @@ import * as React from 'react'
 import Helmet from 'react-helmet'
 import Typekit from 'react-typekit'
 import styled from 'react-emotion'
-import { ThemeProvider } from 'emotion-theming'
 import { transparentize } from 'polished'
 
 import Header from '../components/Header'
@@ -15,8 +14,8 @@ import {
   borderWidth,
   fontFutura,
   fontSystem,
-  Theme,
-  darkTheme,
+  foreground,
+  background,
 } from '../style'
 
 import '../../node_modules/prismjs/themes/prism-solarizedlight.css'
@@ -27,49 +26,46 @@ const favicon152 = require('../assets/favicon.152.png')
 
 interface BaseProps {
   children: React.ReactNode
-  theme?: Theme
 }
 
 export default function Base(props: BaseProps): JSX.Element {
-  const { children, theme = darkTheme } = props
+  const { children } = props
 
   return (
-    <ThemeProvider theme={theme}>
-      <StyledBase>
-        <Helmet
-          titleTemplate="%s ◇ Axolotl Industries"
-          defaultTitle="Axolotl Industries"
-        >
-          <link rel="icon" sizes="16x16" href={favicon16} />
-          <link rel="icon" sizes="32x32" href={favicon32} />
-          <link rel="icon" sizes="64x64" href={favicon64} />
-          <link rel="icon" sizes="152x152" href={favicon152} />
+    <StyledBase>
+      <Helmet
+        titleTemplate="%s ◇ Axolotl Industries"
+        defaultTitle="Axolotl Industries"
+      >
+        <link rel="icon" sizes="16x16" href={favicon16} />
+        <link rel="icon" sizes="32x32" href={favicon32} />
+        <link rel="icon" sizes="64x64" href={favicon64} />
+        <link rel="icon" sizes="152x152" href={favicon152} />
 
-          <meta name="theme-color" content={theme.bgColor} />
-          <style>{`
+        <meta name="theme-color" content={background} />
+        <style>{`
             :root {
               font-size: ${baseFontSize};
             }
 
             html {
-              background: ${theme.bgColor};
+              background: ${background};
             }
           `}</style>
-        </Helmet>
+      </Helmet>
 
-        <Typekit kitId="obw1zlc" />
+      <Typekit kitId="obw1zlc" />
 
-        <Body>
-          <Header />
+      <Body>
+        <Header />
 
-          <Main>{children as React.ReactElement<any>}</Main>
+        <Main>{children as React.ReactElement<any>}</Main>
 
-          <Footer>
-            <Tombstone />
-          </Footer>
-        </Body>
-      </StyledBase>
-    </ThemeProvider>
+        <Footer>
+          <Tombstone />
+        </Footer>
+      </Body>
+    </StyledBase>
   )
 }
 
@@ -94,28 +90,24 @@ const Footer = styled('footer')({
   margin: '4rem 0 2rem',
 })
 
-const StyledBase = styled('div')(
-  ({ theme }) => ({
-    color: theme.fgColor,
-  }),
-  {
-    fontFamily: fontSystem.fontFamily,
+const StyledBase = styled('div')({
+  color: foreground,
+  fontFamily: fontSystem.fontFamily,
 
-    transition: '1s linear background',
+  transition: '1s linear background',
 
-    '& h1, h2, h3, h4, h5, h6': fontFutura,
+  '& h1, h2, h3, h4, h5, h6': fontFutura,
 
-    '& a:any-link': {
-      textDecoration: 'none',
-    },
-
-    '& pre[class*="language-"]': {
-      padding: '1.5em',
-
-      color: 'inherit',
-      background: 'none',
-      borderLeft: `${borderWidth} solid ${transparentize(doubleFade, black)}`,
-      borderRadius: 0,
-    },
+  '& a:any-link': {
+    textDecoration: 'none',
   },
-)
+
+  '& pre[class*="language-"]': {
+    padding: '1.5em',
+
+    color: 'inherit',
+    background: 'none',
+    borderLeft: `${borderWidth} solid ${transparentize(doubleFade, black)}`,
+    borderRadius: 0,
+  },
+})

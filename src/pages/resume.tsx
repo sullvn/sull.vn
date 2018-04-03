@@ -7,13 +7,12 @@ import {
   articleTextWidth,
   baseWidth,
   contentStartSpacing,
-  lightTheme,
   largeHeaderSize,
 } from '../style'
 
 export default function ResumePage(): JSX.Element {
   return (
-    <Base theme={lightTheme}>
+    <Base>
       <Helmet title="Resume" />
       <Resume>
         <Name>Kevin Sullivan</Name>

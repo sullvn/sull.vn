@@ -7,6 +7,10 @@ export const green = '#adcc66'
 export const red = '#ef5b5b'
 export const purple = '#927bd0'
 
+// Theme
+export const foreground = black
+export const background = white
+
 // Fades
 export const fade = 0.7
 export const halfFade = 0.35
@@ -38,22 +42,6 @@ export const heading = 'h1, h2, h3, h4, h5, h6'
 export const textContent = 'blockquote, dd, dl, dt, hr, li, ol, p, ul'
 export const visualContent =
   'img, figure, pre, svg, pre[class*="language-"], .katex-display'
-
-// Themes
-export interface Theme {
-  fgColor: string
-  bgColor: string
-}
-
-export const darkTheme: Theme = {
-  fgColor: white,
-  bgColor: black,
-}
-
-export const lightTheme: Theme = {
-  fgColor: black,
-  bgColor: white,
-}
 
 // Functions
 export function deepTextShadow(x: number, y: number, color: string): string {

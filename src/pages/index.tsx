@@ -13,6 +13,7 @@ import {
   contentStartSpacing,
   largeHeaderSize,
   deepTextShadow,
+  background,
 } from '../style'
 
 const waveTexture = require('../assets/wave-texture.jpg')
@@ -111,21 +112,17 @@ const P = styled('p')({
 })
 
 // A direct parent is needed on the texture for it to blend correctly
-const Texture = styled('div')(
-  {
-    position: 'relative',
-    height: '210px',
-    padding: '0 30px 0 20px',
-    marginBottom: contentStartSpacing,
+const Texture = styled('div')({
+  position: 'relative',
+  height: '210px',
+  padding: '0 30px 0 20px',
+  marginBottom: contentStartSpacing,
 
-    background: `no-repeat left/cover url(${waveTexture})`,
-    backgroundBlendMode: 'lighten',
-    backgroundClip: 'content-box',
-  },
-  ({ theme }) => ({
-    backgroundColor: theme.bgColor,
-  }),
-)
+  background: `no-repeat left/cover url(${waveTexture})`,
+  backgroundBlendMode: 'lighten',
+  backgroundClip: 'content-box',
+  backgroundColor: background,
+})
 
 const Portrait = styled('img')({
   position: 'absolute',

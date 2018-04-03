@@ -14,7 +14,6 @@
   "dependencies": {
     "emotion": "^9.1.0",
     "emotion-server": "^9.1.0",
-    "emotion-theming": "^9.0.0",
     "gatsby-link": "^1.6.20",
     "gatsby-plugin-emotion": "^1.1.16",
     "polished": "^1.8.0",
