@@ -1,6 +1,6 @@
 import * as React from 'react'
 import styled, { keyframes } from 'react-emotion'
-import { darken } from 'polished'
+import { lighten } from 'polished'
 
 import { purple } from '../style'
 
@@ -16,11 +16,11 @@ export default function Cube3D(props: Cube3DProps): JSX.Element {
     <Container {...props}>
       <Cube>
         <Face color={purple} />
-        <Face color={darken(0.03, purple)} transform="rotateY(.25turn)" />
-        <Face color={darken(0.06, purple)} transform="rotateY(.5turn)" />
-        <Face color={darken(0.03, purple)} transform="rotateY(.75turn)" />
-        <Face color={darken(0.09, purple)} transform="rotateX(.25turn)" />
-        <Face color={darken(0.09, purple)} transform="rotateX(-.25turn)" />
+        <Face color={lighten(0.03, purple)} transform="rotateY(.25turn)" />
+        <Face color={lighten(0.06, purple)} transform="rotateY(.5turn)" />
+        <Face color={lighten(0.03, purple)} transform="rotateY(.75turn)" />
+        <Face color={lighten(0.09, purple)} transform="rotateX(.25turn)" />
+        <Face color={lighten(0.09, purple)} transform="rotateX(-.25turn)" />
       </Cube>
     </Container>
   )

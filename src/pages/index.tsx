@@ -5,16 +5,7 @@ import Base from '../templates/Base'
 import Cube3D from '../components/Cube3D'
 import Disc3D from '../components/Disc3D'
 import TextLink from '../components/TextLink'
-import {
-  green,
-  purple,
-  red,
-  articleTextWidth,
-  contentStartSpacing,
-  largeHeaderSize,
-  deepTextShadow,
-  background,
-} from '../style'
+import { articleTextWidth, contentStartSpacing } from '../style'
 
 const waveTexture = require('../assets/wave-texture.jpg')
 const portraitImage = require('../assets/portrait.png')
@@ -23,29 +14,6 @@ export default function IndexPage(): JSX.Element {
   return (
     <Base>
       <Section>
-        <H1>
-          <Word>
-            <H>A</H>
-            <H>x</H>
-            <H>o</H>
-            <H>l</H>
-            <H>o</H>
-            <H>t</H>
-            <H>l</H>
-          </Word>
-          <Word>
-            <H>I</H>
-            <H>n</H>
-            <H>d</H>
-            <H>u</H>
-            <H>s</H>
-            <H>t</H>
-            <H>r</H>
-            <H>i</H>
-            <H>e</H>
-            <H>s</H>
-          </Word>
-        </H1>
         <Texture>
           <Disc3D
             style={{
@@ -94,16 +62,8 @@ const Section = styled('section')({
   marginTop: `calc(${contentStartSpacing} / 2)`,
 })
 
-const H1 = styled('h1')({
-  fontSize: largeHeaderSize,
-  marginBottom: '-.3em',
-  position: 'relative',
-  zIndex: 1,
-})
-
 const P = styled('p')({
   fontSize: '1.5em',
-  fontWeight: 'bold',
 
   lineHeight: 1.45,
 
@@ -115,13 +75,11 @@ const P = styled('p')({
 const Texture = styled('div')({
   position: 'relative',
   height: '210px',
-  padding: '0 30px 0 20px',
+  padding: '0 30px 0 0',
   marginBottom: contentStartSpacing,
 
   background: `no-repeat left/cover url(${waveTexture})`,
-  backgroundBlendMode: 'lighten',
   backgroundClip: 'content-box',
-  backgroundColor: background,
 })
 
 const Portrait = styled('img')({
@@ -131,25 +89,4 @@ const Portrait = styled('img')({
 
   height: '300px',
   margin: 0,
-})
-
-const H = styled('span')({
-  ':nth-of-type( 3n )': {
-    textShadow: deepTextShadow(4, 4, green),
-  },
-  ':nth-of-type( 3n+1 )': {
-    textShadow: deepTextShadow(0, 4, red),
-  },
-  ':nth-of-type( 3n+2 )': {
-    textShadow: deepTextShadow(-4, 4, purple),
-  },
-})
-
-const Word = styled('span')({
-  display: 'inline-block',
-  marginRight: '.5em',
-
-  ':last-child': {
-    margin: 0,
-  },
 })

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import styled, { keyframes } from 'react-emotion'
-import { darken } from 'polished'
+import { lighten } from 'polished'
 import { range } from 'ramda'
 
 import { red } from '../style'
@@ -93,7 +93,7 @@ const EdgeFace = styled<EdgeProps, 'div'>('div')(
     width: `${1.1 * edgeFaceWidthEm}em`,
     height: `${depthEm}em`,
 
-    backgroundColor: darken(0.05, red),
+    backgroundColor: lighten(0.08, red),
     backfaceVisibility: 'hidden',
   },
 )
