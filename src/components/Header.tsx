@@ -1,21 +1,22 @@
 import * as React from 'react'
 import styled from 'react-emotion'
 import Link from 'gatsby-link'
+import { css } from 'emotion'
 
-import { doubleFade, articleTextWidth, fontFutura } from '../style'
+import { fade, articleTextWidth, fontFutura } from '../style'
 import Sprinkles from './Sprinkles'
 
 export default function Header(): JSX.Element {
   return (
     <StyledHeader>
       <Nav>
-        <HeaderLink to="/">
+        <HeaderLink to="/" activeClassName={activeHeaderLinkStyle} exact>
           <Sprinkles>Axolotl Industries</Sprinkles>
         </HeaderLink>
-        <HeaderLink to="/babbles">
+        <HeaderLink to="/babbles" activeClassName={activeHeaderLinkStyle}>
           <Sprinkles>Babbles</Sprinkles>
         </HeaderLink>
-        <HeaderLink to="/resume">
+        <HeaderLink to="/resume" activeClassName={activeHeaderLinkStyle}>
           <Sprinkles>Resume</Sprinkles>
         </HeaderLink>
       </Nav>
@@ -38,10 +39,14 @@ const Nav = styled('nav')({
   },
 })
 
+const activeHeaderLinkStyle = css({
+  opacity: '1 !important',
+})
+
 const HeaderLink = styled(Link)({
   fontSize: '1.2rem',
   color: 'inherit',
-  opacity: 1 - doubleFade,
+  opacity: 1 - fade,
   textDecoration: 'none',
 
   margin: '0 1em',
