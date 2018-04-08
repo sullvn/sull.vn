@@ -42,6 +42,9 @@ export default function Base(props: BaseProps): JSX.Element {
         <link rel="icon" sizes="64x64" href={favicon64} />
         <link rel="icon" sizes="152x152" href={favicon152} />
 
+        <meta property="og:site_name" content="Axolotl Industries" />
+        <meta property="og:locale" content="en_US" />
+
         <meta name="theme-color" content={background} />
         <style>{`
             :root {

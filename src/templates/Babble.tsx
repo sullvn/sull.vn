@@ -22,9 +22,11 @@ interface BabbleProps {
   data: {
     markdownRemark: {
       html: string
+      excerpt: string
       frontmatter: {
         title: string
         date: string
+        isoDate: string
       }
     }
   }
@@ -35,7 +37,16 @@ export default function Babble({ data }: BabbleProps) {
 
   return (
     <Base>
-      <Helmet title={babble.frontmatter.title} />
+      <Helmet title={babble.frontmatter.title}>
+        <meta property="og:title" content={babble.frontmatter.title} />
+        <meta property="og:type" content="article" />
+        <meta property="og:description" content={babble.excerpt} />
+        <meta
+          property="article:published_time"
+          content={babble.frontmatter.isoDate}
+        />
+        <meta property="article:author" content="Kevin Sullivan" />
+      </Helmet>
       <Article>
         <Hgroup>
           <Title>{babble.frontmatter.title}</Title>
@@ -110,10 +121,13 @@ export const pageQuery = graphql`
   query BabbleByPath($path: String!) {
     markdownRemark(frontmatter: { path: { eq: $path } }) {
       html
+      excerpt
+
       frontmatter {
-        date(formatString: "MMMM DD, YYYY")
-        path
         title
+        path
+        date(formatString: "MMMM DD, YYYY")
+        isoDate: date
       }
     }
   }

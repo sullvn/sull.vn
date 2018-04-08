@@ -1,5 +1,6 @@
 import * as React from 'react'
 import styled from 'react-emotion'
+import Helmet from 'react-helmet'
 
 import Base from '../templates/Base'
 import Cube3D from '../components/Cube3D'
@@ -13,6 +14,10 @@ const portraitImage = require('../assets/portrait.png')
 export default function IndexPage(): JSX.Element {
   return (
     <Base>
+      <Helmet>
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={waveTexture} />
+      </Helmet>
       <Section>
         <Texture>
           <Disc3D
