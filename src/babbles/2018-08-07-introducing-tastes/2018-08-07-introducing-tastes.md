@@ -86,7 +86,7 @@ Here's a rough outline of what's coming down the pipe:
 - Components for interactive exploration of sample spaces.
 - Plug and play for React components with prop types.
 - Auto-generate unit test cases from Typescript functions.
-- Auto-generated infinite examples for React Storybook.
+- Auto-generate infinite examples for React Storybook.
 - A richer library of pre-made sample spaces. This can include geospatial types, colors, lorem ipsum, shapes, data structures, time series, and more.
 - Pick and choose sample space exploration.
 
@@ -136,5 +136,6 @@ Check out Tastes when you get a chance!
 It's just an NPM install away:
 
 ```sh
-npm install tastes --save-dev # or `yarn add tastes --dev`
+npm install tastes --save-dev
+# or `yarn add tastes --dev`
 ```
