@@ -41,7 +41,7 @@ export const largeHeaderSize = '4.2rem'
 export const heading = 'h1, h2, h3, h4, h5, h6'
 export const textContent = 'blockquote, dd, dl, dt, hr, li, ol, p, ul'
 export const visualContent =
-  'img, figure, pre, svg, pre[class*="language-"], .katex-display'
+  'img, video, figure, pre, svg, pre[class*="language-"], .katex-display'
 
 // Functions
 export function deepTextShadow(x: number, y: number, color: string): string {
@@ -49,8 +49,8 @@ export function deepTextShadow(x: number, y: number, color: string): string {
 
   let tss = []
   for (let i = 1; i <= m; i += 1) {
-    const xi = i * x / m
-    const yi = i * y / m
+    const xi = (i * x) / m
+    const yi = (i * y) / m
 
     tss.push(`${xi}px ${yi}px 0 ${color}`)
   }

@@ -85,6 +85,11 @@ const Article = styled('article')({
     margin: '5em auto',
   },
 
+  '& video': {
+    display: 'block',
+    maxWidth: '100%',
+  },
+
   '& blockquote': {
     padding: '0 1em',
 
