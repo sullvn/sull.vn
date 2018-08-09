@@ -35,11 +35,11 @@
     "gatsby-plugin-typography": "^1.7.10",
     "gatsby-remark-images": "^1.5.28",
     "gatsby-remark-katex": "^1.0.6",
-    "gatsby-remark-prismjs": "^1.2.8",
+    "gatsby-remark-prismjs": "^2.0.5",
     "gatsby-remark-smartypants": "^1.4.8",
     "gatsby-source-filesystem": "^1.5.2",
     "gatsby-transformer-remark": "^1.7.15",
-    "tslint": "^5.8.0",
-    "typescript": "^2.5.3"
+    "prismjs": "^1.15.0",
+    "typescript": "^3.0.1"
   }
 }
