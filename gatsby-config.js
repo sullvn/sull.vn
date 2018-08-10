@@ -1,12 +1,16 @@
 module.exports = {
   siteMetadata: {
     title: 'Axolotl Industries',
+    author: 'Kevin Sullivan',
+    siteUrl: 'https://axolotl.industries',
+    description: 'Code, art, and absurdity by Kevin Sullivan',
   },
   plugins: [
     'gatsby-plugin-emotion',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-typescript',
+    'gatsby-plugin-feed',
     {
       resolve: `gatsby-transformer-remark`,
       options: {
