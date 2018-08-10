@@ -1,7 +1,7 @@
 ---
-path: "/babbles/introducing-tastes"
-date: "2018-08-08T18:08:01.385Z"
-title: "Introducing Tastes and Rapid Prototyping with Flavor"
+path: '/babbles/introducing-tastes'
+date: '2018-08-08T18:08:01.385Z'
+title: 'Introducing Tastes and Rapid Prototyping with Flavor'
 ---
 
 <img src="face-boxes.png" />
@@ -18,7 +18,7 @@ Let's say we're creating a minimal poster. No — a _giant_ minimal poster becau
 
 Let's use Tastes to quickly check out different combinations of font sizes and colors.
 
-The code below is also available for interactivity [on Runkit](https://runkit.com/awfulaxolotl/a-quick-bite-of-tastes).
+The code below is also available for interactivity [on Runkit](https://runkit.com/awfulaxolotl/a-quick-bite-of-tastes/1.0.1).
 
 ```js
 // 1. Define the variables we want to play with
