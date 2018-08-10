@@ -46,16 +46,24 @@ export default function Base(props: BaseProps): JSX.Element {
         <meta property="og:locale" content="en_US" />
 
         <meta name="theme-color" content={background} />
-        <style>{`
-            :root {
-              font-size: ${baseFontSize};
-            }
-
-            html {
-              background: ${background};
-            }
-          `}</style>
       </Helmet>
+
+      {/*
+          Causes jittering on page transitions if placed within
+          React Helmet.
+
+          This is due to React Helmet naively reinserting the style
+          on every page load.
+      */}
+      <style>{`
+        :root {
+          font-size: ${baseFontSize};
+        }
+
+        html {
+          background: ${background};
+        }
+      `}</style>
 
       <Typekit kitId="obw1zlc" />
 
