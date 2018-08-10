@@ -11,6 +11,7 @@ module.exports = {
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-typescript',
     'gatsby-plugin-feed',
+    'gatsby-plugin-sitemap',
     {
       resolve: `gatsby-transformer-remark`,
       options: {
