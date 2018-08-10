@@ -46,13 +46,15 @@ export default function IndexPage(): JSX.Element {
           <TextLink href="https://github.com/awfulaxolotl">GitHub</TextLink>,{' '}
           <TextLink href="https://instagram.com/awfulaxolotl/">
             Instagram
-          </TextLink>,{' '}
+          </TextLink>
+          , <TextLink href="https://dev.to/awfulaxolotl">DEV</TextLink>,{' '}
           <TextLink href="https://keybase.io/awfulaxolotl">Keybase</TextLink>,{' '}
           <TextLink href="https://twitter.com/awfulaxolotl">Twitter</TextLink>,
           or{' '}
           <TextLink href="mailto:kevin.sullivan@axolotl.industries">
             email
-          </TextLink>. Say hello!
+          </TextLink>
+          . Say hello!
         </P>
         <P>
           What you can't find here are any cave salamanders. No refunds – sorry,
