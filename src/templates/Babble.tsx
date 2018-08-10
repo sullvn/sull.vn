@@ -48,10 +48,10 @@ export default function Babble({ data }: BabbleProps) {
         <meta property="article:author" content="Kevin Sullivan" />
       </Helmet>
       <Article>
-        <Hgroup>
+        <Header>
           <Title>{babble.frontmatter.title}</Title>
           <Time>{babble.frontmatter.date}</Time>
-        </Hgroup>
+        </Header>
         <div dangerouslySetInnerHTML={{ __html: babble.html }} />
       </Article>
     </Base>
@@ -98,7 +98,7 @@ const Article = styled('article')({
   },
 })
 
-const Hgroup = styled('hgroup')({
+const Header = styled('header')({
   ...fontFutura,
   margin: `${contentStartSpacing} 0`,
 

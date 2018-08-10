@@ -8,29 +8,25 @@ import Sprinkles from './Sprinkles'
 
 export default function Header(): JSX.Element {
   return (
-    <StyledHeader>
-      <Nav>
-        <HeaderLink to="/" activeClassName={activeHeaderLinkStyle} exact>
-          <Sprinkles>Axolotl Industries</Sprinkles>
-        </HeaderLink>
-        <HeaderLink to="/babbles" activeClassName={activeHeaderLinkStyle}>
-          <Sprinkles>Babbles</Sprinkles>
-        </HeaderLink>
-        <HeaderLink to="/resume" activeClassName={activeHeaderLinkStyle}>
-          <Sprinkles>Resume</Sprinkles>
-        </HeaderLink>
-      </Nav>
-    </StyledHeader>
+    <Nav>
+      <HeaderLink to="/" activeClassName={activeHeaderLinkStyle} exact>
+        <Sprinkles>Axolotl Industries</Sprinkles>
+      </HeaderLink>
+      <HeaderLink to="/babbles" activeClassName={activeHeaderLinkStyle}>
+        <Sprinkles>Babbles</Sprinkles>
+      </HeaderLink>
+      <HeaderLink to="/resume" activeClassName={activeHeaderLinkStyle}>
+        <Sprinkles>Resume</Sprinkles>
+      </HeaderLink>
+    </Nav>
   )
 }
-
-const StyledHeader = styled('header')(fontFutura)
 
 const Nav = styled('nav')({
   display: 'flex',
   justifyContent: 'flex-start',
 
-  textTransform: 'uppercase',
+  ...fontFutura,
 
   [`@media(max-width: ${articleTextWidth})`]: {
     flexDirection: 'column',
