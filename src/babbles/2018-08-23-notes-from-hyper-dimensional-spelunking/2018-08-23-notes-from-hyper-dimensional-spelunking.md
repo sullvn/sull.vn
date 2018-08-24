@@ -99,7 +99,7 @@ That list of places is a cartesian product. So for an arbitrary unit hyper-cube 
 
 $$
 \begin{aligned}
-places &= \{\,0, 0.5, 1\,\} \times \{\,0, 0.5, 1\,\} \times \ldots \times \{\,0, 0.5, 1\,\} \\
+places &= \{\,0, 0.5, 1\,\} \times \ldots \times \{\,0, 0.5, 1\,\} \\
 \mid places \mid &= 3^\text{dimensions}
 \end{aligned}
 $$
