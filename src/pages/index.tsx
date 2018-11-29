@@ -57,10 +57,7 @@ export default function IndexPage(): JSX.Element {
           </TextLink>
           . Say hello!
         </P>
-        <P>
-          What you can't find here are any cave salamanders. No refunds – sorry,
-          not sorry!
-        </P>
+        <P>Bloop.</P>
       </Section>
     </Base>
   )
