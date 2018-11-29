@@ -16,28 +16,25 @@ export default function ResumePage(): JSX.Element {
       <Helmet title="Resume" />
       <Resume>
         <Name>Kevin Sullivan</Name>
-        <Purpose>
-          Empowering others at the intersection of technology and creativity.
-        </Purpose>
+        <Purpose>Because data and design deserve each other.</Purpose>
 
-        <Job smallRow="3/6">
+        <Job>
+          <Company>Uber</Company>
+          <Duration>2018 - Now</Duration>
+        </Job>
+        <Task>
+          Building tools for artificial intelligence research in autonomous
+          driving.
+        </Task>
+
+        <Job>
           <Company>Aclima</Company>
           <Duration>2015 - 2018</Duration>
         </Job>
         <Task>
-          <Role>Engineer.</Role> Creating interactive geospatial visuals for
-          hyper-dense environmental data in WebGL. Featured work at the United
-          Nations and New York Times: Cities for Tomorrow.
-        </Task>
-        <Task>
-          Architected an in-browser metadata graph engine for flexible querying
-          and display. Also setup a versatile authentication platform for all of
-          our user interfaces.
-        </Task>
-        <Task>
-          State of the art practices for fast, correct, and maintainable user
-          interfaces. Includes static type systems, isomorphic rendering,
-          continuous deployment, and more.
+          Created interactive geospatial interfaces for hyper-dense
+          environmental data. Featured work at the United Nations and New York
+          Times: Cities for Tomorrow.
         </Task>
 
         <Job>
@@ -45,13 +42,15 @@ export default function ResumePage(): JSX.Element {
           <Duration>2014 - 2015</Duration>
         </Job>
         <Task>
-          <Role>Engineer.</Role> Worked on a generative testing system for a
-          point-of-sales mobile app and hardware.
+          Worked on a generative testing system for a point-of-sales mobile app
+          and hardware.
         </Task>
 
         <Job>
           <Company>
-            Popular<wbr />Pays
+            Popular
+            <wbr />
+            Pays
           </Company>
           <Duration>2014</Duration>
         </Job>
@@ -62,7 +61,9 @@ export default function ResumePage(): JSX.Element {
 
         <Job>
           <Company>
-            Study<wbr />Cloud
+            Study
+            <wbr />
+            Cloud
           </Company>
           <Duration>2013</Duration>
         </Job>
@@ -73,7 +74,9 @@ export default function ResumePage(): JSX.Element {
 
         <Job>
           <Company>
-            Wolfram<wbr />Alpha
+            Wolfram
+            <wbr />
+            Alpha
           </Company>
           <Duration>2011 - 2012</Duration>
         </Job>
@@ -155,21 +158,10 @@ const Purpose = styled('p')({
   },
 })
 
-interface JobProps {
-  smallRow?: React.CSSProperties['gridRow']
-}
-
-const Job = styled('div')(
-  ({ smallRow }: JobProps) => ({
-    [`@media(max-width: ${baseWidth})`]: {
-      gridRow: smallRow,
-    },
-  }),
-  {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-)
+const Job = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+})
 
 const Company = styled('h2')({
   textAlign: 'right',
@@ -198,7 +190,7 @@ const Education = styled('div')({
 
   [`@media(max-width: ${baseWidth})`]: {
     gridColumn: '1 / 2',
-    gridRow: '10 / 12',
+    gridRow: '9 / 11',
   },
 })
 
