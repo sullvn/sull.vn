@@ -60,5 +60,8 @@ typings/
 # Gatsby cache
 /.cache
 
+# Firebase cache
+/.firebase
+
 # Build artifacts
 /public
