@@ -1,9 +1,12 @@
 {
-  "name": "axolotl.industries",
+  "name": "sull.vn",
   "version": "1.0.1",
-  "description": "The best blog of all time. https://axolotl.industries",
-  "author": "Kevin Sullivan <kevin.sullivan@axolotl.industries>",
+  "description": "The best blog of all time. https://sull.vn",
+  "author": "Kevin Sullivan <kevin@sull.vn>",
   "license": "MIT",
+  "engines": {
+    "node": "10"
+  },
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop --host=0.0.0.0",

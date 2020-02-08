@@ -33,16 +33,13 @@ export default function Base(props: BaseProps): JSX.Element {
 
   return (
     <StyledBase>
-      <Helmet
-        titleTemplate="%s ◇ Axolotl Industries"
-        defaultTitle="Axolotl Industries"
-      >
+      <Helmet titleTemplate="%s ◇ Kevin Sullivan" defaultTitle="Kevin Sullivan">
         <link rel="icon" sizes="16x16" href={favicon16} />
         <link rel="icon" sizes="32x32" href={favicon32} />
         <link rel="icon" sizes="64x64" href={favicon64} />
         <link rel="icon" sizes="152x152" href={favicon152} />
 
-        <meta property="og:site_name" content="Axolotl Industries" />
+        <meta property="og:site_name" content="Kevin Sullivan" />
         <meta property="og:locale" content="en_US" />
 
         <meta name="theme-color" content={background} />

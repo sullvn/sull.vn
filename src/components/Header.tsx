@@ -10,7 +10,7 @@ export default function Header(): JSX.Element {
   return (
     <Nav>
       <HeaderLink to="/" activeClassName={activeHeaderLinkStyle} exact>
-        <Sprinkles>Axolotl Industries</Sprinkles>
+        <Sprinkles>sullvn</Sprinkles>
       </HeaderLink>
       <HeaderLink to="/babbles" activeClassName={activeHeaderLinkStyle}>
         <Sprinkles>Babbles</Sprinkles>

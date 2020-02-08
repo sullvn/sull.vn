@@ -1,7 +1,7 @@
 ---
-path: "/babbles/dot-waves-a-purescript-short-story"
-date: "2016-02-02T00:37:48-08:00"
-title: "Dot Waves: A PureScript Short Story"
+path: '/babbles/dot-waves-a-purescript-short-story'
+date: '2016-02-02T00:37:48-08:00'
+title: 'Dot Waves: A PureScript Short Story'
 ---
 
 If you haven't checked out [PureScript](http://www.purescript.org/), then you totally should. It's a spiritual child to Haskell, but currently focused for compiling to Javascript. Readable Javascript at that!
@@ -51,7 +51,7 @@ Anyways, we have a canvas context now. Let's take a pit stop in Dot Land and wri
 
 ```haskell
 renderDot :: Number -> Number -> Number -> Drawing
-renderDot x y r = 
+renderDot x y r =
   filled (fillColor color) dot
   where
     dot :: Shape
@@ -63,7 +63,7 @@ renderDot x y r =
 
 So we have a function which takes three numbers (x, y, radius) and returns a drawing of a dot. `filled` is a function from the [purescript-drawing](https://github.com/paf31/purescript-drawing/blob/master/docs/Graphics/Drawing.md#filled) library which takes a fill style and shape to create a drawing. Nifty!
 
-What's next? We have the canvas, the dot... oh! The *pulsating*, of course. Let's pulse. The easiest way is to make pulsating a function of the current time. If you imagine the two-dimensional graph of such a function, it would look like a sin wave. So let's use the `sin` function!
+What's next? We have the canvas, the dot... oh! The _pulsating_, of course. Let's pulse. The easiest way is to make pulsating a function of the current time. If you imagine the two-dimensional graph of such a function, it would look like a sin wave. So let's use the `sin` function!
 
 ```haskell
 pulse :: forall eff. Number -> Number -> Eff (dom :: DOM, timer :: Timer | eff) (Signal Number)
@@ -118,14 +118,14 @@ main = do
 
 This updated main function takes a pulse signal, between 30.0 and 100.0, and runs the renderer on every element when it comes available.
 
-And that's how you render a pulsating dot, folks. Checkout the [full source](https://github.com/awfulaxolotl/dot-waves/blob/c4eeb67378f97dc4c3fdd43cae39a6a6d7ded31c/src/Main.purs).
+And that's how you render a pulsating dot, folks. Checkout the [full source](https://github.com/sullvn/dot-waves/blob/c4eeb67378f97dc4c3fdd43cae39a6a6d7ded31c/src/Main.purs).
 
 ## More Dots, Please
 
 <iframe height='400' scrolling='no' title='Rectangle of Dots' src='//codepen.io/awfulaxolotl/embed/preview/wMmOxL/?height=400&theme-id=21896&default-tab=result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='https://codepen.io/awfulaxolotl/pen/wMmOxL/'>Rectangle of Dots</a> by Kevin Sullivan (<a href='https://codepen.io/awfulaxolotl'>@awfulaxolotl</a>) on <a href='https://codepen.io'>CodePen</a>.
 </iframe>
 
-You aren't happy with one dot? *You want more?!*
+You aren't happy with one dot? _You want more?!_
 
 Okay, let's do it. Specifically, let's make a rectangle of pulsating dots in a grid.
 
@@ -166,7 +166,7 @@ In an alternative Javascript universe, it would look like this:
 (\x y -> { x, y }) <$> [ 0, 1, ..., xn - 1 ]
 ```
 
-If you look closely enough, you may spot something kinda odd. The dreaded *double lambda!* Nah, I'm joking. It's not dreaded; it's actually loved! It's function which returns a function, and that means you can partially apply its arguments. It's called [currying](https://en.wikipedia.org/wiki/Currying) and it's awesome. All functions in PureScript are curried by default.
+If you look closely enough, you may spot something kinda odd. The dreaded _double lambda!_ Nah, I'm joking. It's not dreaded; it's actually loved! It's function which returns a function, and that means you can partially apply its arguments. It's called [currying](https://en.wikipedia.org/wiki/Currying) and it's awesome. All functions in PureScript are curried by default.
 
 Let's checkout what happens when we evaluate the above Javascript statement alongside its PureScript expression counterpart.
 
@@ -205,7 +205,7 @@ We now know it's equivalent to this:
 places = [ \y -> { x: 0, y }, ... ] <*> [ 0, 1, ..., yn - 1 ]
 ```
 
-So, what the heck is that `<*>` operator? Remember how functional programmers like to generalize things? Turns out those guys and gals generalized function application itself as well. *Oh them*.
+So, what the heck is that `<*>` operator? Remember how functional programmers like to generalize things? Turns out those guys and gals generalized function application itself as well. _Oh them_.
 
 Specifically, function applications are generalized between contexts. In this case, a list of functions knows how to apply itself to a list of arguments. Let's complete the evaluation and checkout the final value!
 
@@ -220,7 +220,7 @@ Okay, okay, so we've come pretty far. What now? Well, remember how I mentioned s
 ```haskell
 renderDots :: Int -> Int -> Number -> Number -> Drawing
 renderDots xn yn spacing diameter = fold dots
-  where 
+  where
     places :: Array { x :: Int, y :: Int }
     places = (\x y -> { x, y }) <$> 0 .. (xn - 1) <*> 0 .. (yn - 1)
 
@@ -241,7 +241,7 @@ First we make our initial places, which we have already gone over. Great, moving
 
 Using the `coord` function, we map over the places by multiplying them by a constant. This spaces them apart, creating our final pixel coordinates.
 
-Afterwards, we need to turn these pixel coordinates into dots. So, let's map over our coordinates, using our existing `renderDot` function. *Boom bada bing,* we got an array of rendered dots.
+Afterwards, we need to turn these pixel coordinates into dots. So, let's map over our coordinates, using our existing `renderDot` function. _Boom bada bing,_ we got an array of rendered dots.
 
 However, there's one more nugget of intrigue in that code snippet. Can you spot it? Checkout `fold dots`. It's your typical fold/reduce function, but with only one argument? How do you fold an array with no fold function?
 
@@ -253,7 +253,7 @@ One of the great things with PureScript, and most functional languages for that 
 
 Abstract on, my fellow programmer. Abstract on.
 
-That's it for this chapter, but feel free to checkout the [final code](https://github.com/awfulaxolotl/dot-waves/blob/bc80d29380c3a0b09d5917a440e6b552f5678d7e/src/Main.purs) for this feature.
+That's it for this chapter, but feel free to checkout the [final code](https://github.com/sullvn/dot-waves/blob/bc80d29380c3a0b09d5917a440e6b552f5678d7e/src/Main.purs) for this feature.
 
 ## Make Some Waves
 
@@ -266,7 +266,7 @@ Conveniently, most of the logic to create waves is already made. We have a flow 
 
 ```haskell
 renderDot :: Int -> Int -> Number -> Drawing
-renderDot x y t = 
+renderDot x y t =
   filled (fillColor dotConfig.color) dot
   where
     xp = (toNumber x) * dotConfig.separation
@@ -291,7 +291,7 @@ t' = t + xf * yf
 
 The core of our changes happens to be the simplest. We literally define a new time, `t'`, by using the actual time plus an offset. The offset is dependent on the x and y location by design. This will create a sort-of wave effect from the bottom-right corner to the top-left.
 
-And, well, that's just about it! The offsetted time and the refactoring make up the entirety of the changes. Check out [the source](https://github.com/awfulaxolotl/dot-waves/blob/66bd7f887b59fb7cdf6617a88cd911c2f7f32fe6/src/Main.purs) at this point.
+And, well, that's just about it! The offsetted time and the refactoring make up the entirety of the changes. Check out [the source](https://github.com/sullvn/dot-waves/blob/66bd7f887b59fb7cdf6617a88cd911c2f7f32fe6/src/Main.purs) at this point.
 
 ## Wax On; Wax Off
 
@@ -344,6 +344,6 @@ Now that we have the color, it's time to tweak the rest of the experience. Light
 
 Using the standard `html` selector for the background totally works because the canvas has a transparent background by default. In theory, we could use any standard CSS abilities in the background to spruce up the experience. But, there's just something about pure black, you know?
 
-This is a pretty good place to end this journey. We've got dots, waves, colors, and a little polish as well. Feel free to visit the [final version](https://github.com/awfulaxolotl/dot-waves/blob/add2744f685262cfd4d193434c9b5f647dbcb9f1/src/Main.purs) of the source code.
+This is a pretty good place to end this journey. We've got dots, waves, colors, and a little polish as well. Feel free to visit the [final version](https://github.com/sullvn/dot-waves/blob/add2744f685262cfd4d193434c9b5f647dbcb9f1/src/Main.purs) of the source code.
 
 Thank you for reading!

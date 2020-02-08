@@ -10,7 +10,7 @@ title: 'Introducing Tastes and Rapid Prototyping with Flavor'
 
 I've made a Typescript library for intelligent sample generation during creative prototyping. It's called Tastes.
 
-[Check it out on GitHub!](https://github.com/awfulaxolotl/tastes)
+[Check it out on GitHub!](https://github.com/sullvn/tastes)
 
 # A Quick Bite
 

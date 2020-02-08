@@ -1,8 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: 'Axolotl Industries',
+    title: 'Kevin Sullivan',
     author: 'Kevin Sullivan',
-    siteUrl: 'https://axolotl.industries',
+    siteUrl: 'https://sull.vn',
     description: 'Code, art, and absurdity by Kevin Sullivan',
   },
   plugins: [

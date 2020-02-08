@@ -16,7 +16,7 @@ Our current toolbox has unit tests, REPLs, static analysis, walkthrough debugger
 
 But we can do more. Much more.
 
-As introduced in my [previous post](https://axolotl.industries/babbles/introducing-tastes/), I'm working on [Tastes](https://github.com/awfulaxolotl/tastes). It's a Typescript library for intelligent sampling for use in software visualization. The idea is to show the extent of states in which a piece of code can exhibit with minimal setup from the coder.
+As introduced in my [previous post](https://sull.vn/babbles/introducing-tastes/), I'm working on [Tastes](https://github.com/sullvn/tastes). It's a Typescript library for intelligent sampling for use in software visualization. The idea is to show the extent of states in which a piece of code can exhibit with minimal setup from the coder.
 
 Thinking about this has raised some interesting questions!
 
@@ -200,7 +200,7 @@ Now imagine this being used to visualize sample spaces in terms of clusters. I'l
 
 # Endless Caves
 
-If this tickles your fancy, feel free checkout [Tastes](https://github.com/awfulaxolotl/tastes) or just get in touch! I'll be thinking about this stuff as I expand out the capabilities of Tastes for my own work.
+If this tickles your fancy, feel free checkout [Tastes](https://github.com/sullvn/tastes) or just get in touch! I'll be thinking about this stuff as I expand out the capabilities of Tastes for my own work.
 
 Happy spelunking!
 

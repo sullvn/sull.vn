@@ -99,13 +99,9 @@ export default function ResumePage(): JSX.Element {
         </Task>
 
         <Links>
-          <Link href="mailto:kevin.sullivan@axolotl.industries">
-            kevin.sullivan@axolotl.industries
-          </Link>
-          <Link href="https://github.com/awfulaxolotl">
-            github.com/awfulaxolotl
-          </Link>
-          <Link href="https://axolotl.industries">axolotl.industries</Link>
+          <Link href="mailto:kevin@sull.vn">kevin@sull.vn</Link>
+          <Link href="https://github.com/sullvn">github.com/sullvn</Link>
+          <Link href="https://sull.vn">sull.vn</Link>
           <Link href="https://keybase.io/awfulaxolotl">
             keybase.io/awfulaxolotl
           </Link>
