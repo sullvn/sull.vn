@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Kevin Sullivan</title>
+
+    <link rel="stylesheet" href="./sanitize.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sullvn</h1>
+    </header>
+    <main>
+      <div>
+        <figure id="intro-visual">
+          <div>
+            <img class="top" src="./top.jpg" />
+            <img class="left" src="./left.jpg" />
+            <img class="right" src="./right.jpg" />
+            <img class="bottom" src="./bottom.jpg" />
+          </div>
+          <svg viewBox="0 0 5 3"></svg>
+        </figure>
+      </div>
+      <section id="intro-text">
+        <p>Oh, hey there! I'm Kevin Sullivan.</p>
+        <p>
+          I do stuff at the intersection of technology and creativity.
+        </p>
+        <p>
+          Here's my <a href="mailto:kevin@sull.vn">email</a> and
+          <a href="https://github.com/sullvn">github</a>. Say hello!
+        </p>
+        <p>
+          Bloop.
+        </p>
+      </section>
+      <h2 id="babbles-header">Babbles</h2>
+      <nav id="babbles-list">
+        <ul>
+          <li>
+            <a href="https://google.com">
+              <span>A Link to Google</span>
+              <time>8·9·20</time>
+            </a>
+          </li>
+          <li>
+            <a href="https://instagram.com">
+              <span>Once Upon a Time: Instagram</span>
+              <time>10·30·16</time>
+            </a>
+          </li>
+          <li>
+            <a href="https://nytimes.com">
+              <span>NYT</span>
+              <time>9·1·19</time>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <style>
+        #resume {
+          grid-area: resume;
+          place-self: center;
+
+          display: grid;
+          grid-template-rows: repeat(6, auto);
+          grid-template-columns: repeat(4, 1fr);
+          gap: 4rem 1rem;
+
+          max-width: 50rem;
+          margin: calc(8rem / 2) 0;
+        }
+
+        @media (max-width: 50rem) {
+          #resume {
+            grid-template-rows: repeat(12, auto);
+            grid-template-columns: repeat(2, auto);
+
+            max-width: 30rem;
+            margin-left: auto;
+            margin-right: auto;
+          }
+        }
+
+        #resume .name {
+          grid-column: 2 / 5;
+          margin: 0;
+          line-height: 0.8;
+          font-size: 4em;
+        }
+
+        @media (max-width: 50rem) {
+          #resume .name {
+            grid-column: 1 / 3;
+          }
+        }
+
+        .purpose {
+          font-size: 14px;
+          line-height: 1.45;
+          margin: 0;
+        }
+
+        @media (max-width: 50rem) {
+          .purpose {
+            grid-column: 1 / 3;
+          }
+        }
+
+        .job,
+        .education {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          text-align: right;
+        }
+
+        .task {
+          margin: 0;
+        }
+
+        .education {
+          grid-column: 3 / 5;
+        }
+
+        @media (max-width: 50rem) {
+          .education {
+            grid-column: 1 / 3;
+          }
+        }
+
+        .company {
+          font-size: 1.5rem;
+          line-height: 1;
+        }
+
+        .school-class {
+          margin: 0;
+        }
+
+        .links {
+          grid-column: 2 / 5;
+          display: flex;
+          justify-content: space-between;
+        }
+
+        @media (max-width: 50rem) {
+          .links {
+            grid-column: 1 / 3;
+          }
+        }
+
+        .links a {
+          color: inherit;
+          box-shadow: none;
+          font-weight: normal;
+        }
+
+        .links a:hover {
+          box-shadow: none;
+        }
+      </style>
+      <article id="resume">
+        <h2 class="name">Kevin Sullivan</h2>
+        <div class="job">
+          <h3 class="company">Symbiote</h3>
+          <time class="duration">2020 - Now</time>
+        </div>
+        <p class="task">
+          Co-founder. Sensors and robotics to manage spaces for healthy people,
+          plants, and animals.
+        </p>
+        <div class="job">
+          <h3 class="company">Uber</h3>
+          <time class="duration">2018 - 2020</time>
+        </div>
+        <p class="task">
+          Engineer. Tools for artificial intelligence research in autonomous
+          driving.
+        </p>
+        <div class="job">
+          <h3 class="company">Aclima</h3>
+          <time class="duration">2015 - 2018</time>
+        </div>
+        <p class="task">
+          Engineer. Interactive geospatial interfaces for hyper-dense
+          environmental data.<!-- Featured work at the United Nations and New York
+          Times: Cities for Tomorrow. -->
+        </p>
+        <div class="job">
+          <h3 class="company">Amazon</h3>
+          <time class="duration">2014 - 2015</time>
+        </div>
+        <p class="task">
+          Engineer. Generative testing system for a point-of-sales mobile app
+          and hardware.
+        </p>
+
+        <div class="job">
+          <h3 class="company">Popular<wbr />Pays</h3>
+          <time class="duration">2014</time>
+        </div>
+        <p class="task">
+          Consulting. Social graph web crawler and complementary fraud detection
+          system using PostgreSQL.
+        </p>
+        <div class="job">
+          <h3 class="company">Study<wbr />Cloud</h3>
+          <time class="duration">2013</time>
+        </div>
+        <p class="task">
+          Intern. Frontend engineering for a new learning management system
+          design.
+        </p>
+
+        <div class="job">
+          <h3 class="company">Wolfram<wbr />Alpha</h3>
+          <time class="duration">2011 - 2012</time>
+        </div>
+        <p class="task">
+          Intern. Frontend engineering, prototyping, and authentication system.
+        </p>
+        <div class="education">
+          <h3 class="company">University of Illinois at Urbana-Champaign</h3>
+          <p class="school-class">B.S. Computer Science</p>
+          <time class="duration">Class of 2014</time>
+        </div>
+        <nav class="links">
+          <a href="mailto:kevin@sull.vn">kevin@sull.vn</a>
+          <a href="https://github.com/sullvn">github.com/sullvn</a>
+          <a href="https://sull.vn">sull.vn</a>
+        </nav>
+      </article>
+      <div></div>
+    </main>
+  </body>
+</html>

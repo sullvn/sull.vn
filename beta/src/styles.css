@@ -1,0 +1,230 @@
+:root {
+  --font-sans-serif: -apple-system, BlinkMacSystemFont, avenir next, avenir,
+    helvetica neue, helvetica, Ubuntu, roboto, noto, segoe ui, arial, sans-serif;
+  --font-serif: Iowan Old Style, Apple Garamond, Baskerville, Times New Roman,
+    Droid Serif, Times, Source Serif Pro, serif, Apple Color Emoji,
+    Segoe UI Emoji, Segoe UI Symbol;
+  --font-mono: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console,
+    monospace;
+  --font-size: 16px;
+
+  --max-page-width: 1200px;
+  --one-column-width: 800px;
+  --gutter-size: 2rem;
+  --page-padding: 2rem;
+
+  --black: #1b1d29;
+  --white: #fffbf4;
+  --green: #adcc66;
+  --purple: #927bd0;
+  --red: #ef5b5b;
+}
+
+html {
+  color: var(--black);
+  background: var(--white);
+  font-family: var(--font-sans-serif);
+  font-size: var(--font-size);
+}
+
+::selection {
+  color: var(--white);
+  background: var(--black);
+}
+
+body {
+  max-width: var(--max-page-width);
+  margin: 0 auto;
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 800;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+a:link,
+a:visited {
+  color: var(--purple);
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: inset 0 -0.1em #ded1ff;
+}
+
+a:link:hover,
+a:visited:hover {
+  box-shadow: inset 0 -0.1em #cdbff0;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "portrait     introduction"
+    "babbles-list babbles-header"
+    "resume       resume";
+
+  gap: var(--gutter-size);
+  margin: 0 var(--page-padding);
+}
+
+@media (max-width: 800px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "portrait"
+      "introduction"
+      "babbles-header"
+      "babbles-list"
+      "resume";
+  }
+}
+
+/**
+ * H1
+ */
+h1 {
+  margin: -0.5em 0 -0.3em;
+
+  /* font-size: 29vw; */
+  font-size: 140px;
+  text-overflow: clip;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 1;
+
+  /* Visible over visual */
+  position: relative;
+  z-index: 1;
+}
+
+/**
+ * Intro visual
+ */
+#intro-visual {
+  grid-area: portrait;
+
+  /* 
+   * Grow with aspect ratio 
+   *
+   * Aspect ratio = inner SVG dimensions.
+   */
+  display: grid;
+  flex-grow: 1;
+  min-width: 50%;
+  max-width: calc(var(--max-page-width) / 2);
+
+  margin: 0;
+}
+
+#intro-visual > * {
+  grid-area: 1/1;
+}
+
+#intro-visual div {
+  position: relative;
+}
+
+#intro-visual .top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80%;
+}
+
+#intro-visual .left {
+  position: absolute;
+  top: 35%;
+  right: 27%;
+  width: 20%;
+}
+
+#intro-visual .right {
+  position: absolute;
+  bottom: 8%;
+  right: 5%;
+  width: 20%;
+}
+
+#intro-visual .bottom {
+  position: absolute;
+  bottom: 2%;
+  right: 20%;
+  width: 40%;
+}
+
+@media (max-width: 800px) {
+  #intro-visual {
+    margin: 0 calc(-1 * var(--page-padding));
+  }
+}
+
+/**
+ * Intro text
+ */
+#intro-text {
+  grid-area: introduction;
+  place-self: center;
+
+  margin: 3rem 0;
+  max-width: 17em;
+
+  font-size: 20px;
+}
+
+/**
+ * H2
+ */
+#babbles-header {
+  grid-area: babbles-header;
+  font-size: 4rem;
+  line-height: 1;
+}
+
+/**
+ * Link list
+ */
+#babbles-list {
+  grid-area: babbles-list;
+}
+
+#babbles-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+#babbles-list a:link {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 1em;
+  padding-bottom: 0.1em;
+}
+
+#babbles-list time {
+  flex-shrink: 0;
+  margin-left: 1em;
+  font-variant: small-caps;
+  color: #c0aeec;
+}
+
+@media (max-width: 800px) {
+  #babbles-list a:link {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #babbles-list time {
+    margin-left: 0;
+    margin-top: 0.25em;
+  }
+}
