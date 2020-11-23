@@ -47,6 +47,7 @@ h6 {
   font-weight: 800;
   text-transform: uppercase;
   margin: 0;
+  line-height: 1;
 }
 
 a:link,
@@ -66,11 +67,11 @@ main {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
-    "portrait     introduction"
-    "babbles-list babbles-header"
-    "resume       resume";
+    'portrait     introduction'
+    'babbles-list babbles-header'
+    'resume       resume';
 
-  gap: var(--gutter-size);
+  gap: 8rem var(--gutter-size);
   margin: 0 var(--page-padding);
 }
 
@@ -78,30 +79,49 @@ main {
   main {
     grid-template-columns: 1fr;
     grid-template-areas:
-      "portrait"
-      "introduction"
-      "babbles-header"
-      "babbles-list"
-      "resume";
+      'portrait'
+      'introduction'
+      'babbles-header'
+      'babbles-list'
+      'resume';
+
+    gap: var(--gutter-size);
   }
 }
 
 /**
- * H1
+ * Header
  */
-h1 {
-  margin: -0.5em 0 -0.3em;
-
-  /* font-size: 29vw; */
+header h2 {
   font-size: 140px;
   text-overflow: clip;
   white-space: nowrap;
   overflow: hidden;
-  line-height: 1;
 
   /* Visible over visual */
   position: relative;
   z-index: 1;
+}
+
+#home-header {
+  margin-bottom: -3rem;
+}
+
+#home-header h2 {
+  margin-top: -0.5em;
+}
+
+#babble-header h2 {
+  margin-top: -0.77em;
+}
+
+#babble-header .back {
+  box-shadow: none;
+  color: inherit;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 3rem;
+  line-height: 0.2;
 }
 
 /**
@@ -184,7 +204,6 @@ h1 {
 #babbles-header {
   grid-area: babbles-header;
   font-size: 4rem;
-  line-height: 1;
 }
 
 /**
@@ -210,10 +229,13 @@ h1 {
   padding-bottom: 0.1em;
 }
 
+#babbles-list span {
+  font-style: italic;
+}
+
 #babbles-list time {
   flex-shrink: 0;
   margin-left: 1em;
-  font-variant: small-caps;
   color: #c0aeec;
 }
 
@@ -227,4 +249,53 @@ h1 {
     margin-left: 0;
     margin-top: 0.25em;
   }
+}
+
+/**
+ * Babble
+ */
+
+#babble {
+  margin: 0 auto;
+  padding: 0 1rem;
+  max-width: 50rem;
+}
+
+#babble-title {
+  margin: 6rem 0;
+  text-align: center;
+}
+
+@media (max-width: 30rem) {
+  #babble-title {
+    text-align: left;
+  }
+}
+
+#babble-title h1 {
+  font-style: italic;
+}
+
+#babble-title time {
+  display: block;
+  margin-top: 1em;
+}
+
+#babble blockquote,
+#babble dd,
+#babble dl,
+#babble dt,
+#babble hr,
+#babble li,
+#babble ol,
+#babble p,
+#babble ul,
+#babble h2,
+#babble h3,
+#babble h4,
+#babble h5,
+#babble h6 {
+  max-width: 30rem;
+  margin-left: auto;
+  margin-right: auto;
 }
