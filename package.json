@@ -23,7 +23,6 @@
     "gatsby-plugin-catch-links": "^5.10.0",
     "gatsby-plugin-emotion": "^8.10.0",
     "gatsby-plugin-feed": "^5.10.0",
-    "gatsby-plugin-image": "^3.10.0",
     "gatsby-plugin-react-helmet": "^6.10.0",
     "gatsby-plugin-sharp": "^5.10.0",
     "gatsby-plugin-sitemap": "^6.10.0",
@@ -53,6 +52,7 @@
     "@types/react-dom": "^18.2.4",
     "@types/react-helmet": "^6.1.6",
     "firebase-tools": "^12.0.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "typescript-language-server": "^3.3.2"
   }
 }

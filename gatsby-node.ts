@@ -1,11 +1,13 @@
-const path = require('path')
+import type { GatsbyNode } from 'gatsby'
+import path from 'path'
 
-exports.createPages = ({ boundActionCreators, graphql }) => {
-  const { createPage } = boundActionCreators
-
+export const createPages: GatsbyNode['createPages'] = async ({
+  graphql,
+  actions: { createPage },
+}) => {
   const babbleTemplate = path.resolve('src/templates/Babble.tsx')
 
-  return graphql(`
+  const { data } = await graphql(`
     {
       allMarkdownRemark(
         sort: { order: DESC, fields: [frontmatter___date] }
@@ -28,29 +30,28 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
         }
       }
     }
-  `).then(result => {
-    if (result.errors) {
-      return Promise.reject(result.errors)
-    }
+  `)
 
-    result.data.allMarkdownRemark.edges.forEach(({ node }) => {
-      createPage({
-        path: node.frontmatter.path,
-        component: babbleTemplate,
-        context: {},
-      })
+  const { edges } = (data as any).allMarkdownRemark
+
+  for (const { node } of edges) {
+    createPage({
+      path: node.frontmatter.path,
+      component: babbleTemplate,
+      context: {},
     })
-  })
+  }
 }
 
-exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
-  const { createNodeField } = boundActionCreators
-
+export const onCreateNode: GatsbyNode['onCreateNode'] = ({
+  actions: { createNodeField },
+  node,
+}) => {
   if (node.internal.type === `MarkdownRemark`) {
     createNodeField({
       name: `slug`,
       node,
-      value: node.frontmatter.path,
+      value: (node as any).frontmatter.path,
     })
   }
 }

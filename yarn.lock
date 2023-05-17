@@ -3766,7 +3766,7 @@ camelcase@^5.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
-camelcase@^6.2.0, camelcase@^6.3.0:
+camelcase@^6.2.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
@@ -6391,26 +6391,6 @@ gatsby-plugin-feed@^5.10.0:
     gatsby-plugin-utils "^4.10.0"
     lodash.merge "^4.6.2"
     rss "^1.2.2"
-
-gatsby-plugin-image@^3.10.0:
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-image/-/gatsby-plugin-image-3.10.0.tgz#76f066bbc53fd707142b3c74329c55cf46875ff3"
-  integrity sha512-6m8RsgA9+01zo5yow1LcA+zph5gjf1S9+zwWASo2d8jfGyHa0KFy3iiHoWKrwYIBOODUFWU/r8NPyVvu1YSyPw==
-  dependencies:
-    "@babel/code-frame" "^7.18.6"
-    "@babel/parser" "^7.20.13"
-    "@babel/runtime" "^7.20.13"
-    "@babel/traverse" "^7.20.13"
-    babel-jsx-utils "^1.1.0"
-    babel-plugin-remove-graphql-queries "^5.10.0"
-    camelcase "^6.3.0"
-    chokidar "^3.5.3"
-    common-tags "^1.8.2"
-    fs-extra "^11.1.1"
-    gatsby-core-utils "^4.10.0"
-    gatsby-plugin-utils "^4.10.0"
-    objectFitPolyfill "^2.3.5"
-    prop-types "^15.8.1"
 
 gatsby-plugin-page-creator@^5.10.0:
   version "5.10.0"
@@ -9857,11 +9837,6 @@ object.values@^1.1.6:
     define-properties "^1.1.4"
     es-abstract "^1.20.4"
 
-objectFitPolyfill@^2.3.5:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/objectFitPolyfill/-/objectFitPolyfill-2.3.5.tgz#be8c83064aabfa4e88780f776c2013c48ce1f745"
-  integrity sha512-8Quz071ZmGi0QWEG4xB3Bv5Lpw6K0Uca87FLoLMKMWjB6qIq9IyBegP3b/VLNxv2WYvIMGoeUQ+c6ibUkNa8TA==
-
 on-finished@2.4.1, on-finished@^2.2.0:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.4.1.tgz#58c8c44116e54845ad57f14ab10b03533184ac3f"
@@ -12684,6 +12659,11 @@ types-ramda@^0.29.2:
   integrity sha512-HpLcR0ly2EfXQwG8VSI5ov6ml7PvtT+u+cp+7lZLu7q4nhnPDVW+rUTC1uy/SNs4aAyTUXri5M/LyhgvjEXJDg==
   dependencies:
     ts-toolbelt "^9.6.0"
+
+typescript-language-server@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/typescript-language-server/-/typescript-language-server-3.3.2.tgz#4547a6098b5708c1e3bd2c5c17ad698e3d6a97a4"
+  integrity sha512-jzun53CIkTbpAki0nP+hk5baGW+86SNNlVhyIj2ZUy45zUkCnmoetWuAtfRRQYrlIr8x4QB3ymGJPuwDQSd/ew==
 
 typescript@^5.0.4:
   version "5.0.4"
