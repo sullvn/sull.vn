@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
 import Typekit from 'react-typekit'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import { transparentize } from 'polished'
 
 import Header from '../components/Header'

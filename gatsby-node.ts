@@ -10,7 +10,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
   const { data } = await graphql(`
     {
       allMarkdownRemark(
-        sort: { order: DESC, fields: [frontmatter___date] }
+        sort: { frontmatter: { date: DESC }}
         limit: 1000
       ) {
         edges {

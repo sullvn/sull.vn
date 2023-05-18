@@ -1,7 +1,8 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import 'katex/dist/katex.min.css'
+import { graphql } from 'gatsby'
 
 import Base from '../templates/Base'
 import TextLink from '../components/TextLink'
@@ -113,7 +114,7 @@ const Time = styled('time')({
 
 export const pageQuery = graphql`
   query BabblesQuery {
-    allMarkdownRemark(sort: { order: DESC, fields: [frontmatter___date] }) {
+    allMarkdownRemark(sort: { frontmatter: { date: DESC }}) {
       edges {
         node {
           id

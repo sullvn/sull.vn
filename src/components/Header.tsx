@@ -1,7 +1,7 @@
 import * as React from 'react'
-import styled from 'react-emotion'
-import Link from 'gatsby-link'
-import { css } from 'emotion'
+import styled from '@emotion/styled'
+import { Link } from 'gatsby'
+import { css } from '@emotion/react'
 
 import { fade, articleTextWidth, fontFutura } from '../style'
 import Sprinkles from './Sprinkles'

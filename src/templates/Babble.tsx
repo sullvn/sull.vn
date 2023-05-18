@@ -1,7 +1,8 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import { transparentize } from 'polished'
+import { graphql } from 'gatsby'
 
 import Base from './Base'
 import { textLinkCSS } from '../components/TextLink'

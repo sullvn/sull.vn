@@ -14,7 +14,6 @@ const config: GatsbyConfig = {
   plugins: [
     'gatsby-plugin-catch-links',
     'gatsby-plugin-emotion',
-    'gatsby-plugin-feed',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-sharp',
     'gatsby-plugin-sitemap',
@@ -34,7 +33,6 @@ const config: GatsbyConfig = {
               linkImagesToOriginal: false,
               backgroundColor: '#fffbf4',
             },
-            __key: 'remark-images',
           },
         ],
       },
