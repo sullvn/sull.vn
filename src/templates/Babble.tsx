@@ -34,7 +34,6 @@ interface BabbleProps {
 }
 
 export default function Babble({ data }: BabbleProps) {
-  console.log(arguments)
   const { markdownRemark: babble } = data
 
   return (
