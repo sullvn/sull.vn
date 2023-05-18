@@ -65,3 +65,5 @@ typings/
 
 # Build artifacts
 /public
+
+/.direnv

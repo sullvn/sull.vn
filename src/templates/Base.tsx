@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
 import Typekit from 'react-typekit'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import { transparentize } from 'polished'
 
 import Header from '../components/Header'
@@ -19,10 +19,10 @@ import {
 } from '../style'
 
 import '../../node_modules/prismjs/themes/prism-solarizedlight.css'
-const favicon16 = require('../assets/favicon.16.png')
-const favicon32 = require('../assets/favicon.32.png')
-const favicon64 = require('../assets/favicon.64.png')
-const favicon152 = require('../assets/favicon.152.png')
+import favicon16 from '../assets/favicon.16.png'
+import favicon32 from '../assets/favicon.32.png'
+import favicon64 from '../assets/favicon.64.png'
+import favicon152 from '../assets/favicon.152.png'
 
 interface BaseProps {
   children: React.ReactNode

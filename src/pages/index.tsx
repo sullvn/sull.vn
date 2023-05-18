@@ -1,5 +1,5 @@
 import * as React from 'react'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import Helmet from 'react-helmet'
 
 import Base from '../templates/Base'
@@ -8,8 +8,8 @@ import Disc3D from '../components/Disc3D'
 import TextLink from '../components/TextLink'
 import { articleTextWidth, contentStartSpacing } from '../style'
 
-const waveTexture = require('../assets/wave-texture.jpg')
-const portraitImage = require('../assets/portrait.png')
+import waveTexture from '../assets/wave-texture.jpg'
+import portraitImage from '../assets/portrait.png'
 
 export default function IndexPage(): JSX.Element {
   return (

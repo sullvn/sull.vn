@@ -1,7 +1,7 @@
 import * as React from 'react'
-import styled from 'react-emotion'
-import Link from 'gatsby-link'
-import { css } from 'emotion'
+import styled from '@emotion/styled'
+import { Link } from 'gatsby'
+import { css } from '@emotion/css'
 
 import { fade, articleTextWidth, fontFutura } from '../style'
 import Sprinkles from './Sprinkles'
@@ -9,7 +9,7 @@ import Sprinkles from './Sprinkles'
 export default function Header(): JSX.Element {
   return (
     <Nav>
-      <HeaderLink to="/" activeClassName={activeHeaderLinkStyle} exact>
+      <HeaderLink to="/" activeClassName={activeHeaderLinkStyle}>
         <Sprinkles>sullvn</Sprinkles>
       </HeaderLink>
       <HeaderLink to="/babbles" activeClassName={activeHeaderLinkStyle}>

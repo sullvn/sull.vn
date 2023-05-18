@@ -1,5 +1,6 @@
 import * as React from 'react'
-import styled, { keyframes } from 'react-emotion'
+import styled from '@emotion/styled'
+import { keyframes } from '@emotion/react'
 import { lighten } from 'polished'
 
 import { purple } from '../style'
