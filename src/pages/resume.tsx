@@ -7,7 +7,9 @@ import {
   articleTextWidth,
   baseWidth,
   contentStartSpacing,
+  foreground,
   largeHeaderSize,
+  quadrupleFade,
 } from '../style'
 
 export default function ResumePage(): JSX.Element {
@@ -16,7 +18,7 @@ export default function ResumePage(): JSX.Element {
       <Helmet title="Resume" />
       <Resume>
         <Name>Kevin Sullivan</Name>
-        <Purpose>Because data and design deserve each other.</Purpose>
+        <HilbertMark />
 
         <Job>
           <Company>Symbiote</Company>
@@ -143,17 +145,6 @@ const Name = styled('h1')({
   },
 })
 
-const Purpose = styled('p')({
-  fontSize: '14px',
-  fontFamily: SYSTEM_FONT_FAMILY,
-  lineHeight: 1.45,
-  margin: 0,
-
-  [`@media(max-width: ${baseWidth})`]: {
-    gridColumn: '1 / 3',
-  },
-})
-
 const Job = styled('div')({
   display: 'flex',
   flexDirection: 'column',
@@ -214,4 +205,32 @@ const Link = styled('a')({
   fontFamily: SYSTEM_FONT_FAMILY,
   textAlign: 'center',
   textDecoration: 'none',
+})
+
+function Hilbert(props: React.HTMLAttributes<SVGSVGElement>): JSX.Element {
+  return (
+    <svg
+      width="186"
+      height="186"
+      viewBox="0 0 186 186"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+    <path
+      d="M0.600006 12.8857H25.1714V25.1714H0.600006V55.8857V86.6H37.4571V62.0286H49.7429V86.6H86.6V55.8857V25.1714H62.0286V12.8857H80.4572H98.8857V37.4571H135.743V12.8857H154.171H172.6V25.1714H148.029V62.0286H172.6V74.3143H154.171H135.743V49.7429H98.8857V80.4572V105.029V135.743H135.743V111.171H154.171H172.6V123.457H148.029V160.314H172.6V172.6H154.171H135.743V148.029H98.8857V172.6H80.4572H62.0286V160.314H86.6V129.6V98.8857H49.7429V123.457H37.4571V98.8857H0.600006V129.6V160.314H25.1714V172.6H0.600006V184.886H37.4571V148.029H12.8857V129.6V111.171H25.1714V135.743H62.0286V111.171H74.3143V129.6V148.029H49.7429V184.886H80.4572H111.171V160.314H123.457V184.886H154.171H184.886V148.029H160.314V135.743H184.886V98.8857H154.171H123.457V123.457H111.171V105.029V80.4572V62.0286H123.457V86.6H154.171H184.886V49.7429H160.314V37.4571H184.886V0.600006H154.171H123.457V25.1714H111.171V0.600006H80.4572H49.7429V37.4571H74.3143V55.8857V74.3143H62.0286V49.7429H25.1714V74.3143H12.8857V55.8857V37.4571H37.4571V0.600006H0.600006V12.8857Z"
+    />
+    </svg>
+  )
+}
+
+const HilbertMark = styled(Hilbert)({
+  height: '6.2rem',
+  justifySelf: 'right',
+  marginTop: '0.25rem',
+  fill: foreground,
+  opacity: 1 - quadrupleFade,
+
+  [`@media(max-width: ${baseWidth})`]: {
+    display: 'none',
+  },
 })
