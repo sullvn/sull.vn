@@ -19,11 +19,21 @@ export default function ResumePage(): JSX.Element {
         <Purpose>Because data and design deserve each other.</Purpose>
 
         <Job>
-          <Company>Uber</Company>
-          <Duration>2018 - Now</Duration>
+          <Company>Symbiote</Company>
+          <Duration>2020 - 2022</Duration>
         </Job>
         <Task>
-          Building tools for artificial intelligence research in autonomous
+          <Role>Co-founder.</Role> Helped start a plant sensor business.
+          Worked on app, cloud services, embedded software, manufacturing,
+          packaging design, online shop, and media.
+        </Task>
+
+        <Job>
+          <Company>Uber ATG</Company>
+          <Duration>2018 - 2020</Duration>
+        </Job>
+        <Task>
+          Built tools for artificial intelligence research in autonomous
           driving.
         </Task>
 
@@ -86,25 +96,15 @@ export default function ResumePage(): JSX.Element {
         </Task>
 
         <Education>
-          <Company>University of Illinois at Urbana-Champaign</Company>
+          <Company>University of Illinois<br />Urbana-Champaign</Company>
+          <Major>B.S. in Computer Science</Major>
           <Duration>Class of 2014</Duration>
         </Education>
-        <Task>
-          <Role>Computer Science major.</Role> Leader of WebMonkeys SIG for ACM.
-        </Task>
-        <Task>
-          Projects include architecting a basic processor, implementing an ML
-          language, memory allocator, TCP stack, routing protocols, game AI,
-          computer virus, and more.
-        </Task>
 
         <Links>
           <Link href="mailto:kevin@sull.vn">kevin@sull.vn</Link>
           <Link href="https://github.com/sullvn">github.com/sullvn</Link>
           <Link href="https://sull.vn">sull.vn</Link>
-          <Link href="https://keybase.io/awfulaxolotl">
-            keybase.io/awfulaxolotl
-          </Link>
         </Links>
       </Resume>
     </Base>
@@ -116,14 +116,14 @@ const SYSTEM_FONT_FAMILY =
 
 const Resume = styled('article')({
   display: 'grid',
-  grid: 'repeat(6, 1fr) / repeat(4, 1fr)',
+  grid: 'repeat(6, 1fr) / repeat(2, 3fr 4fr)',
   gridGap: '2rem 1rem',
 
   margin: `calc(${contentStartSpacing} / 2) 0`,
 
   [`@media(max-width: ${baseWidth})`]: {
     gridTemplateRows: 'repeat(12, auto)',
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: 'repeat(2, auto)',
 
     maxWidth: articleTextWidth,
     marginLeft: 'auto',
@@ -178,15 +178,19 @@ const Task = styled('p')({
 
 const Role = styled('b')({})
 
+const Major = styled('b')({
+  textAlign: 'right',
+  margin: 0,
+})
+
 const Education = styled('div')({
   display: 'flex',
   flexDirection: 'column',
 
-  gridColumn: '1 / 3',
+  gridColumnEnd: 'span 2',
 
   [`@media(max-width: ${baseWidth})`]: {
-    gridColumn: '1 / 2',
-    gridRow: '9 / 11',
+    alignItems: 'center',
   },
 })
 
