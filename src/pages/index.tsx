@@ -41,14 +41,10 @@ export default function IndexPage(): JSX.Element {
           I do stuff at the intersection of technology and creativity.{' '}
           <TextLink href="/babbles">Sometimes I write about that</TextLink>.
         </P>
-        <P>Currently working on self-driving cars at Uber.</P>
         <P>
           You can find me on{' '}
           <TextLink href="https://github.com/sullvn">GitHub</TextLink>,{' '}
           <TextLink href="https://instagram.com/ksullvn/">Instagram</TextLink>,{' '}
-          <TextLink href="https://dev.to/awfulaxolotl">DEV</TextLink>,{' '}
-          <TextLink href="https://keybase.io/awfulaxolotl">Keybase</TextLink>,{' '}
-          <TextLink href="https://twitter.com/awfulaxolotl">Twitter</TextLink>,
           or <TextLink href="mailto:kevin@sull.vn">email</TextLink>. Say hello!
         </P>
         <P>Bloop.</P>
