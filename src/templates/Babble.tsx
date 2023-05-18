@@ -34,6 +34,7 @@ interface BabbleProps {
 }
 
 export default function Babble({ data }: BabbleProps) {
+  console.log(arguments)
   const { markdownRemark: babble } = data
 
   return (
@@ -123,9 +124,9 @@ const Time = styled('time')({
   opacity: halfFade,
 })
 
-export const pageQuery = graphql`
-  query BabbleByPath($path: String!) {
-    markdownRemark(frontmatter: { path: { eq: $path } }) {
+export const query = graphql`
+  query BabbleByPath($id: String!) {
+    markdownRemark(id: { eq: $id }) {
       html
       excerpt
 

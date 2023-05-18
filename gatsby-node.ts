@@ -38,7 +38,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
     createPage({
       path: node.frontmatter.path,
       component: babbleTemplate,
-      context: {},
+      context: { id: node.id },
     })
   }
 }
