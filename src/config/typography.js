@@ -1,3 +1,4 @@
 import Typography from 'typography'
 
-export default new Typography()
+const typography = new Typography()
+export default typography
