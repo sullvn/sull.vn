@@ -25,9 +25,9 @@ export default function ResumePage(): JSX.Element {
           <Duration>2020 - 2022</Duration>
         </Job>
         <Task>
-          <Role>Co-founder.</Role> Helped start a plant sensor business.
-          Worked on app, cloud services, embedded software, manufacturing,
-          packaging design, online shop, and media.
+          <Role>Co-founder.</Role> Helped create the plant soil sensor
+          product. Worked on app, cloud services, embedded sensor software,
+          device manufacturing, packaging design, online shop, and media.
         </Task>
 
         <Job>
