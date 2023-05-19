@@ -25,9 +25,9 @@ export default function ResumePage(): JSX.Element {
           <Duration>2020 - 2022</Duration>
         </Job>
         <Task>
-          <Role>Co-founder.</Role> Helped create the plant soil sensor
-          product. Worked on app, cloud services, embedded sensor software,
-          device manufacturing, packaging design, online shop, and media.
+          <Role>Co-founder.</Role> Helped create plant soil sensor.
+          product. Worked on app, cloud services, embedded software,
+          manufacturing, packaging, shop, and media.
         </Task>
 
         <Job>
@@ -44,9 +44,9 @@ export default function ResumePage(): JSX.Element {
           <Duration>2015 - 2018</Duration>
         </Job>
         <Task>
-          Created interactive geospatial interfaces for hyper-dense
-          environmental data. Featured work at the United Nations and New York
-          Times: Cities for Tomorrow.
+          Interactive geospatial interfaces for hyper-dense
+          environmental data. Featured at the U.N. and New
+          York Times: Cities for Tomorrow.
         </Task>
 
         <Job>
@@ -130,6 +130,10 @@ const Resume = styled('article')({
     maxWidth: articleTextWidth,
     marginLeft: 'auto',
     marginRight: 'auto',
+  },
+
+  [`@media print`]: {
+    marginTop: `calc(${contentStartSpacing} / 4)`
   },
 })
 
