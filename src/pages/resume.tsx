@@ -225,7 +225,8 @@ function Hilbert(props: React.HTMLAttributes<SVGSVGElement>): JSX.Element {
 
 const HilbertMark = styled(Hilbert)({
   height: '6.2rem',
-  justifySelf: 'right',
+  width: '6.2rem',
+  justifySelf: 'end',
   marginTop: '0.25rem',
   fill: foreground,
   opacity: 1 - quadrupleFade,
