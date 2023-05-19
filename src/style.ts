@@ -35,7 +35,7 @@ export const baseWidth = '50rem'
 export const articleTextWidth = '30rem'
 export const borderWidth = '.2rem'
 export const contentStartSpacing = '8rem'
-export const largeHeaderSize = '4.2rem'
+export const largeHeaderSize = '4.1rem'
 
 // Selectors
 export const heading = 'h1, h2, h3, h4, h5, h6'

@@ -143,6 +143,7 @@ const Name = styled('h1')({
   fontSize: largeHeaderSize,
   margin: 0,
   lineHeight: 0.8,
+  justifySelf: 'end',
 
   [`@media(max-width: ${baseWidth})`]: {
     gridColumn: '1 / 3',
@@ -228,8 +229,8 @@ function Hilbert(props: React.HTMLAttributes<SVGSVGElement>): JSX.Element {
 }
 
 const HilbertMark = styled(Hilbert)({
-  height: '6.2rem',
-  width: '6.2rem',
+  height: '5.75rem',
+  width: '5.75rem',
   justifySelf: 'end',
   marginTop: '0.25rem',
   fill: foreground,
