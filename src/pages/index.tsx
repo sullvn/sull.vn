@@ -4,6 +4,7 @@ import Helmet from 'react-helmet'
 
 import Base from '../templates/Base'
 import Cube3D from '../components/Cube3D'
+import Cylinder3D from '../components/Cylinder3D'
 import Disc3D from '../components/Disc3D'
 import TextLink from '../components/TextLink'
 import { articleTextWidth, contentStartSpacing } from '../style'
@@ -31,7 +32,14 @@ export default function IndexPage(): JSX.Element {
             style={{
               position: 'absolute',
               left: '30%',
-              bottom: '40%',
+              bottom: '60%',
+            }}
+          />
+          <Cylinder3D
+            style={{
+              position: 'absolute',
+              left: '50%',
+              bottom: '5%',
             }}
           />
           <Portrait src={portraitImage} />
