@@ -40,6 +40,7 @@ export default function IndexPage(): JSX.Element {
               position: 'absolute',
               left: '50%',
               bottom: '5%',
+              zIndex: 1,
             }}
           />
           <Portrait src={portraitImage} />
