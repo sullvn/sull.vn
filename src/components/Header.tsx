@@ -62,4 +62,8 @@ const HeaderLink = styled(Link)({
   [`@media(max-width: ${articleTextWidth})`]: {
     margin: '0',
   },
+
+  [`@media print`]: {
+    display: 'none',
+  },
 })

@@ -96,6 +96,10 @@ const Footer = styled('footer')({
   justifyContent: 'center',
 
   margin: '4rem 0 2rem',
+
+  [`@media print`]: {
+    display: 'none',
+  },
 })
 
 const StyledBase = styled('div')({
