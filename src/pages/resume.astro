@@ -138,4 +138,10 @@ import EducationSection from '../components/EducationSection.astro';
       grid-column-start: span 2;
     }
   }
+
+  @media print {
+    :global(footer) {
+      display: none;
+    }
+  }
 </style>

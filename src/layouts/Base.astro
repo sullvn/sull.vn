@@ -43,13 +43,19 @@ const isHomepage = currentPath === '/';
 </html>
 
 <!--
-  -- Layout 
+  -- Layout
   -->
 <style>
   body {
     max-width: 80rem; /* 1280px */
     margin: 0 auto;
     padding: 2rem;
+  }
+
+  @media print {
+    header {
+      display: none;
+    }
   }
 </style>
 
