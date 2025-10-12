@@ -70,11 +70,11 @@ import EducationSection from '../components/EducationSection.astro';
     display: grid;
 
     grid-template-columns: min-content 1fr min-content 1fr;
-    grid-template-rows: auto;
+    grid-template-rows: repeat(6, auto);
     grid-auto-rows: 1fr;
 
     column-gap: 1rem;
-    row-gap: 2rem;
+    row-gap: 4rem;
   }
 
   h1 {
@@ -114,6 +114,7 @@ import EducationSection from '../components/EducationSection.astro';
   @container (max-width: 640px) {
     article {
       grid-template-columns: min-content 1fr;
+      grid-template-rows: repeat(10, auto);
     }
 
     article :global(svg) {
