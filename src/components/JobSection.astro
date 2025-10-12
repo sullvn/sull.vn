@@ -1,0 +1,18 @@
+---
+import ResumeSection from './ResumeSection.astro';
+
+interface Props {
+  company: string;
+  time: string;
+}
+
+const { company, time } = Astro.props;
+---
+
+<ResumeSection>
+  <header>
+    <h2 set:html={company} />
+    <time>{time}</time>
+  </header>
+  <p><slot /></p>
+</ResumeSection>

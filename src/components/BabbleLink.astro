@@ -1,0 +1,27 @@
+---
+export interface Props {
+  href: string;
+  title: string;
+  date: string;
+}
+
+const { href, title, date } = Astro.props;
+
+function formatDate(isoDate: string): string {
+  const dateObj = new Date(isoDate);
+  return dateObj.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+const displayDate = formatDate(date);
+---
+
+<li>
+  <a href={href}>
+    <span>{title}</span>
+    <time datetime={date}>{displayDate}</time>
+  </a>
+</li>

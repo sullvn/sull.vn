@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import HilbertCurve from '../components/HilbertCurve.astro';
+import JobSection from '../components/JobSection.astro';
+import InternshipsSection from '../components/InternshipsSection.astro';
+import EducationSection from '../components/EducationSection.astro';
+---
+
+<Base>
+  <article>
+    <div>
+      <h1>Kevin Sullivan</h1>
+    </div>
+
+    <HilbertCurve />
+    
+    <JobSection company="Felt" time="2023 - Now">
+      Making the most intuitive GIS software on the planet.
+    </JobSection>
+
+    <JobSection company="Symbiote" time="2020 - 2022">
+      <strong>Co-founder.</strong> Helped create the plant soil sensor product. Worked on app, cloud services, embedded software, manufacturing, packaging, shop, and media.
+    </JobSection>
+
+    <JobSection company="Uber ATG" time="2018 - 2020">
+      Built tools for artificial intelligence research in autonomous driving.
+    </JobSection>
+
+    <JobSection company="Aclima" time="2015 - 2018">
+      Interactive geospatial interfaces for hyper-dense environmental data. Featured at the U.N. and New York Times: Cities for Tomorrow.
+    </JobSection>
+
+    <JobSection company="Amazon" time="2014 - 2015">
+      Worked on a generative testing system for a point-of-sales mobile app and hardware.
+    </JobSection>
+
+    <JobSection company="Popular<wbr />Pays" time="2014">
+      <strong>Consulting.</strong> Started a social graph web crawler and complementary fraud detection system using PostgreSQL.
+    </JobSection>
+
+    <InternshipsSection jobs={[
+      { company: "StudyCloud", time: "2013" },
+      { company: "Wolfram<wbr />Alpha", time: "2011 - 2012" }
+    ]}>
+      <strong>Internships.</strong> Frontend engineering, prototyping, and authentication system.
+    </InternshipsSection>
+
+    <EducationSection
+      school="University of Illinois<br />Urbana-Champaign"
+      time="Class of 2014"
+      degree="B.S. in Computer Science"
+    />
+
+    <nav>
+      <a href="mailto:kevin@sull.vn">kevin@sull.vn</a>
+      <a href="https://github.com/sullvn">github.com/sullvn</a>
+      <a href="https://sull.vn">sull.vn</a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  article {
+    display: grid;
+
+    grid-template-columns: min-content 1fr min-content 1fr;
+    grid-template-rows: auto;
+    grid-auto-rows: 1fr;
+
+    column-gap: 1rem;
+    row-gap: 2rem;
+
+    container-type: inline-size;
+  }
+
+  h1 {
+    font-size: 8cqi;
+    text-wrap: nowrap;
+    text-transform: uppercase;
+    text-box-edge: cap alphabetic;
+    text-box-trim: trim-both;
+
+    div:has(&) {
+      grid-column-start: span 3;
+      justify-self: end;
+
+      container-style: inline-size;
+    }
+  }
+
+  nav {
+    grid-column-start: span 4;
+
+    justify-self: stretch;
+    align-self: center;
+
+    display: flex;
+    justify-content: space-around;
+  }
+
+  nav a {
+    color: inherit;
+    text-decoration: none;
+
+    &:link, &:visited, &:active {
+      color: inherit;
+    }
+  }
+</style>

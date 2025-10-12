@@ -1,0 +1,24 @@
+---
+import ResumeSection from './ResumeSection.astro';
+
+interface Props {
+  jobs: Array<{
+    company: string;
+    time: string;
+  }>;
+}
+
+const { jobs } = Astro.props;
+---
+
+<ResumeSection>
+  <header>
+    {jobs.map(job => (
+      <div>
+        <h2 set:html={job.company} />
+        <time>{job.time}</time>
+      </div>
+    ))}
+  </header>
+  <p><slot /></p>
+</ResumeSection>

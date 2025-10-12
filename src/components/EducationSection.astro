@@ -1,0 +1,19 @@
+---
+import ResumeSection from './ResumeSection.astro';
+
+interface Props {
+  school: string;
+  time: string;
+  degree: string;
+}
+
+const { school, time, degree } = Astro.props;
+---
+
+<ResumeSection>
+  <header>
+    <h2 set:html={school} />
+    <div><strong>{degree}</strong></div>
+    <time>{time}</time>
+  </header>
+</ResumeSection>

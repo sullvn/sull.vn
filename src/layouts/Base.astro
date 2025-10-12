@@ -1,0 +1,167 @@
+---
+import { black, white } from "../config/colors";
+import Logo from "../components/Logo.astro";
+
+const currentPath = Astro.url.pathname;
+const isHomepage = currentPath === '/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>Kevin Sullivan</title>
+  </head>
+  <body>
+    <header>
+      {isHomepage ? (
+        <Logo />
+      ) : (
+      <a href="/" class="logo">
+        <Logo />
+      </a>
+      )}
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <span class="tombstone">
+        <span>⬤</span>
+        <span>■</span>
+        <span>▲</span>
+      </span>
+    </footer>
+  </body>
+</html>
+
+<!--
+  -- Layout 
+  -->
+<style>
+  body {
+    max-width: 80rem; /* 1280px */
+    margin: 0 auto;
+    padding: 2rem;
+  }
+</style>
+
+<!--
+  -- Color scheme
+  -->
+<style is:global define:vars={{ white, black }}>
+  :root {
+    color-scheme: light dark;
+  }
+
+  :root {
+    color: var(--black);
+    background: var(--white); 
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color: var(--white);
+      background: var(--black); 
+    }
+  }
+</style>
+
+<!--
+  -- CSS reset
+  --
+  -- Inspiration: https://www.joshwcomeau.com/css/custom-css-reset/
+  -->
+<style is:global>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+
+    /*
+     * Remove browser's automatic half-leading block space
+     *
+     * Makes it way easier to align text with other elements
+     * along the vertical axis.
+     */
+    text-box-edge: cap alphabetic;
+    text-box-trim: trim-both;
+  }
+
+  :root {
+    min-height: 100vh;
+
+    /*
+     * System font stack
+     *
+     * See: https://systemfontstack.com
+     */
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+
+    /*
+     * Make macOS Safari font rendering consistent with:
+     *
+     * - Rest of macOS (no subpixel antialiasing)
+     * - Other operating systems
+     *
+     * See: https://dbushell.com/2024/11/05/webkit-font-smoothing/
+     */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  input, button, textarea, select {
+    /* Consistent look and fix auto-zoom behavior on mobile */
+    font: inherit;
+  }
+
+  p, h1, h2, h3, h4, h5, h6 {
+    /* Avoid text overflows */
+    overflow-wrap: break-word;
+  }
+
+  p {
+    /*
+     * Follow WCAG recommendations, while allowing tighter
+     * line heights for larger text
+     */
+    line-height: calc(1em + 0.5rem);
+
+    /* Avoid orphan lines with a single word */
+    text-wrap: pretty;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    /* Tightest, recommended line-height defined by font */
+    line-height: 1;
+
+    /* Make lines about equal length */
+    text-wrap: balance;
+
+    /* Get blockiest appearance we can get */
+    font-weight: 900;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    h1, h2, h3, h4, h5, h6 {
+      /*
+       * Light-on-dark is punchier. Reduce weight a bit
+       * to compensate.
+       */
+      font-weight: 800;
+    }
+  }
+
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+</style>

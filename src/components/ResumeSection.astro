@@ -1,0 +1,36 @@
+<section>
+  <slot />
+</section>
+
+<style>
+  section {
+    display: grid;
+
+    grid-column-start: span 2;
+    grid-template-columns: subgrid;
+  }
+
+  section :global(header) {
+    justify-self: end;
+    text-align: end;
+
+    &:only-child {
+      grid-column-start: span 2;
+    }
+
+    &:has(div) {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  section :global(h2) {
+    text-transform: uppercase;
+  }
+
+  section :global(time) {
+    /* Same as h2 */
+    line-height: 24px;
+  }
+</style>

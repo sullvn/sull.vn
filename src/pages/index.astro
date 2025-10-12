@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import BabbleLink from '../components/BabbleLink.astro';
+---
+
+<Base>
+  <div class="home">
+    <section class="fun">
+    </section>
+
+    <section class="intro">
+      <p>Oh, hey!</p>
+      <p>I'm Kevin Sullivan.</p>
+      <p>
+        I do stuff at the intersection of technology and
+        creativity. Sometimes I write about that.
+      </p>
+      <p>Here's my GitHub, resume, and email. Say hello!</p>
+      <p>Bloop.</p>
+    </section>
+
+    <section class="babbles">
+      <h2>Babbles</h2>
+      <nav>
+        <ol>
+          <BabbleLink
+            href="/babbles/example-title"
+            title="Notes from Hyper-Dimensional Spelunking"
+            date="2018-08-24"
+          />
+          <BabbleLink
+            href="/babbles/example-title"
+            title="Notes from Hyper-Dimensional Spelunking"
+            date="2018-08-24"
+          />
+          <BabbleLink
+            href="/babbles/example-title"
+            title="Notes from Hyper-Dimensional Spelunking"
+            date="2018-08-24"
+          />
+        </ol>
+      </nav>
+    </section>
+
+    <section class="resume">
+      <h2>Resume</h2>
+      <section>
+        <hgroup>
+          <h6>Symbiote</h6>
+          <time>2020 - 2022</time>
+        </hgroup>
+        <p>
+          Helped create the plant soil sensor product.
+          Worked on app, cloud services, embedded
+          software, manufacturing, packaging, shop, and
+          media.
+        </p>
+      </section>
+      <section>
+        <hgroup>
+          <h6>Symbiote</h6>
+          <time>2020 - 2022</time>
+        </hgroup>
+        <p>
+          Helped create the plant soil sensor product.
+          Worked on app, cloud services, embedded
+          software, manufacturing, packaging, shop, and
+          media.
+        </p>
+      </section>
+      <section>
+        <hgroup>
+          <h6>Symbiote</h6>
+          <time>2020 - 2022</time>
+        </hgroup>
+        <p>
+          Helped create the plant soil sensor product.
+          Worked on app, cloud services, embedded
+          software, manufacturing, packaging, shop, and
+          media.
+        </p>
+      </section>
+      <section>
+        <hgroup>
+          <h6>Symbiote</h6>
+          <time>2020 - 2022</time>
+        </hgroup>
+        <p>
+          Helped create the plant soil sensor product.
+          Worked on app, cloud services, embedded
+          software, manufacturing, packaging, shop, and
+          media.
+        </p>
+      </section>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .home {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "fun     intro"
+      "babbles babbles"
+      "resume resume";
+
+    row-gap: 3rem;
+  }
+
+  h2 {
+    font-size: 3rem;
+  }
+
+  .fun {
+    grid-area: fun;
+   }
+
+  .intro {
+    grid-area: intro;
+   }
+
+  .babbles {
+    grid-area: babbles;
+  }
+
+  .resume {
+    grid-area: resume;
+  }
+</style>
