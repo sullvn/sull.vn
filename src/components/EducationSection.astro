@@ -13,7 +13,21 @@ const { school, time, degree } = Astro.props;
 <ResumeSection>
   <header>
     <h2 set:html={school} />
-    <div><strong>{degree}</strong></div>
-    <time>{time}</time>
+    <div>
+      <strong>{degree}</strong>
+      <time>{time}</time>
+    </div>
   </header>
 </ResumeSection>
+
+<style>
+  header {
+    gap: 1rem;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+</style>

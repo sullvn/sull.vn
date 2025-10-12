@@ -16,15 +16,15 @@ import EducationSection from '../components/EducationSection.astro';
       <HilbertCurve />
     
     <JobSection company="Felt" time="2023 - Now">
-      Making the most intuitive GIS software on the planet.
+        Making the most intuitive GIS software on the planet. Features geospatial analysis, realtime multiplayer, and high-performance rendering.
     </JobSection>
 
     <JobSection company="Symbiote" time="2020 - 2022">
-      <strong>Co-founder.</strong> Helped create the plant soil sensor product. Worked on app, cloud services, embedded software, manufacturing, packaging, shop, and media.
+      <strong>Co-founder.</strong> Plant soil sensor product. Involved in app, cloud services, embedded software, manufacturing, packaging, shop, and media.
     </JobSection>
 
     <JobSection company="Uber ATG" time="2018 - 2020">
-      Built tools for artificial intelligence research in autonomous driving.
+      Built tools for artificial intelligence research in autonomous driving. Includes high-performance spatial visualizations and topology editing.
     </JobSection>
 
     <JobSection company="Aclima" time="2015 - 2018">
@@ -36,14 +36,14 @@ import EducationSection from '../components/EducationSection.astro';
     </JobSection>
 
     <JobSection company="Popular<wbr />Pays" time="2014">
-      <strong>Consulting.</strong> Started a social graph web crawler and complementary fraud detection system using PostgreSQL.
+      Started a social graph web crawler and complementary bot detection system.
     </JobSection>
 
     <InternshipsSection jobs={[
       { company: "StudyCloud", time: "2013" },
       { company: "Wolfram<wbr />Alpha", time: "2011 - 2012" }
     ]}>
-      <strong>Internships.</strong> Frontend engineering, prototyping, and authentication system.
+        <strong>Intern.</strong> Web engineering and prototyping. Includes custom authentication system and social media visualizations.
     </InternshipsSection>
 
     <EducationSection
@@ -140,8 +140,16 @@ import EducationSection from '../components/EducationSection.astro';
   }
 
   @media print {
+    .container {
+      font-size: 13px;
+    }
+
     :global(footer) {
       display: none;
+    }
+
+    @page {
+      margin-block: .5in;
     }
   }
 </style>
