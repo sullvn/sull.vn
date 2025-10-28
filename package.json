@@ -1,7 +1,7 @@
 {
   "name": "sull.vn",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
@@ -9,16 +9,16 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.5",
     "@astrojs/svelte": "^7.2.0",
-    "astro": "^5.14.1",
+    "astro": "^5.15.1",
     "lightningcss": "^1.30.2",
-    "svelte": "^5.39.8",
+    "svelte": "^5.42.2",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@astrojs/language-server": "^2.15.4",
-    "svelte-language-server": "^0.17.20",
-    "typescript-language-server": "^5.0.0"
+    "@astrojs/language-server": "^2.15.5",
+    "svelte-language-server": "^0.17.21",
+    "typescript-language-server": "^5.0.1"
   }
 }
