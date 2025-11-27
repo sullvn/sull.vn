@@ -1,0 +1,16 @@
+<nav>
+  <ol>
+    <slot />
+  </ol>
+</nav>
+
+<style>
+  ol {
+    list-style: none;
+    padding: 0;
+    font-size: var(--proseFontSize);
+    display: flex;
+    flex-direction: column;
+    gap: var(--proseParagraphGap);
+  }
+</style>
