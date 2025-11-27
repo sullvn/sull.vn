@@ -1,5 +1,6 @@
 ---
 import { black, white } from "../config/colors";
+import { prose } from "../config/typography";
 import Logo from "../components/Logo.astro";
 
 const currentPath = Astro.url.pathname;
@@ -78,6 +79,12 @@ const isHomepage = currentPath === '/';
       background: var(--black); 
     }
   }
+</style>
+
+<!--
+  -- Typography
+  -->
+<style is:global define:vars={{ proseFontSize: prose.fontSize, proseParagraphGap: prose.paragraphGap }}>
 </style>
 
 <!--

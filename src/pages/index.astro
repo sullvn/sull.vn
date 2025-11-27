@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import BabbleLink from '../components/BabbleLink.astro';
+import Prose from '../components/Prose.astro';
 ---
 
 <Base>
@@ -9,14 +10,14 @@ import BabbleLink from '../components/BabbleLink.astro';
     </section>
 
     <section class="intro">
-      <p>Oh, hey!</p>
-      <p>I'm Kevin Sullivan.</p>
-      <p>
+      <Prose>Oh, hey!</Prose>
+      <Prose>I'm Kevin Sullivan.</Prose>
+      <Prose>
         I do stuff at the intersection of technology and
         creativity. Sometimes I write about that.
-      </p>
-      <p>Here's my GitHub, resume, and email. Say hello!</p>
-      <p>Bloop.</p>
+      </Prose>
+      <Prose>Here's my GitHub, resume, and email. Say hello!</Prose>
+      <Prose>Bloop.</Prose>
     </section>
 
     <section class="babbles">
@@ -119,7 +120,7 @@ import BabbleLink from '../components/BabbleLink.astro';
 
   .intro {
     grid-area: intro;
-   }
+  }
 
   .babbles {
     grid-area: babbles;
