@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import BabbleLink from '../components/BabbleLink.astro';
 import BabblesNav from '../components/BabblesNav.astro';
 import Prose from '../components/Prose.astro';
+import H2 from '../components/H2.astro';
 ---
 
 <Base>
@@ -22,7 +23,7 @@ import Prose from '../components/Prose.astro';
     </section>
 
     <section class="babbles">
-      <h2>Babbles</h2>
+      <H2>Babbles</H2>
       <BabblesNav>
         <BabbleLink
           href="/babbles/example-title"
@@ -43,7 +44,7 @@ import Prose from '../components/Prose.astro';
     </section>
 
     <section class="resume">
-      <h2>Resume</h2>
+      <H2>Resume</H2>
       <section>
         <hgroup>
           <h6>Symbiote</h6>
@@ -109,7 +110,7 @@ import Prose from '../components/Prose.astro';
     row-gap: 3rem;
   }
 
-  h2 {
+  .resume h2 {
     font-size: 3rem;
   }
 
