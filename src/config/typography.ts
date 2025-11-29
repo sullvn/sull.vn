@@ -25,6 +25,10 @@ export const prose: Typography = {
   paragraphGap: "2em",
 };
 
+export const logo = {
+  fontSize: fontScale(12),
+};
+
 interface Typography {
   fontSize: string;
   paragraphGap: string;

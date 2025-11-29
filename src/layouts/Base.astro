@@ -1,10 +1,8 @@
 ---
 import { black, white } from "../config/colors";
-import { prose, headings } from "../config/typography";
+import { prose, headings, logo } from "../config/typography";
 import Logo from "../components/Logo.astro";
 
-const currentPath = Astro.url.pathname;
-const isHomepage = currentPath === '/';
 ---
 
 <!doctype html>
@@ -20,13 +18,7 @@ const isHomepage = currentPath === '/';
   </head>
   <body>
     <header>
-      {isHomepage ? (
-        <Logo />
-      ) : (
-      <a href="/" class="logo">
-        <Logo />
-      </a>
-      )}
+      <Logo />
     </header>
 
     <main>
@@ -48,6 +40,10 @@ const isHomepage = currentPath === '/';
   -->
 <style>
   body {
+    display: flex;
+    flex-direction: column;
+    gap: 8rem;
+
     max-width: 80rem; /* 1280px */
     margin: 0 auto;
     padding: 2rem;
@@ -93,6 +89,7 @@ const isHomepage = currentPath === '/';
   h4FontSize: headings.h4.fontSize,
   h5FontSize: headings.h5.fontSize,
   h6FontSize: headings.h6.fontSize,
+  logoFontSize: logo.fontSize,
 }}>
 </style>
 
