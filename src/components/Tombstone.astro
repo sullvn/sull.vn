@@ -1,0 +1,23 @@
+<span class="tombstone">
+  <span class="circle">⬤</span>
+  <span class="square">■</span>
+  <span class="triangle">▲</span>
+</span>
+
+<style>
+  .tombstone {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    font-size: var(--proseFontSize);
+  }
+
+  /*
+   * Square and triangle glyphs render smaller
+   * than circle. Scale them up to match.
+   */
+  .square,
+  .triangle {
+    transform: scale(1.5);
+  }
+</style>

@@ -2,6 +2,7 @@
 import { black, white } from "../config/colors";
 import { prose, headings, logo } from "../config/typography";
 import Logo from "../components/Logo.astro";
+import Tombstone from "../components/Tombstone.astro";
 
 ---
 
@@ -26,11 +27,7 @@ import Logo from "../components/Logo.astro";
     </main>
 
     <footer>
-      <span class="tombstone">
-        <span>⬤</span>
-        <span>■</span>
-        <span>▲</span>
-      </span>
+      <Tombstone />
     </footer>
   </body>
 </html>
