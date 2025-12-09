@@ -18,7 +18,8 @@ const isHomepage = Astro.url.pathname === '/';
     color: inherit;
     text-decoration: none;
 
-    padding-bottom: 1em;
+    /* Avoid overflow cutoff of text descenders */
+    padding-bottom: 1rem;
 
     position: absolute;
     top: calc(-0.65 * var(--logoFontSize));
