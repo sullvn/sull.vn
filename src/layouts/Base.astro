@@ -1,5 +1,5 @@
 ---
-import { black, white } from "../config/colors";
+import { black, white, green, red, purple } from "../config/colors";
 import { prose, headings, logo } from "../config/typography";
 import Logo from "../components/Logo.astro";
 import Tombstone from "../components/Tombstone.astro";
@@ -56,7 +56,7 @@ import Tombstone from "../components/Tombstone.astro";
 <!--
   -- Color scheme
   -->
-<style is:global define:vars={{ white, black }}>
+<style is:global define:vars={{ white, black, green, red, purple }}>
   :root {
     color-scheme: light dark;
   }
