@@ -5,21 +5,22 @@ const isHomepage = Astro.url.pathname === '/';
 {isHomepage ? (
   <span class="logo">sullvn</span>
 ) : (
-  <a href="/" class="logo">sullvn</a>
+<a href="/" class="logo">
+  <span>sullvn</span>
+  <span class="arrow">↖</span>
+</a>
 )}
 
 <style>
   .logo {
-    display: block;
+    display: flex;
+    flex-direction: column;
 
     font-size: var(--logoFontSize);
     font-weight: 900;
     text-transform: uppercase;
     color: inherit;
     text-decoration: none;
-
-    /* Avoid overflow cutoff of text descenders */
-    padding-bottom: 1rem;
 
     position: absolute;
     top: calc(-0.65 * var(--logoFontSize));
@@ -29,6 +30,25 @@ const isHomepage = Astro.url.pathname === '/';
     overflow-x: hidden;
   }
 
+  span.logo {
+    display: block;
+
+    /* Avoid overflow cutoff of text descenders */
+    padding-bottom: 1rem;
+  }
+
+  a.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+
+    transition: transform 0.4s cubic-bezier(0, 0, 0.35, 1);
+  }
+
+  a.logo:hover {
+    transform: translateY(calc(0.25 * var(--logoFontSize)));
+  }
+
   /*
    * Include specific `a` selector to override
    * built-in `a:any-link`, `a:any-link:active`
@@ -36,5 +56,11 @@ const isHomepage = Astro.url.pathname === '/';
   .logo, a.logo {
     color: var(--purple);
     text-decoration: none;
+  }
+
+  .arrow {
+    font-size: calc(0.4 * var(--logoFontSize));
+
+    margin: .5rem;
   }
 </style>
