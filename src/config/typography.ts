@@ -1,14 +1,8 @@
-import { GOLDEN_RATIO } from "../utils/math";
-import { typographyScale } from "../utils/typography";
+import { fontScale } from "../utils/typography";
 
-const scaleOptions = {
-  base: 1,
-  ratio: Math.pow(GOLDEN_RATIO, 3), // ≈ 4.236
-  notes: 6,
-};
-
-function fontScale(position: number): string {
-  return `${typographyScale(position, scaleOptions)}rem`;
+interface Typography {
+  fontSize: string;
+  paragraphGap: string;
 }
 
 export const headings = {
@@ -29,7 +23,3 @@ export const logo = {
   fontSize: fontScale(12),
 };
 
-interface Typography {
-  fontSize: string;
-  paragraphGap: string;
-}

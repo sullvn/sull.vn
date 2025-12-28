@@ -1,3 +1,5 @@
+import { GOLDEN_RATIO } from "./math";
+
 /**
  * Compute a font size from a typographic scale.
  *
@@ -38,5 +40,15 @@ export interface TypographyScaleOptions {
   base: number;
   ratio: number;
   notes: number;
+}
+
+const scaleOptions = {
+  base: 1,
+  ratio: Math.pow(GOLDEN_RATIO, 3), // ≈ 4.236
+  notes: 6,
+};
+
+export function fontScale(position: number): string {
+  return `${typographyScale(position, scaleOptions)}rem`;
 }
 
