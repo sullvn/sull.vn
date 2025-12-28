@@ -46,7 +46,7 @@ const isHomepage = Astro.url.pathname === '/';
   }
 
   a.logo:hover {
-    transform: translateY(calc(0.25 * var(--logoFontSize)));
+    transform: translateY(calc(0.05 * var(--logoFontSize)));
   }
 
   /*
@@ -59,7 +59,7 @@ const isHomepage = Astro.url.pathname === '/';
   }
 
   .arrow {
-    font-size: calc(0.4 * var(--logoFontSize));
+    font-size: var(--h1FontSize);
 
     margin: .5rem;
   }

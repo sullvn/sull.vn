@@ -18,3 +18,29 @@ const displayDate = formatDate(date);
     <time datetime={date}>{displayDate}</time>
   </a>
 </li>
+
+<style>
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 4ch;
+    color: var(--purple);
+    text-decoration: none;
+    padding-bottom: 0.2em;
+    border-bottom: 0.2em solid color-mix(in srgb, var(--purple) 30%, transparent);
+  }
+
+  a:hover {
+    border-bottom-color: var(--purple);
+  }
+
+  time {
+    flex-shrink: 0;
+    color: color-mix(in srgb, var(--purple) 60%, transparent);
+  }
+
+  a:hover time {
+    color: var(--purple);
+  }
+</style>
