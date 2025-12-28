@@ -42,58 +42,6 @@ import H2 from '../components/H2.astro';
         />
       </BabblesNav>
     </section>
-
-    <section class="resume">
-      <H2>Resume</H2>
-      <section>
-        <hgroup>
-          <h6>Symbiote</h6>
-          <time>2020 - 2022</time>
-        </hgroup>
-        <p>
-          Helped create the plant soil sensor product.
-          Worked on app, cloud services, embedded
-          software, manufacturing, packaging, shop, and
-          media.
-        </p>
-      </section>
-      <section>
-        <hgroup>
-          <h6>Symbiote</h6>
-          <time>2020 - 2022</time>
-        </hgroup>
-        <p>
-          Helped create the plant soil sensor product.
-          Worked on app, cloud services, embedded
-          software, manufacturing, packaging, shop, and
-          media.
-        </p>
-      </section>
-      <section>
-        <hgroup>
-          <h6>Symbiote</h6>
-          <time>2020 - 2022</time>
-        </hgroup>
-        <p>
-          Helped create the plant soil sensor product.
-          Worked on app, cloud services, embedded
-          software, manufacturing, packaging, shop, and
-          media.
-        </p>
-      </section>
-      <section>
-        <hgroup>
-          <h6>Symbiote</h6>
-          <time>2020 - 2022</time>
-        </hgroup>
-        <p>
-          Helped create the plant soil sensor product.
-          Worked on app, cloud services, embedded
-          software, manufacturing, packaging, shop, and
-          media.
-        </p>
-      </section>
-    </section>
   </div>
 </Base>
 
@@ -104,14 +52,9 @@ import H2 from '../components/H2.astro';
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
       "fun     intro"
-      "babbles babbles"
-      "resume resume";
+      "babbles babbles";
 
     row-gap: 3rem;
-  }
-
-  .resume h2 {
-    font-size: 3rem;
   }
 
   .fun {
@@ -124,9 +67,8 @@ import H2 from '../components/H2.astro';
 
   .babbles {
     grid-area: babbles;
-  }
-
-  .resume {
-    grid-area: resume;
+    display: flex;
+    flex-direction: column;
+    gap: var(--proseParagraphGap);
   }
 </style>
