@@ -1,9 +1,14 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import BabbleLink from '../components/BabbleLink.astro';
 import BabblesNav from '../components/BabblesNav.astro';
 import Prose from '../components/Prose.astro';
 import H2 from '../components/H2.astro';
+
+const babbles = (await getCollection('babbles')).sort(
+  (a, b) => (b.data.date as Date).getTime() - (a.data.date as Date).getTime()
+);
 ---
 
 <Base>
@@ -25,21 +30,13 @@ import H2 from '../components/H2.astro';
     <section class="babbles">
       <H2>Babbles</H2>
       <BabblesNav>
-        <BabbleLink
-          href="/babbles/example-title"
-          title="Notes from Hyper-Dimensional Spelunking"
-          date="2018-08-24"
-        />
-        <BabbleLink
-          href="/babbles/example-title"
-          title="Notes from Hyper-Dimensional Spelunking"
-          date="2018-08-24"
-        />
-        <BabbleLink
-          href="/babbles/example-title"
-          title="Notes from Hyper-Dimensional Spelunking"
-          date="2018-08-24"
-        />
+        {babbles.map((babble) => (
+          <BabbleLink
+            href={`/babbles/${babble.id}`}
+            title={babble.data.title}
+            date={(babble.data.date as Date).toISOString().split('T')[0]!}
+          />
+        ))}
       </BabblesNav>
     </section>
   </div>

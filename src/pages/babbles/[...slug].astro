@@ -1,0 +1,58 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import H1 from '../../components/H1.astro';
+import { formatDate } from '../../utils/date';
+import 'katex/dist/katex.css';
+
+export async function getStaticPaths() {
+  const babbles = await getCollection('babbles');
+  return babbles.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const date = (entry.data.date as Date).toISOString().split('T')[0]!;
+---
+
+<Base>
+  <article>
+    <header>
+      <H1>{entry.data.title}</H1>
+      <time datetime={date}>{formatDate(date)}</time>
+    </header>
+
+    <section>
+      <Content />
+    </section>
+  </article>
+</Base>
+
+<style>
+  article {
+    display: flex;
+    flex-direction: column;
+    gap: 8rem;
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  header time {
+    font-size: var(--h5FontSize);
+  }
+
+  article :global(p) {
+    max-width: 50ch;
+    font-size: var(--proseFontSize);
+    margin-bottom: var(--proseParagraphGap);
+    margin-inline: auto;
+  }
+</style>
