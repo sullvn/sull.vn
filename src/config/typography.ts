@@ -1,8 +1,13 @@
 import { fontScale } from '../utils/typography'
+import { GOLDEN_RATIO } from '../utils/math'
 
 interface Typography {
   fontSize: string
   paragraphGap: string
+  listGap: string
+  headingGap: string
+  headingGapTop: string
+  codeFontSize: string
 }
 
 export const headings = {
@@ -14,9 +19,17 @@ export const headings = {
   h6: { fontSize: fontScale(1) },
 }
 
+const paragraphGapEm = 2
+const headingGapEm = paragraphGapEm
+const headingGapTopEm = 2 * GOLDEN_RATIO
+
 export const prose: Typography = {
   fontSize: fontScale(1),
-  paragraphGap: '2em',
+  paragraphGap: `${paragraphGapEm}em`,
+  listGap: '1em',
+  headingGap: `${headingGapEm}em`,
+  headingGapTop: `${headingGapTopEm}em`,
+  codeFontSize: fontScale(-1),
 }
 
 export const logo = {

@@ -9,6 +9,12 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
+    shikiConfig: {
+      themes: {
+        light: 'material-theme-lighter',
+        dark: 'material-theme-darker',
+      },
+    },
   },
   integrations: [svelte(), mdx()],
   server: {
