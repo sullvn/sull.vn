@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# NixOS can't execute Biome's default npm-provided linux binary (glibc dynamic linker).
+# But Biome also ships a statically-linked musl binary.
+#
+# Keep usage simple: `pnpm format` and `pnpm check:biome` call this wrapper.
+
+export BIOME_BINARY='@biomejs/cli-linux-x64-musl/biome'
+exec pnpm exec biome "$@"

@@ -3,4 +3,4 @@
  *
  * This constant satisfies the identity φ² = φ + 1
  */
-export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
+export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2

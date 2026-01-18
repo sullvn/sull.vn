@@ -3,12 +3,13 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import BabbleLink from '../components/BabbleLink.astro';
 import BabblesNav from '../components/BabblesNav.astro';
+import Heading from '../components/Heading.astro';
 import Prose from '../components/Prose.astro';
-import H2 from '../components/H2.astro';
+import { toIsoDay, toTimestamp } from '../utils/date'
 
 const babbles = (await getCollection('babbles')).sort(
-  (a, b) => (b.data.date as Date).getTime() - (a.data.date as Date).getTime()
-);
+  (a, b) => toTimestamp(b.data.date) - toTimestamp(a.data.date)
+)
 ---
 
 <Base>
@@ -28,13 +29,13 @@ const babbles = (await getCollection('babbles')).sort(
     </section>
 
     <section class="babbles">
-      <H2>Babbles</H2>
+      <Heading level={2}>Babbles</Heading>
       <BabblesNav>
         {babbles.map((babble) => (
           <BabbleLink
-            href={`/babbles/${babble.id}`}
+            href={`/babbles/${babble.data.slug}`}
             title={babble.data.title}
-            date={(babble.data.date as Date).toISOString().split('T')[0]!}
+            date={toIsoDay(babble.data.date)}
           />
         ))}
       </BabblesNav>

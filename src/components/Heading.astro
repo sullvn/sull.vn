@@ -1,0 +1,67 @@
+---
+type Level = 1 | 2 | 3 | 4 | 5 | 6;
+
+const { level = 2 } = Astro.props as { level?: Level };
+---
+
+{level === 1 && (
+  <h1>
+    <slot />
+  </h1>
+)}
+
+{level === 2 && (
+  <h2>
+    <slot />
+  </h2>
+)}
+
+{level === 3 && (
+  <h3>
+    <slot />
+  </h3>
+)}
+
+{level === 4 && (
+  <h4>
+    <slot />
+  </h4>
+)}
+
+{level === 5 && (
+  <h5>
+    <slot />
+  </h5>
+)}
+
+{level === 6 && (
+  <h6>
+    <slot />
+  </h6>
+)}
+
+<style>
+  h1 {
+    font-size: var(--h1FontSize);
+  }
+
+  h2 {
+    font-size: var(--h2FontSize);
+  }
+
+  h3 {
+    font-size: var(--h3FontSize);
+  }
+
+  h4 {
+    font-size: var(--h4FontSize);
+  }
+
+  h5 {
+    font-size: var(--h5FontSize);
+  }
+
+  h6 {
+    font-size: var(--h6FontSize);
+  }
+</style>

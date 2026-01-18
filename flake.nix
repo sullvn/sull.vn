@@ -14,8 +14,14 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in
-      {
-        devShells.default = pkgs.mkShell { packages = [ pkgs.nodejs_latest pkgs.pnpm ]; };
-      }
+        {
+          devShells.default = pkgs.mkShell {
+            packages = [
+              pkgs.nodejs_latest
+              pkgs.pnpm
+            ];
+          };
+        }
+
     );
 }

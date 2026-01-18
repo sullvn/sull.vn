@@ -1,9 +1,9 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from 'astro/config'
 
-import svelte from '@astrojs/svelte';
-import mdx from '@astrojs/mdx';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
+import svelte from '@astrojs/svelte'
+import mdx from '@astrojs/mdx'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 
 export default defineConfig({
   markdown: {
@@ -17,7 +17,7 @@ export default defineConfig({
   },
   vite: {
     css: {
-      transformer: "lightningcss",
+      transformer: 'lightningcss',
     },
   },
-});
+})

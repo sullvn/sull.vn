@@ -1,4 +1,4 @@
-import { GOLDEN_RATIO } from "./math";
+import { GOLDEN_RATIO } from './math.ts'
 
 /**
  * Compute a font size from a typographic scale.
@@ -27,28 +27,24 @@ import { GOLDEN_RATIO } from "./math";
  *
  * @see https://spencermortensen.com/articles/typographic-scale/
  */
-export function typographyScale(
-  i: number,
-  options: TypographyScaleOptions
-): number {
-  const { base, ratio, notes } = options;
+export function typographyScale(i: number, options: TypographyScaleOptions): number {
+  const { base, ratio, notes } = options
 
-  return base * Math.pow(ratio, i / notes);
+  return base * ratio ** (i / notes)
 }
 
 export interface TypographyScaleOptions {
-  base: number;
-  ratio: number;
-  notes: number;
+  base: number
+  ratio: number
+  notes: number
 }
 
 const scaleOptions = {
   base: 1,
-  ratio: Math.pow(GOLDEN_RATIO, 3), // ≈ 4.236
+  ratio: GOLDEN_RATIO ** 3, // ≈ 4.236
   notes: 6,
-};
-
-export function fontScale(position: number): string {
-  return `${typographyScale(position, scaleOptions)}rem`;
 }
 
+export function fontScale(position: number): string {
+  return `${typographyScale(position, scaleOptions)}rem`
+}

@@ -1,27 +1,27 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import H1 from '../../components/H1.astro';
-import { formatDate } from '../../utils/date';
+import Heading from '../../components/Heading.astro';
+import { formatDate, toIsoDay } from '../../utils/date'
 import 'katex/dist/katex.css';
 
 export async function getStaticPaths() {
   const babbles = await getCollection('babbles');
   return babbles.map((entry) => ({
-    params: { slug: entry.id },
+    params: { slug: entry.data.slug },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const date = (entry.data.date as Date).toISOString().split('T')[0]!;
+const date = toIsoDay(entry.data.date)
 ---
 
 <Base>
   <article>
     <header>
-      <H1>{entry.data.title}</H1>
+      <Heading level={1}>{entry.data.title}</Heading>
       <time datetime={date}>{formatDate(date)}</time>
     </header>
 
