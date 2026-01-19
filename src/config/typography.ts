@@ -8,6 +8,7 @@ interface Typography {
   headingGap: string
   headingGapTop: string
   codeFontSize: string
+  codeBlockGap: string
 }
 
 export const headings = {
@@ -30,6 +31,7 @@ export const prose: Typography = {
   headingGap: `${headingGapEm}em`,
   headingGapTop: `${headingGapTopEm}em`,
   codeFontSize: fontScale(-1),
+  codeBlockGap: '8em',
 }
 
 export const logo = {
