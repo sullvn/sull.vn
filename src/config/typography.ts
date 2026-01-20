@@ -27,7 +27,7 @@ const headingGapTopEm = 2 * GOLDEN_RATIO
 export const prose: Typography = {
   fontSize: fontScale(1),
   paragraphGap: `${paragraphGapEm}em`,
-  listGap: '1em',
+  listGap: `${paragraphGapEm}em`,
   headingGap: `${headingGapEm}em`,
   headingGapTop: `${headingGapTopEm}em`,
   codeFontSize: fontScale(-1),
