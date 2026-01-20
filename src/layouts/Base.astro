@@ -118,6 +118,18 @@ import Tombstone from "../components/Tombstone.astro";
     text-box-trim: trim-both;
   }
 
+  /*
+   * KaTeX uses many nested inline boxes with custom layout.
+   * text-box-trim can collapse their block size, causing
+   * multi-line equations to overlap adjacent content.
+   */
+  .katex-display,
+  .katex,
+  .katex * {
+    text-box-edge: auto;
+    text-box-trim: none;
+  }
+
   :root {
     min-height: 100vh;
 

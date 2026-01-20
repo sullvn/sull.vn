@@ -93,6 +93,10 @@ const date = toIsoDay(entry.data.date)
     overflow-x: auto;
   }
 
+  .content :global(.katex-display) {
+    margin-block: var(--proseCodeBlockGap);
+  }
+
   @media (prefers-color-scheme: dark) {
     .content :global(.astro-code span) {
       color: var(--shiki-dark) !important;
