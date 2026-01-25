@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "astro-docs": {
+      "type": "http",
+      "url": "https://mcp.docs.astro.build/mcp"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "sh",
+      "args": [
+        "-c",
+        "pnpm dlx @playwright/mcp@latest --executable-path $(which chromium)"
+      ],
+      "env": {}
+    }
+  }
+}
