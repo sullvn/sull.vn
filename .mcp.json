@@ -7,10 +7,7 @@
     "playwright": {
       "type": "stdio",
       "command": "sh",
-      "args": [
-        "-c",
-        "pnpm dlx @playwright/mcp@latest --executable-path $(which chromium)"
-      ],
+      "args": ["-c", "pnpm dlx @playwright/mcp@latest --executable-path $(which chromium)"],
       "env": {}
     }
   }

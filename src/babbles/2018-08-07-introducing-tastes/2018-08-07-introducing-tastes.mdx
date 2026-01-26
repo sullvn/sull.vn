@@ -4,13 +4,10 @@ date: '2018-08-08T18:08:01.385Z'
 title: 'Introducing Tastes and Rapid Prototyping with Flavor'
 ---
 
-import faceBoxesImage from './face-boxes.png';
+import { Image } from 'astro:assets';
 import facesConversationImage from './faces-conversation.png';
-import dragonLoveImage from './dragon-love.jpg';
 
-<img src={faceBoxesImage.src} />
-
-&nbsp;
+![Face boxes](./face-boxes.png)
 
 I've made a Typescript library for intelligent sample generation during creative prototyping. It's called Tastes.
 
@@ -73,11 +70,9 @@ Random data generators just don’t cut it for this.
 
 You can experiment with how your code reacts to random data, but it will be an aimless pursuit. It’s the equivalent of button mashing on a video game controller. Will you win? Maybe. But will you know why? No!
 
-So that’s where Tastes comes in. It’s a more intentional foundation for new methods in creative prototyping. The hypothesis is large productivity benefits if example-driven prototyping is used to its fullest extent.
+So that's where Tastes comes in. It's a more intentional foundation for new methods in creative prototyping. The hypothesis is large productivity benefits if example-driven prototyping is used to its fullest extent.
 
-&nbsp;
-
-<img src={facesConversationImage.src} data-invert-on-dark />
+<Image src={facesConversationImage} alt="Faces conversation" data-invert-on-dark />
 
 # The Plan
 
@@ -114,13 +109,9 @@ But we humans don't think in letters and pixels. We express ourselves with narra
 
 Software should help us work at that level. Who cares about pixel-tweaking if we can simply ask for a dragon in our profile picture? Who would worry about spelling in a world where you can ask for infinite valid alternative versions of your essay?
 
-&nbsp;
+![Dragon love](./dragon-love.jpg)
 
-<img src={dragonLoveImage.src} />
-
-&nbsp;
-
-And we’re getting there. Just a few examples are the following:
+And we're getting there. Just a few examples are the following:
 
 - [**Project Dreamcatcher.**](https://autodeskresearch.com/projects/dreamcatcher) Generate parts for industrial designs from constraints.
 - [**Magenta.**](https://magenta.tensorflow.org/) Creating music and art from samples and styles.

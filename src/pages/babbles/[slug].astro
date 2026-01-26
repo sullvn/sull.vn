@@ -63,6 +63,21 @@ const date = toIsoDay(entry.data.date)
     margin-bottom: var(--proseHeadingGap);
   }
 
+  .content :global(img, picture, figure, svg, video, canvas, iframe) {
+    margin-inline: auto;
+    margin-top: var(--proseHeadingGapTop);
+    margin-bottom: var(--proseHeadingGap);
+  }
+
+  .content :global(iframe) {
+    display: block;
+  }
+
+  .content :global(p:has(img)) {
+    max-width: none;
+    margin-block: 0;
+  }
+
   .content :global(ul, ol) {
     max-width: 50rch;
     margin-inline: auto;

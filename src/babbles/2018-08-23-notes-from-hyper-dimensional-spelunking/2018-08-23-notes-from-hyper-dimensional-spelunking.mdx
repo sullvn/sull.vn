@@ -4,19 +4,14 @@ date: '2018-08-24T01:29:14.000Z'
 title: 'Notes from Hyper-Dimensional Spelunking'
 ---
 
+import { Image } from 'astro:assets';
 import introSpelunkerImage from './intro-spelunker.png';
 import randomSamplingImage from './random-sampling.png';
 import shannonNyquistSamplingImage from './shannon-nyquist-sampling.png';
 import snakeCurvesImage from './snake-curves.png';
 import hilbertMappingImage from './hilbert-mapping.png';
-import binvisioImage from './binvisio.jpg';
-import tSneCnnEmbedImage from './t-sne-cnn-embed.jpg';
 
-<div style="max-width: 150px; margin: 0 auto;">
-  <img src={introSpelunkerImage.src} data-invert-on-dark />
-</div>
-
-&nbsp;
+<Image src={introSpelunkerImage} alt="Intro spelunker" layout="constrained" width={150} data-invert-on-dark />
 
 Writing software is hard. Visualizing its behavior makes it easier.
 
@@ -57,13 +52,7 @@ You _can_ look everywhere, but it may take a long time. What do you do when time
 
 You _could_ look randomly, but then you might miss important features. Check it out on some random mathematical function:
 
-&nbsp;
-
-<div style="max-width: 368px; margin: 0 auto;">
-  <img src={randomSamplingImage.src} data-invert-on-dark />
-</div>
-
-&nbsp;
+<Image src={randomSamplingImage} alt="Random sampling" layout="constrained" width={368} data-invert-on-dark />
 
 Well, if your cave happens to be a signal then you can ask some information theorists. They're expert cave explorers, but only if it's composed of waves.
 
@@ -71,13 +60,7 @@ Well, if your cave happens to be a signal then you can ask some information theo
 
 They suggest using the [Nyquist-Shannon sampling theorem](https://en.wikipedia.org/wiki/Nyquist–Shannon_sampling_theorem). The basic idea is to sample at twice the rate as the smallest possible wavelength. Otherwise you'll never be totally sure what you're looking at.
 
-&nbsp;
-
-<div style="max-width: 368px; margin: 0 auto;">
-  <img src={shannonNyquistSamplingImage.src} data-invert-on-dark />
-</div>
-
-&nbsp;
+<Image src={shannonNyquistSamplingImage} alt="Shannon Nyquist sampling" layout="constrained" width={368} data-invert-on-dark />
 
 Cool. But our cave isn't made out of waves. And it isn't one dimensional. It's hyper-dimensional.
 
@@ -144,11 +127,7 @@ The problem is since our goal is human understanding, the best sampling method i
 
 # Don't Touch the Space-Filling Snakes
 
-&nbsp;
-
-<img src={snakeCurvesImage.src} data-invert-on-dark />
-
-&nbsp;
+<Image src={snakeCurvesImage} alt="Snake curves" data-invert-on-dark />
 
 Cartesian products are simple to understand, but have some drawbacks. You can't choose any number of samples and have them equally spread out. You'll have to pick favorites.
 
@@ -156,13 +135,7 @@ Those are not issues with space-filling curves. If you're not familiar, they are
 
 They're neat because they preserve locality while being incredibly easy to use. Want five samples? Just pick five scalar points, and project them onto the curve. Want them equally distributed? Well, they will stay spread out after projection.
 
-&nbsp;
-
-<div style="max-width: 300px; margin: 0 auto;">
-  <img src={hilbertMappingImage.src} />
-</div>
-
-&nbsp;
+<Image src={hilbertMappingImage} alt="Hilbert mapping" layout="constrained" width={300} />
 
 I prefer the [Hilbert curve](https://en.wikipedia.org/wiki/Hilbert_curve) over the [Z-order](https://en.wikipedia.org/wiki/Z-order_curve) or [Peano curves](https://en.wikipedia.org/wiki/Peano_curve). The latter two don't preserve locality as well as the Hilbert curve, but are much faster to compute.
 
@@ -188,21 +161,13 @@ This gives us the cool property where neighboring samples are alike each other. 
 
 You can see some neat visual applications of space filling curves for [binary data visualizations](http://binvis.io/) and [a map of the internet](https://xkcd.com/195/).
 
-&nbsp;
-
-<img src={binvisioImage.src} />
-
-&nbsp;
+![Binvisio](./binvisio.jpg)
 
 But space-filling curves aren't the only game in town. Our new hyper-goggles could also be made out of a [dimensionality reduction](https://en.wikipedia.org/wiki/Dimensionality_reduction) process.
 
 One example is t-SNE, which has been popular in the machine learning world. It's mainly used to peer into the learnings of a deep-neural net by examining how it groups items in a data set. Of course t-SNE isn't alone with other methods like UMAP being developed as well.
 
-&nbsp;
-
-<img src={tSneCnnEmbedImage.src} />
-
-&nbsp;
+![t-SNE CNN embed](./t-sne-cnn-embed.jpg)
 
 Now imagine this being used to visualize sample spaces in terms of clusters. I'll admit, it's a little of stretch. I'm not quite sure how performant these methods are or if they support live additions of the datasets.
 

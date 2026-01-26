@@ -4,6 +4,9 @@ date: "2017-10-03T09:04:30-07:00"
 title: "Hey Web, How Did We Get Here?"
 ---
 
+import { Image } from 'astro:assets';
+import installingImage from './installing_2x.png';
+
 What a strange place.
 
 Today’s websites can be email clients, 3D games, graphic design applications, word processors, crypto-currency miners, and more - the list just goes on.
@@ -135,8 +138,9 @@ You want to use that program?
 
 The impact of *now* cannot be overstated. The web’s humble origins from purely linked documents set our expectations:
 
-<img
-  src="https://imgs.xkcd.com/comics/installing_2x.png"
+<Image
+  src={installingImage}
+  alt="XKCD installing comic"
   style="float: right; max-width: 13rem; margin: 2em 0 2em 2em"
   data-invert-on-dark
   data-monochrome-blend
