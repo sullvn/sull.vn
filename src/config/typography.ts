@@ -5,6 +5,7 @@ interface Typography {
   fontSize: string
   paragraphGap: string
   listGap: string
+  listMarginBlock: string
   headingGap: string
   headingGapTop: string
   codeFontSize: string
@@ -21,13 +22,16 @@ export const headings = {
 }
 
 const paragraphGapEm = 2
+const listGapEm = 1.5
+const listMarginBlockEm = paragraphGapEm * GOLDEN_RATIO
 const headingGapEm = paragraphGapEm
 const headingGapTopEm = 2 * GOLDEN_RATIO
 
 export const prose: Typography = {
   fontSize: fontScale(1),
   paragraphGap: `${paragraphGapEm}em`,
-  listGap: `${paragraphGapEm}em`,
+  listGap: `${listGapEm}em`,
+  listMarginBlock: `${listMarginBlockEm}em`,
   headingGap: `${headingGapEm}em`,
   headingGapTop: `${headingGapTopEm}em`,
   codeFontSize: fontScale(-1),

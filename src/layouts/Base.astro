@@ -81,6 +81,7 @@ import Tombstone from "../components/Tombstone.astro";
   proseFontSize: prose.fontSize,
   proseParagraphGap: prose.paragraphGap,
   proseListGap: prose.listGap,
+  proseListMarginBlock: prose.listMarginBlock,
   proseHeadingGap: prose.headingGap,
   proseHeadingGapTop: prose.headingGapTop,
   proseCodeFontSize: prose.codeFontSize,
@@ -161,7 +162,7 @@ import Tombstone from "../components/Tombstone.astro";
     overflow-wrap: break-word;
   }
 
-  p {
+  p, li {
     /*
      * Follow WCAG recommendations, while allowing tighter
      * line heights for larger text

@@ -50,14 +50,14 @@ const date = toIsoDay(entry.data.date)
   }
 
   .content :global(p) {
-    max-width: 50rch;
+    max-width: 60rch;
     font-size: var(--proseFontSize);
     margin-bottom: var(--proseParagraphGap);
     margin-inline: auto;
   }
 
   .content :global(h1, h2, h3, h4, h5, h6) {
-    max-width: 60rch;
+    max-width: 70rch;
     margin-inline: auto;
     margin-top: var(--proseHeadingGapTop);
     margin-bottom: var(--proseHeadingGap);
@@ -78,11 +78,11 @@ const date = toIsoDay(entry.data.date)
   }
 
   .content :global(ul, ol) {
-    max-width: 50rch;
+    max-width: 60rch;
     margin-inline: auto;
     font-size: var(--proseFontSize);
-    margin-bottom: var(--proseParagraphGap);
-    padding-inline-start: 2ch;
+    margin-block: var(--proseListMarginBlock);
+    padding-inline-start: 3ch;
     list-style-position: outside;
     display: flex;
     flex-direction: column;
@@ -91,7 +91,7 @@ const date = toIsoDay(entry.data.date)
 
   .content :global(.astro-code) {
     width: max-content;
-    min-width: min(60rch, 100%);
+    min-width: min(70rch, 100%);
     max-width: 100%;
 
     margin-inline: auto;
