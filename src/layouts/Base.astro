@@ -44,6 +44,24 @@ import Tombstone from "../components/Tombstone.astro";
     max-width: 80rem; /* 1280px */
     margin: 0 auto;
     padding: 2rem;
+
+    /**
+     * Allow footer room to hit the viewport's bottom on short pages
+     *
+     * Use `svh` as it allows the footer to display over any bottom browser
+     * interface elements
+     */
+    min-height: 100svh;
+  }
+
+  main {
+    /**
+     * Allow footer to stay at bottom of viewport on short pages.
+     *
+     * An alternative could be to expand the footer instead, and
+     * have the footer's tombstone aligned to the bottom.
+     */
+    flex-grow: 1;
   }
 
   @media print {
@@ -132,8 +150,6 @@ import Tombstone from "../components/Tombstone.astro";
   }
 
   :root {
-    min-height: 100vh;
-
     /*
      * System font stack
      *
