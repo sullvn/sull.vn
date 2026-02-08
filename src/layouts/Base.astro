@@ -80,15 +80,20 @@ import Tombstone from "../components/Tombstone.astro";
   }
 
   :root {
-    color: var(--black);
-    background: var(--white); 
+    --fg: var(--black);
+    --bg: var(--white);
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      color: var(--white);
-      background: var(--black); 
+      --fg: var(--white);
+      --bg: var(--black);
     }
+  }
+
+  :root {
+    color: var(--fg);
+    background: var(--bg);
   }
 </style>
 

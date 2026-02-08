@@ -42,11 +42,12 @@ const isHomepage = Astro.url.pathname === '/';
     flex-direction: column;
     align-items: start;
 
-    transition: transform 0.4s cubic-bezier(0, 0, 0.35, 1);
+transition: transform 0.4s cubic-bezier(0, 0, 0.35, 1), color 0.4s cubic-bezier(0, 0, 0.35, 1);
   }
 
   a.logo:hover {
     transform: translateY(calc(0.05 * var(--logoFontSize)));
+    color: var(--purple);
   }
 
   /*
@@ -54,12 +55,13 @@ const isHomepage = Astro.url.pathname === '/';
    * built-in `a:any-link`, `a:any-link:active`
    */
   .logo, a.logo {
-    color: var(--purple);
+    color: color-mix(in oklab, var(--purple) 25%, var(--bg) 80%);
     text-decoration: none;
   }
 
   .arrow {
     font-size: var(--h1FontSize);
+    color: var(--purple);
 
     margin: .5rem;
   }
