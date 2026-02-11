@@ -20,6 +20,10 @@ const displayDate = formatDate(date);
 </li>
 
 <style>
+  li {
+    container-type: inline-size;
+  }
+
   a {
     display: flex;
     justify-content: space-between;
@@ -42,5 +46,13 @@ const displayDate = formatDate(date);
 
   a:hover time {
     color: var(--purple);
+  }
+
+  @container (inline-size < 32ch) {
+    a {
+      flex-direction: column;
+      align-items: start;
+      gap: calc(var(--proseLineHeight) / 2);
+    }
   }
 </style>

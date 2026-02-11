@@ -3,6 +3,7 @@ import { GOLDEN_RATIO } from '../utils/math'
 
 interface Typography {
   fontSize: string
+  lineHeight: string
   paragraphGap: string
   listGap: string
   listMarginBlock: string
@@ -29,6 +30,7 @@ const headingGapTopEm = 2 * GOLDEN_RATIO
 
 export const prose: Typography = {
   fontSize: fontScale(1),
+  lineHeight: 'calc(1em + 0.5rem)',
   paragraphGap: `${paragraphGapEm}em`,
   listGap: `${listGapEm}em`,
   listMarginBlock: `${listMarginBlockEm}em`,

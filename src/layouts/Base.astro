@@ -102,6 +102,7 @@ import Tombstone from "../components/Tombstone.astro";
   -->
 <style is:global define:vars={{
   proseFontSize: prose.fontSize,
+  proseLineHeight: prose.lineHeight,
   proseParagraphGap: prose.paragraphGap,
   proseListGap: prose.listGap,
   proseListMarginBlock: prose.listMarginBlock,
@@ -188,7 +189,7 @@ import Tombstone from "../components/Tombstone.astro";
      * Follow WCAG recommendations, while allowing tighter
      * line heights for larger text
      */
-    line-height: calc(1em + 0.5rem);
+    line-height: var(--proseLineHeight);
 
     /* Avoid orphan lines with a single word */
     text-wrap: pretty;
