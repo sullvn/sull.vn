@@ -19,3 +19,6 @@ pnpm-debug.log*
 
 # direnv
 .direnv
+
+# Playwright MCP artifacts, like logged console output
+.playwright-mcp/

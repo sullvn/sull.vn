@@ -13,6 +13,7 @@ const babbles = (await getCollection('babbles')).sort(
 ---
 
 <Base>
+  <div class="home-container">
   <div class="home">
     <section class="fun">
     </section>
@@ -41,9 +42,14 @@ const babbles = (await getCollection('babbles')).sort(
       </BabblesNav>
     </section>
   </div>
+  </div>
 </Base>
 
 <style>
+  .home-container {
+    container-type: inline-size;
+  }
+
   .home {
     display: grid;
 
@@ -68,5 +74,15 @@ const babbles = (await getCollection('babbles')).sort(
     display: flex;
     flex-direction: column;
     gap: var(--proseParagraphGap);
+  }
+
+  @container (inline-size < 900px) {
+    .home {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "fun"
+        "intro"
+        "babbles";
+    }
   }
 </style>
