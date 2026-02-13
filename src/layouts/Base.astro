@@ -10,8 +10,14 @@ import Tombstone from "../components/Tombstone.astro";
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
+
+    <!--
+     --- width=device-width = Don't use scaled down desktop-width pages
+     ---
+     --- viewport-fit=cover = Use full viewport, including safe areas
+     ---                      occluded by browser chrome and screen notches
+     -->
+    <meta name="viewport" content="width=device-width, viewport-fit=cover" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
@@ -43,7 +49,17 @@ import Tombstone from "../components/Tombstone.astro";
 
     max-width: 80rem; /* 1280px */
     margin: 0 auto;
-    padding: 2rem;
+
+    /*
+     * Use full viewport, but prevent content from
+     * being obscured by screen cutouts and
+     * browser chrome
+     */
+    padding:
+      max(2rem, env(safe-area-inset-top))
+      max(2rem, env(safe-area-inset-right))
+      max(2rem, env(safe-area-inset-bottom))
+      max(2rem, env(safe-area-inset-left));
 
     /**
      * Allow footer room to hit the viewport's bottom on short pages
