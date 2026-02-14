@@ -1,13 +1,15 @@
 ---
+import Anchor from './Anchor.astro';
+
 const isHomepage = Astro.url.pathname === '/';
 ---
 
 {!isHomepage && (
-  <a href="/">↖</span>
+  <Anchor href="/" class="back-arrow" style="border-bottom:none;padding-bottom:0">↖</Anchor>
 )}
 
 <style>
-  a {
+  .back-arrow {
     position: absolute;
     top: 0;
 
@@ -19,8 +21,6 @@ const isHomepage = Astro.url.pathname === '/';
     font-size: var(--backArrowFontSize);
     font-weight: 900;
     text-transform: uppercase;
-    text-decoration: none;
 
-    color: var(--purple);
   }
 </style>

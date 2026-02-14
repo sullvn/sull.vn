@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import BabbleLink from '../components/BabbleLink.astro';
 import BabblesNav from '../components/BabblesNav.astro';
 import Heading from '../components/Heading.astro';
+import Anchor from '../components/Anchor.astro';
 import Prose from '../components/Prose.astro';
 import { toIsoDay, toTimestamp } from '../utils/date'
 
@@ -25,7 +26,7 @@ const babbles = (await getCollection('babbles')).sort(
         I do stuff at the intersection of technology and
         creativity. Sometimes I write about that.
       </Prose>
-<Prose>Here's my <a href="https://github.com/sullvn">github</a>, <a href="/resume">resume</a>, and <a href="mailto:kevin@sull.vn">email</a>. Say hello!</Prose>
+<Prose>Here's my <Anchor href="https://github.com/sullvn">github</Anchor>, <Anchor href="/resume">resume</Anchor>, and <Anchor href="mailto:kevin@sull.vn">email</Anchor>. Say hello!</Prose>
       <Prose>Bloop.</Prose>
     </section>
 
