@@ -14,7 +14,7 @@ const { radius, depth, color, capNearZ, capFarZ, class: className, ...rest } = A
 // Safari doesn't reliably resolve CSS tan()/pi inside calc() with
 // custom properties, especially within transform functions.
 const sides = 40
-const edgeWidth = 2.2 * radius / Math.tan(0.5 * Math.PI - Math.PI / sides)
+const edgeWidth = 2.5 * radius / Math.tan(0.5 * Math.PI - Math.PI / sides)
 const edgeMarginH = radius / Math.tan(0.5 * Math.PI - Math.PI / sides)
 const vars = [
   `--r:${radius}em`,

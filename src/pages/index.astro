@@ -32,7 +32,7 @@ const babbles = (await getCollection('babbles')).sort(
         I do stuff at the intersection of technology and
         creativity. Sometimes I write about that.
       </Prose>
-<Prose>Here's my <Anchor href="https://github.com/sullvn">github</Anchor>, <Anchor href="/resume">resume</Anchor>, and <Anchor href="mailto:kevin@sull.vn">email</Anchor>. Say hello!</Prose>
+      <Prose>Here's my <Anchor href="https://github.com/sullvn">github</Anchor>, <Anchor href="/resume">resume</Anchor>, and <Anchor href="mailto:kevin@sull.vn">email</Anchor>. Say hello!</Prose>
       <Prose>Bloop.</Prose>
     </section>
 
@@ -73,9 +73,9 @@ const babbles = (await getCollection('babbles')).sort(
     position: relative;
   }
 
-  .disc { position: absolute; left: 12%; bottom: 25%; }
-  .cube { position: absolute; left: 30%; bottom: 60%; }
-  .cylinder { position: absolute; left: 50%; bottom: 5%; z-index: 1; }
+  .disc {position: absolute; left: 12%; bottom: 25%; }
+  .cube { position: absolute; left: 50%; bottom: 70%; }
+  .cylinder { position: absolute; left: 60%; bottom: 10%; z-index: 1; }
 
   .intro {
     grid-area: intro;
@@ -91,6 +91,7 @@ const babbles = (await getCollection('babbles')).sort(
   @container (inline-size < 900px) {
     .home {
       grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr auto;
       grid-template-areas:
         "fun"
         "intro"
