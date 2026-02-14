@@ -6,6 +6,9 @@ import BabblesNav from '../components/BabblesNav.astro';
 import Heading from '../components/Heading.astro';
 import Anchor from '../components/Anchor.astro';
 import Prose from '../components/Prose.astro';
+import Disc3D from '../components/Disc3D.astro';
+import Cube3D from '../components/Cube3D.astro';
+import Cylinder3D from '../components/Cylinder3D.astro';
 import { toIsoDay, toTimestamp } from '../utils/date'
 
 const babbles = (await getCollection('babbles')).sort(
@@ -17,6 +20,9 @@ const babbles = (await getCollection('babbles')).sort(
   <div class="home-container">
   <div class="home">
     <section class="fun">
+      <Disc3D class="disc" />
+      <Cube3D class="cube" />
+      <Cylinder3D class="cylinder" />
     </section>
 
     <section class="intro">
@@ -64,7 +70,12 @@ const babbles = (await getCollection('babbles')).sort(
 
   .fun {
     grid-area: fun;
-   }
+    position: relative;
+  }
+
+  .disc { position: absolute; left: 12%; bottom: 25%; }
+  .cube { position: absolute; left: 30%; bottom: 60%; }
+  .cylinder { position: absolute; left: 50%; bottom: 5%; z-index: 1; }
 
   .intro {
     grid-area: intro;

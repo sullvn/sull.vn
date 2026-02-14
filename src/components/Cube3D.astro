@@ -1,0 +1,78 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {}
+
+const { class: className, ...rest } = Astro.props
+---
+
+<div class:list={["container", className]} {...rest}>
+  <div class="spin">
+    <div class="face"></div>
+    <div class="face"></div>
+    <div class="face"></div>
+    <div class="face"></div>
+    <div class="face"></div>
+    <div class="face"></div>
+  </div>
+</div>
+
+<style>
+  .container {
+    position: relative;
+    width: 8em;
+    height: 8em;
+    perspective: 20em;
+  }
+
+  .spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+    animation: cube-rotate 121s linear infinite;
+  }
+
+  @keyframes cube-rotate {
+    from { transform: rotateZ(.13turn) rotateX(.4turn) rotateY(.8turn); }
+    to   { transform: rotateZ(1.13turn) rotateX(.4turn) rotateY(1.8turn); }
+  }
+
+  .face {
+    margin: -2em;
+    margin-bottom: -4em;
+    width: 4em;
+    height: 4em;
+    backface-visibility: hidden;
+  }
+
+  .face:nth-child(1) {
+    background-color: var(--purple);
+    transform: translateZ(2em);
+  }
+
+  .face:nth-child(2) {
+    background-color: oklch(from var(--purple) calc(l + 0.03) c h);
+    transform: rotateY(.25turn) translateZ(2em);
+  }
+
+  .face:nth-child(3) {
+    background-color: oklch(from var(--purple) calc(l + 0.06) c h);
+    transform: rotateY(.5turn) translateZ(2em);
+  }
+
+  .face:nth-child(4) {
+    background-color: oklch(from var(--purple) calc(l + 0.03) c h);
+    transform: rotateY(.75turn) translateZ(2em);
+  }
+
+  .face:nth-child(5) {
+    background-color: oklch(from var(--purple) calc(l + 0.09) c h);
+    transform: rotateX(.25turn) translateZ(2em);
+  }
+
+  .face:nth-child(6) {
+    background-color: oklch(from var(--purple) calc(l + 0.09) c h);
+    transform: rotateX(-.25turn) translateZ(2em);
+  }
+</style>

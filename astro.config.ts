@@ -25,5 +25,10 @@ export default defineConfig({
     css: {
       transformer: 'lightningcss',
     },
+    server: {
+      watch: {
+        ignored: ['**/dist/**', '**/.*/**'],
+      },
+    },
   },
 })

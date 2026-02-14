@@ -1,0 +1,13 @@
+---
+import { green } from '../config/colors'
+import RoundShape3D from './RoundShape3D.astro'
+---
+
+<RoundShape3D
+  {...Astro.props}
+  radius={0.75}
+  depth={8}
+  color={green}
+  capNearZ={0.75}
+  capFarZ={-7.25}
+/>

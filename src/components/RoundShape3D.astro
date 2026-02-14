@@ -1,0 +1,87 @@
+---
+interface Props {
+  radius: number
+  depth: number
+  color: string
+  capNearZ: number
+  capFarZ: number
+  class?: string
+}
+
+const { radius, depth, color, capNearZ, capFarZ, class: className, ...rest } = Astro.props
+
+// Edge dimensions and per-edge transforms are computed in JS because
+// Safari doesn't reliably resolve CSS tan()/pi inside calc() with
+// custom properties, especially within transform functions.
+const sides = 40
+const edgeWidth = 2.2 * radius / Math.tan(0.5 * Math.PI - Math.PI / sides)
+const edgeMarginH = radius / Math.tan(0.5 * Math.PI - Math.PI / sides)
+const vars = [
+  `--r:${radius}em`,
+  `--d:${depth}em`,
+  `--cnz:${capNearZ}em`,
+  `--cfz:${capFarZ}em`,
+  `--color:${color}`,
+  `--ew:${edgeWidth}em`,
+  `--em:${edgeMarginH}em`,
+].join(';')
+---
+
+<div class:list={["container", className]} style={vars} {...rest}>
+  <div class="shape">
+    {Array.from({ length: sides }, (_, i) =>
+      <div class="edge" style={`transform:rotateY(${i / sides}turn) translateZ(${radius}em)`} />
+    )}
+    <div class="cap cap-near"></div>
+    <div class="cap cap-far"></div>
+  </div>
+</div>
+
+<style>
+  .container {
+    position: relative;
+    width: calc(2 * var(--r));
+    height: calc(2 * var(--r));
+    perspective: 12em;
+  }
+
+  .shape {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+    animation: round-rotate 43s linear infinite;
+  }
+
+  @keyframes round-rotate {
+    from { transform: rotateX(1.3turn) rotateZ(0.9turn) rotateZ(1.77turn); }
+    to   { transform: rotateX(0.3turn) rotateZ(1.9turn) rotateZ(.77turn); }
+  }
+
+  .edge {
+    width: var(--ew);
+    height: var(--d);
+    margin:
+      calc(-0.5 * var(--d))
+      calc(-1 * var(--em))
+      calc(-1 * var(--d));
+    background-color: oklch(from var(--color) calc(l + 0.08) c h);
+    backface-visibility: hidden;
+  }
+
+  .cap {
+    width: calc(2 * var(--r));
+    height: calc(2 * var(--r));
+    margin: calc(-1 * var(--r)) calc(-1 * var(--r)) calc(-2 * var(--r));
+    border-radius: var(--r);
+    background-color: var(--color);
+  }
+
+  .cap-near {
+    transform: rotateX(.25turn) translateZ(var(--cnz));
+  }
+
+  .cap-far {
+    transform: rotateX(.25turn) translateZ(var(--cfz));
+  }
+</style>
