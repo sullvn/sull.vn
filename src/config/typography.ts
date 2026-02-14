@@ -40,6 +40,6 @@ export const prose: Typography = {
   codeBlockGap: '8em',
 }
 
-export const logo = {
-  fontSize: fontScale(12),
+export const backArrow = {
+  fontSize: fontScale(6),
 }
