@@ -10,6 +10,13 @@ const props = Astro.props;
 
 <style>
   a {
+    /**
+     * Put in to solve trailing trim Chrome leaves in
+     * for `display: inline` although `text-box-trim`
+     * is active. Also naturally prevents wrapping links,
+     * which seems okay for now.
+     */
+    display: inline-block;
     color: var(--purple);
     text-decoration: none;
     padding-bottom: 0.2em;
