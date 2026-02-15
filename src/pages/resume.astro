@@ -84,7 +84,7 @@ import EducationSection from '../components/EducationSection.astro';
     text-box-edge: cap alphabetic;
     text-box-trim: trim-both;
 
-    div:has(&) {
+    div:has(> &) {
       grid-column-start: span 3;
       justify-self: end;
 
@@ -125,7 +125,7 @@ import EducationSection from '../components/EducationSection.astro';
       font-size: 12cqi;
       margin-bottom: 1em;
 
-      div:has(&) {
+      div:has(> &) {
         grid-column-start: span 2;
         justify-self: center;
       }
