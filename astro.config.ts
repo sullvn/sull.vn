@@ -4,6 +4,7 @@ import svelte from '@astrojs/svelte'
 import mdx from '@astrojs/mdx'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
+import { exportRoutes } from './src/integrations/exportRoutes'
 
 export default defineConfig({
   publicDir: './src/public',
@@ -17,7 +18,7 @@ export default defineConfig({
       },
     },
   },
-  integrations: [svelte(), mdx()],
+  integrations: [svelte(), mdx(), exportRoutes()],
   server: {
     host: true, // Listen on all addresses
     allowedHosts: true, // Accept connections as any host
