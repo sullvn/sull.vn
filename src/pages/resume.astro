@@ -40,7 +40,7 @@ import EducationSection from '../components/EducationSection.astro';
     </JobSection>
 
     <InternshipsSection jobs={[
-      { company: "StudyCloud", time: "2013" },
+      { company: "Study<wbr>Cloud", time: "2013" },
       { company: "Wolfram<wbr />Alpha", time: "2011 - 2012" }
     ]}>
         <strong>Intern.</strong> Web engineering and prototyping. Includes custom authentication system and social media visualizations.
@@ -111,7 +111,15 @@ import EducationSection from '../components/EducationSection.astro';
     }
   }
 
+  article :global(wbr) {
+    display: none;
+  }
+
   @container (max-width: 640px) {
+    article :global(wbr) {
+      display: inline;
+    }
+
     article {
       grid-template-columns: min-content 1fr;
       grid-template-rows: repeat(10, auto);
