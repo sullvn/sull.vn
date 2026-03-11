@@ -37,6 +37,13 @@ const date = toIsoDay(entry.data.date)
     display: flex;
     flex-direction: column;
     gap: 8rem;
+    container-type: inline-size;
+  }
+
+  @container (max-width: 640px) {
+    header :global(h1) {
+      font-size: var(--h2FontSize);
+    }
   }
 
   header {
