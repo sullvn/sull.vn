@@ -6,6 +6,7 @@ export type Props = HTMLAttributes<'a'>;
 const props = Astro.props;
 ---
 
+<!-- biome-ignore lint/a11y/useAnchorContent: content provided via slot -->
 <a {...props}><slot /></a>
 
 <style>

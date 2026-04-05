@@ -19,6 +19,7 @@
             packages = [
               pkgs.nodejs_latest
               pkgs.pnpm
+              pkgs.biome
               pkgs.chromium
             ];
             shellHook = ''

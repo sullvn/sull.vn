@@ -10,8 +10,8 @@
     "test": "pnpm test:unit && pnpm test:visual",
     "test:unit": "node --test",
     "test:visual": "playwright test",
-    "format": "./scripts/biome format --write .",
-    "check": "astro check && ./scripts/biome check ."
+    "format": "biome format --write .",
+    "check": "astro check && biome check ."
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@astrojs/language-server": "^2.16.6",
-    "@biomejs/biome": "2.4.10",
     "@playwright/test": "^1.59.1",
     "svelte-language-server": "^0.17.30",
     "typescript-language-server": "^5.1.3"

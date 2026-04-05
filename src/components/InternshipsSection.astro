@@ -15,6 +15,7 @@ const { jobs } = Astro.props;
   <header>
     {jobs.map(job => (
       <div>
+        {/* biome-ignore lint/a11y/useHeadingContent: content provided via set:html */}
         <h2 set:html={job.company} />
         <time>{job.time}</time>
       </div>

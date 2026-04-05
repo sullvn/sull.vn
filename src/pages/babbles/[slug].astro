@@ -64,14 +64,14 @@ const date = toIsoDay(entry.data.date)
     margin-inline: auto;
   }
 
-  .content :global(h1, h2, h3, h4, h5, h6) {
+  .content :global(:is(h1, h2, h3, h4, h5, h6)) {
     max-width: 70rch;
     margin-inline: auto;
     margin-top: var(--proseHeadingGapTop);
     margin-bottom: var(--proseHeadingGap);
   }
 
-  .content :global(img, picture, figure, svg, video, canvas, iframe) {
+  .content :global(:is(img, picture, figure, svg, video, canvas, iframe)) {
     margin-inline: auto;
     margin-block: var(--proseCodeBlockGap);
   }
@@ -85,7 +85,7 @@ const date = toIsoDay(entry.data.date)
     margin-block: 0;
   }
 
-  .content :global(ul, ol) {
+  .content :global(:is(ul, ol)) {
     max-width: 60rch;
     margin-inline: auto;
     font-size: var(--proseFontSize);
@@ -110,9 +110,20 @@ const date = toIsoDay(entry.data.date)
     font-family: Menlo, Consolas, Monaco, 'Adwaita Mono', 'Liberation Mono', 'Lucida Console', monospace;
     line-height: calc(1em + 0.5rem);
 
+    /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
     background: transparent !important;
+    /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
     color: inherit !important;
-    overflow-x: auto;
+    /*
+     * `overflow-x: auto` for horizontal scrolling on wide code.
+     *
+     * `overflow-y: clip` to suppress a spurious vertical scrollbar
+     * in Chrome, caused by subpixel `line-height` rounding: setting
+     * any `overflow-x` other than `visible` computes `overflow-y`
+     * to `auto` per spec, and Chrome's font metrics can push content
+     * a fraction of a pixel past the box.
+     */
+    overflow: auto clip;
   }
 
   .content :global(.katex-display) {
@@ -139,17 +150,24 @@ const date = toIsoDay(entry.data.date)
 
   @media (prefers-color-scheme: dark) {
     .content :global(.astro-code span) {
+      /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
       color: var(--shiki-dark) !important;
+      /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
       font-style: var(--shiki-dark-font-style) !important;
+      /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
       font-weight: var(--shiki-dark-font-weight) !important;
+      /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
       text-decoration: var(--shiki-dark-text-decoration) !important;
     }
   }
 
   @media (prefers-color-scheme: light) {
     .content :global(.astro-code span) {
+      /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
       font-style: var(--shiki-light-font-style) !important;
+      /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
       font-weight: var(--shiki-light-font-weight) !important;
+      /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
       text-decoration: var(--shiki-light-text-decoration) !important;
     }
   }

@@ -14,7 +14,7 @@ export function exportRoutes(): AstroIntegration {
     name: 'export-routes',
     hooks: {
       'astro:build:done': async ({ pages, dir }) => {
-        const routes = pages.map((p) => '/' + p.pathname)
+        const routes = pages.map((p) => `/${p.pathname}`)
         await writeFile(new URL('./routes.json', dir), JSON.stringify(routes))
       },
     },

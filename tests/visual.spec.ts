@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 
-const routes: string[] = JSON.parse(
-  readFileSync('dist/routes.json', 'utf-8'),
-)
+const routes: string[] = JSON.parse(readFileSync('dist/routes.json', 'utf-8'))
 
 for (const route of routes) {
   test(`visual snapshot: ${route}`, async ({ page }) => {
@@ -12,9 +10,7 @@ for (const route of routes) {
       for (const iframe of document.querySelectorAll('iframe')) {
         iframe.remove()
       }
-      const imgs = document.querySelectorAll<HTMLImageElement>(
-        'img[loading="lazy"]',
-      )
+      const imgs = document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]')
       for (const img of imgs) {
         img.setAttribute('loading', 'eager')
       }
@@ -22,9 +18,7 @@ for (const route of routes) {
 
       // CSS columns/masonry layout reflows AFTER img.decode() resolves.
       // Double-rAF: first frame = layout scheduled, second = layout painted.
-      await new Promise<void>((r) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => r())),
-      )
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
     })
     await expect(page).toHaveScreenshot({ fullPage: true })
   })
