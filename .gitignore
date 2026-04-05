@@ -20,5 +20,11 @@ pnpm-debug.log*
 # direnv
 .direnv
 
+# crush
+.crush
+
+# claude
+.claude
+
 # Playwright MCP artifacts, like logged console output
 .playwright-mcp/

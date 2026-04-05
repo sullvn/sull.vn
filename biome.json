@@ -6,16 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": true,
-    "includes": [
-      "**",
-      "!!**/dist",
-      "!!**/.astro",
-      "!!**/node_modules",
-      "!!**/.direnv",
-      "!!**/.crush",
-      "!!**/.claude"
-    ]
+    "ignoreUnknown": true
   },
   "formatter": {
     "indentStyle": "space",
@@ -25,11 +16,6 @@
   "assist": {
     "enabled": false
   },
-  "css": {
-    "parser": {
-      "cssModules": true
-    }
-  },
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
@@ -38,22 +24,5 @@
   },
   "html": {
     "experimentalFullSupportEnabled": true
-  },
-  "overrides": [
-    {
-      "includes": ["**/*.svelte", "**/*.astro"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useConst": "off",
-            "useImportType": "off"
-          },
-          "correctness": {
-            "noUnusedVariables": "off",
-            "noUnusedImports": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }
