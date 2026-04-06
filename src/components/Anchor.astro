@@ -1,27 +1,46 @@
 ---
 import type { HTMLAttributes } from 'astro/types'
 
-export type Props = HTMLAttributes<'a'>;
+export interface Props extends HTMLAttributes<'a'> {
+  inline?: boolean;
+}
 
-const props = Astro.props;
+const { inline = true, class: className, ...props } = Astro.props;
 ---
 
 <!-- biome-ignore lint/a11y/useAnchorContent: content provided via slot -->
-<a {...props}><slot /></a>
+<a class:list={[className, { inline }]} {...props}><slot /></a>
 
 <style>
   a {
-    /**
-     * Put in to solve trailing trim Chrome leaves in
-     * for `display: inline` although `text-box-trim`
-     * is active. Also naturally prevents wrapping links,
-     * which seems okay for now.
-     */
-    display: inline-block;
     color: var(--purple);
     text-decoration: none;
     padding-bottom: 0.2em;
     border-bottom: 0.2em solid color-mix(in srgb, var(--purple) 30%, transparent);
+  }
+
+  /**
+   * Opt out of the global `text-box-trim: trim-both` for
+   * inline display contexts.
+   *
+   * Per the spec, text-box-trim on inline boxes only trims
+   * painting (backgrounds/borders), not layout — the height
+   * contribution stays based on line-height. Chrome follows
+   * this, so our padding/border end up offset from the
+   * descent line rather than the alphabetic baseline. Safari
+   * applies the full trim to inlines too, which looks correct
+   * but goes beyond the current spec.
+   *
+   * Resetting here avoids the Chrome discrepancy and lets the
+   * parent block container's trim handle the line box. The
+   * padding is also removed since the parent's trim already
+   * accounts for the space between baseline and border.
+   *
+   * @see https://github.com/w3c/csswg-drafts/issues/10834#issuecomment-2578210039
+   */
+  a.inline {
+    text-box-trim: none;
+    padding-bottom: 0;
   }
 
   a:hover {
