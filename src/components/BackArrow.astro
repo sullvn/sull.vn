@@ -5,7 +5,7 @@ const isHomepage = Astro.url.pathname === '/';
 ---
 
 {!isHomepage && (
-  <Anchor href="/" class="back-arrow" style="border-bottom:none;padding-bottom:0">↖</Anchor>
+  <Anchor href="/" class="back-arrow" inline={false}>↖</Anchor>
 )}
 
 <style>
@@ -22,5 +22,7 @@ const isHomepage = Astro.url.pathname === '/';
     font-weight: 900;
     text-transform: uppercase;
 
+    border-bottom: none;
+    padding-bottom: 0;
   }
 </style>
