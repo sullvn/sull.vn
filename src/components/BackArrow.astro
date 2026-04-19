@@ -25,4 +25,15 @@ const isHomepage = Astro.url.pathname === '/';
     border-bottom: none;
     padding-bottom: 0;
   }
+
+  /*
+   * Without text-box-trim (e.g. Firefox), line-height adds vertical
+   * space above the glyph. Tightening it pulls the arrow up to the
+   * visual top of its container.
+   */
+  @supports not (text-box-trim: trim-both) {
+    .back-arrow {
+      line-height: 0.7;
+    }
+  }
 </style>

@@ -46,4 +46,15 @@ const { inline = true, class: className, ...props } = Astro.props;
   a:hover {
     border-bottom-color: var(--purple);
   }
+
+  /*
+   * Without text-box-trim (e.g. Firefox), the line box's leading
+   * and descent already supply the visual gap between the baseline
+   * and the border, so our padding stacks on top and looks bloated.
+   */
+  @supports not (text-box-trim: trim-both) {
+    a:not(.inline) {
+      padding-bottom: 0;
+    }
+  }
 </style>
