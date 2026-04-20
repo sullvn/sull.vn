@@ -26,5 +26,9 @@ pnpm-debug.log*
 # claude
 .claude
 
+# firebase
+.firebase
+firebase-debug.log*
+
 # Playwright MCP artifacts, like logged console output
 .playwright-mcp/

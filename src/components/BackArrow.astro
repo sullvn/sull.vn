@@ -1,7 +1,8 @@
 ---
 import Anchor from './Anchor.astro';
 
-const isHomepage = Astro.url.pathname === '/';
+const { pathname } = Astro.url;
+const isHomepage = pathname === '/' || pathname === '/index.html';
 ---
 
 {!isHomepage && (

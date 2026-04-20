@@ -19,6 +19,9 @@ export default defineConfig({
     },
   },
   integrations: [svelte(), mdx(), exportRoutes()],
+  build: {
+    format: 'file',
+  },
   server: {
     host: true, // Listen on all addresses
     allowedHosts: true, // Accept connections as any host

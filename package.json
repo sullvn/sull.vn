@@ -11,7 +11,10 @@
     "test:unit": "node --test",
     "test:visual": "playwright test",
     "format": "biome format --write .",
-    "check": "astro check && biome check ."
+    "check": "astro check && biome check .",
+    "deploy": "firebase deploy --only hosting",
+    "build:deploy": "pnpm build && pnpm deploy",
+    "emulate": "firebase emulators:start --only hosting"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -29,6 +32,7 @@
   "devDependencies": {
     "@astrojs/language-server": "^2.16.6",
     "@playwright/test": "^1.59.1",
+    "firebase-tools": "^15.15.0",
     "svelte-language-server": "^0.17.30",
     "typescript-language-server": "^5.1.3"
   }
