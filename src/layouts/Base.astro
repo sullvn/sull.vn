@@ -93,9 +93,46 @@ const { title = "Kevin Sullivan" } = Astro.props;
 </style>
 
 <!--
+  -- Colors
+  -->
+<style is:global set:html={`
+  :root {
+    --white: ${white};
+    --black: ${black};
+    --green: ${green};
+    --red: ${red};
+    --purple: ${purple};
+  }
+`}></style>
+
+<!--
+  -- Typography
+  -->
+<style is:global set:html={`
+  :root {
+    --proseFontSize: ${prose.fontSize};
+    --proseLineHeight: ${prose.lineHeight};
+    --proseParagraphGap: ${prose.paragraphGap};
+    --proseListGap: ${prose.listGap};
+    --proseListMarginBlock: ${prose.listMarginBlock};
+    --proseHeadingGap: ${prose.headingGap};
+    --proseHeadingGapTop: ${prose.headingGapTop};
+    --proseCodeFontSize: ${prose.codeFontSize};
+    --proseCodeBlockGap: ${prose.codeBlockGap};
+    --h1FontSize: ${headings.h1.fontSize};
+    --h2FontSize: ${headings.h2.fontSize};
+    --h3FontSize: ${headings.h3.fontSize};
+    --h4FontSize: ${headings.h4.fontSize};
+    --h5FontSize: ${headings.h5.fontSize};
+    --h6FontSize: ${headings.h6.fontSize};
+    --backArrowFontSize: ${backArrow.fontSize};
+  }
+`}></style>
+
+<!--
   -- Color scheme
   -->
-<style is:global define:vars={{ white, black, green, red, purple }}>
+<style is:global>
   :root {
     color-scheme: light dark;
   }
@@ -116,29 +153,6 @@ const { title = "Kevin Sullivan" } = Astro.props;
     color: var(--fg);
     background: var(--bg);
   }
-</style>
-
-<!--
-  -- Typography
-  -->
-<style is:global define:vars={{
-  proseFontSize: prose.fontSize,
-  proseLineHeight: prose.lineHeight,
-  proseParagraphGap: prose.paragraphGap,
-  proseListGap: prose.listGap,
-  proseListMarginBlock: prose.listMarginBlock,
-  proseHeadingGap: prose.headingGap,
-  proseHeadingGapTop: prose.headingGapTop,
-  proseCodeFontSize: prose.codeFontSize,
-  proseCodeBlockGap: prose.codeBlockGap,
-  h1FontSize: headings.h1.fontSize,
-  h2FontSize: headings.h2.fontSize,
-  h3FontSize: headings.h3.fontSize,
-  h4FontSize: headings.h4.fontSize,
-  h5FontSize: headings.h5.fontSize,
-  h6FontSize: headings.h6.fontSize,
-  backArrowFontSize: backArrow.fontSize,
-}}>
 </style>
 
 <!--
