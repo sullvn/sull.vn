@@ -13,7 +13,7 @@
     "format": "biome format --write .",
     "check": "astro check && biome check .",
     "deploy": "firebase deploy --only hosting",
-    "build:deploy": "pnpm build && pnpm deploy",
+    "build:deploy": "pnpm build && pnpm run deploy",
     "emulate": "firebase emulators:start --only hosting"
   },
   "dependencies": {
