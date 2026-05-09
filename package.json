@@ -17,23 +17,23 @@
     "emulate": "firebase emulators:start --only hosting"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.8",
-    "@astrojs/mdx": "^5.0.3",
-    "@astrojs/svelte": "^8.0.5",
-    "astro": "^6.1.8",
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/svelte": "^8.1.0",
+    "astro": "^6.3.1",
     "katex": "^0.16.45",
     "lightningcss": "^1.32.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.34.5",
-    "svelte": "^5.55.4",
+    "svelte": "^5.55.5",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@astrojs/language-server": "^2.16.6",
+    "@astrojs/language-server": "^2.16.8",
     "@playwright/test": "^1.59.1",
-    "firebase-tools": "^15.15.0",
-    "svelte-language-server": "^0.17.30",
+    "firebase-tools": "^15.17.0",
+    "svelte-language-server": "^0.18.0",
     "typescript-language-server": "^5.1.3"
   }
 }
