@@ -130,7 +130,6 @@ ls -al | grep '^d'
 ps aux | wc -l
 
 # Kill process by name
-# Courtesy of https://unix.stackexchange.com/questions/30759/whats-a-good-example-of-piping-commands-together
 ps aux | grep <name> | grep -v grep | awk '{print $2}' | xargs kill
 ```
 

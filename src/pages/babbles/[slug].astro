@@ -97,23 +97,16 @@ const date = toIsoDay(entry.data.date)
     gap: var(--proseListGap);
   }
 
-  .content :global(.astro-code) {
-    width: max-content;
-    min-width: min(70rch, 100%);
-    max-width: 100%;
-
-    margin-inline: auto;
+  .content :global(.astro-code),
+  .content :global(.katex-display) {
+    margin-inline:
+      calc(-1 * var(--bodyPaddingInlineStart))
+      calc(-1 * var(--bodyPaddingInlineEnd));
     margin-block: var(--proseCodeBlockGap);
-    padding-block: 1ex;
-
-    font-size: var(--proseCodeFontSize);
-    font-family: Menlo, Consolas, Monaco, 'Adwaita Mono', 'Liberation Mono', 'Lucida Console', monospace;
-    line-height: calc(1em + 0.5rem);
-
-    /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
-    background: transparent !important;
-    /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
-    color: inherit !important;
+    padding-block: 2lh;
+    padding-inline:
+      calc(var(--bodyPaddingInlineStart) + max(0px, 50% - 35rch))
+      calc(var(--bodyPaddingInlineEnd) + max(0px, 50% - 35rch));
     /*
      * `overflow-x: auto` for horizontal scrolling on wide code.
      *
@@ -126,8 +119,15 @@ const date = toIsoDay(entry.data.date)
     overflow: auto clip;
   }
 
-  .content :global(.katex-display) {
-    margin-block: var(--proseCodeBlockGap);
+  .content :global(.astro-code) {
+    font-size: var(--proseCodeFontSize);
+    font-family: Menlo, Consolas, Monaco, 'Adwaita Mono', 'Liberation Mono', 'Lucida Console', monospace;
+    line-height: calc(1em + 0.5rem);
+
+    /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
+    background: transparent !important;
+    /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline styles */
+    color: inherit !important;
   }
 
   @media (prefers-color-scheme: dark) {

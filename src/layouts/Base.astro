@@ -1,6 +1,12 @@
 ---
 import { black, white, green, red, purple } from "../config/colors";
 import { prose, headings, backArrow } from "../config/typography";
+import {
+  bodyPaddingBlockStart,
+  bodyPaddingBlockEnd,
+  bodyPaddingInlineStart,
+  bodyPaddingInlineEnd,
+} from "../config/layout";
 import BackArrow from "../components/BackArrow.astro";
 import Tombstone from "../components/Tombstone.astro";
 
@@ -61,10 +67,10 @@ const { title = "Kevin Sullivan" } = Astro.props;
      * browser chrome
      */
     padding:
-      max(2rem, env(safe-area-inset-top))
-      max(2rem, env(safe-area-inset-right))
-      max(2rem, env(safe-area-inset-bottom))
-      max(2rem, env(safe-area-inset-left));
+      var(--bodyPaddingBlockStart)
+      var(--bodyPaddingInlineEnd)
+      var(--bodyPaddingBlockEnd)
+      var(--bodyPaddingInlineStart);
 
     /**
      * Allow footer room to hit the viewport's bottom on short pages
@@ -126,6 +132,18 @@ const { title = "Kevin Sullivan" } = Astro.props;
     --h5FontSize: ${headings.h5.fontSize};
     --h6FontSize: ${headings.h6.fontSize};
     --backArrowFontSize: ${backArrow.fontSize};
+  }
+`}></style>
+
+<!--
+  -- Layout
+  -->
+<style is:global set:html={`
+  :root {
+    --bodyPaddingBlockStart: ${bodyPaddingBlockStart};
+    --bodyPaddingBlockEnd: ${bodyPaddingBlockEnd};
+    --bodyPaddingInlineStart: ${bodyPaddingInlineStart};
+    --bodyPaddingInlineEnd: ${bodyPaddingInlineEnd};
   }
 `}></style>
 
