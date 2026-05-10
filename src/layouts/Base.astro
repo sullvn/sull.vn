@@ -233,8 +233,8 @@ const { title = "Kevin Sullivan" } = Astro.props;
   }
 
   p, h1, h2, h3, h4, h5, h6 {
-    /* Avoid text overflows */
-    overflow-wrap: break-word;
+    /* Soft fallback for words too long to fit the line */
+    hyphens: auto;
   }
 
   p, li {
