@@ -1,10 +1,16 @@
 ---
-import { Picture, type LocalImageProps, type RemoteImageProps } from 'astro:assets'
+import { Picture, type LocalImageProps } from 'astro:assets'
 
-export type Props = LocalImageProps | RemoteImageProps
+export type Props = LocalImageProps
 
-// biome-ignore lint/suspicious/noExplicitAny: discriminated-union forwarding defeats TS under exactOptionalPropertyTypes
-const props = Astro.props as any
+// biome-ignore lint/suspicious/noExplicitAny: `<Picture>` accepts a discriminated union (Local|Remote); TS can't validate a JSX spread against it under exactOptionalPropertyTypes
+const { src, ...rest } = Astro.props as any
 ---
 
-<Picture formats={['avif']} layout="constrained" {...props} />
+<Picture
+  src={src}
+  width={src.width / 2}
+  formats={['avif']}
+  layout="constrained"
+  {...rest}
+/>
