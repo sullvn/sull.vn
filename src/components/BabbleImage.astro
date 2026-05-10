@@ -1,0 +1,10 @@
+---
+import { Picture, type LocalImageProps, type RemoteImageProps } from 'astro:assets'
+
+export type Props = LocalImageProps | RemoteImageProps
+
+// biome-ignore lint/suspicious/noExplicitAny: discriminated-union forwarding defeats TS under exactOptionalPropertyTypes
+const props = Astro.props as any
+---
+
+<Picture formats={['avif']} layout="constrained" {...props} />

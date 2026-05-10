@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Anchor from '../../components/Anchor.astro';
+import BabbleImage from '../../components/BabbleImage.astro';
 import Heading from '../../components/Heading.astro';
 import { formatDate, toIsoDay } from '../../utils/date'
 import 'katex/dist/katex.css';
@@ -27,7 +28,7 @@ const date = toIsoDay(entry.data.date)
     </header>
 
     <section class="content">
-      <Content components={{ a: Anchor }} />
+      <Content components={{ a: Anchor, img: BabbleImage }} />
     </section>
   </article>
 </Base>

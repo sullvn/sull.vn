@@ -4,7 +4,7 @@ date: "2017-10-03T09:04:30-07:00"
 title: "Hey Web, How Did We Get Here?"
 ---
 
-import { Image } from 'astro:assets';
+import BabbleImage from '../../components/BabbleImage.astro';
 import installingImage from './installing_2x.png';
 
 What a strange place.
@@ -138,7 +138,7 @@ You want to use that program?
 
 The impact of *now* cannot be overstated. The web’s humble origins from purely linked documents set our expectations:
 
-<Image
+<BabbleImage
   src={installingImage}
   alt="XKCD installing comic"
   style="float: right; max-width: 13rem; margin: 2em 0 2em 2em"
