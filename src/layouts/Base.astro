@@ -232,8 +232,14 @@ const { title = "Kevin Sullivan" } = Astro.props;
     font: inherit;
   }
 
-  p, h1, h2, h3, h4, h5, h6 {
-    /* Soft fallback for words too long to fit the line */
+  p {
+    /*
+     * Soft fallback for words too long to fit the line
+     *
+     * Omit headers (h1, etc) as hyphens were too aggressive
+     * in babble and resume headers, while not really helping in
+     * practice. Header titles don't seem to have problematic text.
+     */
     hyphens: auto;
   }
 
