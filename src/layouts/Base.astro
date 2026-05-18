@@ -30,7 +30,17 @@ const { title = "Kevin Sullivan" } = Astro.props;
      -->
     <meta name="viewport" content="width=device-width, viewport-fit=cover" />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!--
+     --- 32x32 = Tab icon, for HiDPI displays. Downscaled to 16x16 for LoDPI
+     ---
+     --- 256x256 = For hypothetical browser features, such as bookmark grids
+     ---
+     --- Apple touch icon = 180x180 PNG in case someone adds the site to
+     ---                    their iOS home screen
+     -->
+    <link rel="icon" href="/favicon-32.avif" type="image/avif" sizes="32x32">
+    <link rel="icon" href="/favicon-256.avif" type="image/avif" sizes="256x256">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <title>{title}</title>
   </head>
