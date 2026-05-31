@@ -105,9 +105,6 @@ const date = toIsoDay(entry.data.date)
       calc(-1 * var(--bodyPaddingInlineEnd));
     margin-block: var(--proseCodeBlockGap);
     padding-block: 2lh;
-    padding-inline:
-      calc(var(--bodyPaddingInlineStart) + max(0px, 50% - 35rch))
-      calc(var(--bodyPaddingInlineEnd) + max(0px, 50% - 35rch));
     /*
      * `overflow-x: auto` for horizontal scrolling on wide code.
      *
@@ -118,6 +115,14 @@ const date = toIsoDay(entry.data.date)
      * a fraction of a pixel past the box.
      */
     overflow: auto clip;
+  }
+
+  .content :global(.astro-code > code),
+  .content :global(.katex-display > .katex) {
+    display: block;
+    width: max-content;
+    padding-inline: var(--bodyPaddingInlineStart) var(--bodyPaddingInlineEnd);
+    margin-inline: auto;
   }
 
   .content :global(.astro-code) {
