@@ -235,6 +235,28 @@ const { title = "Kevin Sullivan" } = Astro.props;
      * See: https://dbushell.com/2024/11/05/webkit-font-smoothing/
      */
     -webkit-font-smoothing: antialiased;
+
+   /*
+    * Avoid mobile Safari's automatic font size boosting
+    *
+    * It scans block-level text containers and, when one
+    * is wider than the viewport, boosts its font size
+    * for "readability."
+    *
+    * `100%` (not `none`) is the accessibility-safe
+    * choice — disables auto-inflation while preserving
+    * user pinch-zoom. Standard normalize/reset idiom.
+    *
+    * When you write both the prefixed and unprefixed
+    * declarations together, lightningcss merges them
+    * and strips the `-webkit-` prefix, leaving only
+    * the unprefixed form that Safari ignores. This
+    * happens even with explicit Safari targets
+    * configured, because lightningcss's compat data
+    * wrongly believes Safari supports the unprefixed
+    * property.
+    */
+    -webkit-text-size-adjust: 100%;
   }
 
   input, button, textarea, select {
