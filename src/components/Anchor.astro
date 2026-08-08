@@ -9,6 +9,7 @@ const { inline = true, class: className, ...props } = Astro.props;
 ---
 
 <!-- biome-ignore lint/a11y/useAnchorContent: content provided via slot -->
+<!-- biome-ignore lint/a11y/useValidAnchor: href provided via props spread -->
 <a class:list={[className, { inline }]} {...props}><slot /></a>
 
 <style>

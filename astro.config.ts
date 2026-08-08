@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config'
 
+import { unified } from '@astrojs/markdown-remark'
 import svelte from '@astrojs/svelte'
 import mdx from '@astrojs/mdx'
 import remarkMath from 'remark-math'
@@ -9,8 +10,10 @@ import { exportRoutes } from './src/integrations/exportRoutes'
 export default defineConfig({
   publicDir: './src/public',
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex],
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeKatex],
+    }),
     shikiConfig: {
       themes: {
         light: 'material-theme-lighter',
