@@ -11,11 +11,11 @@ import BackArrow from "../components/BackArrow.astro";
 import Tombstone from "../components/Tombstone.astro";
 
 interface Props {
-  title?: string;
+  title: string;
   description: string;
 }
 
-const { title = "Kevin Sullivan", description } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <!doctype html>
