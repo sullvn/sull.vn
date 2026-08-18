@@ -20,7 +20,7 @@ const { Content } = await render(entry);
 const date = toIsoDay(entry.data.date)
 ---
 
-<Base title={entry.data.title}>
+<Base title={entry.data.title} description={entry.data.description}>
   <article>
     <header>
       <Heading level={1}>{entry.data.title}</Heading>

@@ -12,9 +12,10 @@ import Tombstone from "../components/Tombstone.astro";
 
 interface Props {
   title?: string;
+  description: string;
 }
 
-const { title = "Kevin Sullivan" } = Astro.props;
+const { title = "Kevin Sullivan", description } = Astro.props;
 ---
 
 <!doctype html>
@@ -43,6 +44,7 @@ const { title = "Kevin Sullivan" } = Astro.props;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <title>{title}</title>
+    <meta name="description" content={description} />
   </head>
   <body>
     <header>

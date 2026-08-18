@@ -8,6 +8,7 @@ const babbles = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     slug: z.string(),
+    description: z.string(),
   }),
 })
 
