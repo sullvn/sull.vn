@@ -2,6 +2,7 @@
 import { black, white, green, red, purple } from "../config/colors";
 import { prose, headings, backArrow } from "../config/typography";
 import {
+  bodyGap,
   bodyPaddingBlockStart,
   bodyPaddingBlockEnd,
   bodyPaddingInlineStart,
@@ -13,9 +14,10 @@ import Tombstone from "../components/Tombstone.astro";
 interface Props {
   title: string;
   description: string;
+  class?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, ...attrs } = Astro.props;
 ---
 
 <!doctype html>
@@ -51,7 +53,7 @@ const { title, description } = Astro.props;
       <BackArrow />
     </header>
 
-    <main>
+    <main {...attrs}>
       <slot />
     </main>
 
@@ -68,7 +70,7 @@ const { title, description } = Astro.props;
   body {
     display: flex;
     flex-direction: column;
-    gap: 8rem;
+    gap: var(--bodyGap);
 
     max-width: 80rem; /* 1280px */
     margin: 0 auto;
@@ -152,6 +154,7 @@ const { title, description } = Astro.props;
   -->
 <style is:global set:html={`
   :root {
+    --bodyGap: ${bodyGap};
     --bodyPaddingBlockStart: ${bodyPaddingBlockStart};
     --bodyPaddingBlockEnd: ${bodyPaddingBlockEnd};
     --bodyPaddingInlineStart: ${bodyPaddingInlineStart};

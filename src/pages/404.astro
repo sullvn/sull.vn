@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Heading from '../components/Heading.astro';
+---
+
+<Base title="404" description="Page not found" class="not-found">
+  <Heading level={1}>404</Heading>
+</Base>
+
+<style>
+  .not-found {
+    align-content: center;
+    text-align: center;
+    padding-block-end: calc(var(--bodyGap) / 2);
+  }
+</style>
