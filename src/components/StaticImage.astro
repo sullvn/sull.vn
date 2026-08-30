@@ -1,0 +1,10 @@
+---
+import { Image, type LocalImageProps } from 'astro:assets'
+
+export type Props = Omit<LocalImageProps, 'alt'> & { alt?: string }
+
+// biome-ignore lint/suspicious/noExplicitAny: `<Image>` accepts a discriminated union (Local|Remote); TS can't validate a JSX spread against it under exactOptionalPropertyTypes
+const { alt = '', ...rest } = Astro.props as any
+---
+
+<Image alt={alt} format="avif" layout="fixed" {...rest} />
