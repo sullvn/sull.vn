@@ -7,4 +7,4 @@ export type Props = Omit<LocalImageProps, 'alt'> & { alt?: string }
 const { alt = '', ...rest } = Astro.props as any
 ---
 
-<Image alt={alt} format="avif" layout="fixed" {...rest} />
+<Image alt={alt} format="avif" densities={[1, 2, 3]} {...rest} />

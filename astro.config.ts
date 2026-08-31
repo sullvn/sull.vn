@@ -13,6 +13,14 @@ const root = escapePath(fileURLToPath(new URL('.', import.meta.url)))
 
 export default defineConfig({
   publicDir: './src/public',
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        avif: { quality: 80 },
+      },
+    },
+  },
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],
