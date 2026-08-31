@@ -1,6 +1,6 @@
 ---
 import { black, white, green, red, purple } from "../config/colors";
-import { prose, headings, backArrow } from "../config/typography";
+import { prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
 import {
   bodyGap,
   bodyPaddingBlockStart,
@@ -68,6 +68,9 @@ const { title, description, ...attrs } = Astro.props;
   -->
 <style>
   body {
+    /* Size query container for page layouts (`@container`, `cqi`) */
+    container-type: inline-size;
+
     display: flex;
     flex-direction: column;
     gap: var(--bodyGap);
@@ -146,6 +149,14 @@ const { title, description, ...attrs } = Astro.props;
     --h5FontSize: ${headings.h5.fontSize};
     --h6FontSize: ${headings.h6.fontSize};
     --backArrowFontSize: ${backArrow.fontSize};
+    --notFoundFontSize: ${notFound.fontSize};
+    --headingFontWeight: ${headingFontWeight.light};
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --headingFontWeight: ${headingFontWeight.dark};
+    }
   }
 `}></style>
 
@@ -299,17 +310,7 @@ const { title, description, ...attrs } = Astro.props;
     text-wrap: balance;
 
     /* Get blockiest appearance we can get */
-    font-weight: 900;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    h1, h2, h3, h4, h5, h6 {
-      /*
-       * Light-on-dark is punchier. Reduce weight a bit
-       * to compensate.
-       */
-      font-weight: 800;
-    }
+    font-weight: var(--headingFontWeight);
   }
 
   img, picture, video, canvas, svg {

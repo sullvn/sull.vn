@@ -43,3 +43,15 @@ export const prose: Typography = {
 export const backArrow = {
   fontSize: fontScale(6),
 }
+
+export const notFound = {
+  fontSize: fontScale(8),
+}
+
+/**
+ * Light-on-dark is punchier. Reduce weight a bit to compensate.
+ */
+export const headingFontWeight = {
+  light: 900,
+  dark: 800,
+}

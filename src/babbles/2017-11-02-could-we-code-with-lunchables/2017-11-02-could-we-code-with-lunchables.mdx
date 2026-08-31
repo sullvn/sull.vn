@@ -5,7 +5,7 @@ title: "Could We Code with Lunchables?"
 description: "What kids' lunches can teach us about composable software."
 ---
 
-import BabbleImage from '../../components/BabbleImage.astro';
+import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import lunchableClosedImage from './lunchable-closed.png';
 import lunchableOpenImage from './lunchable-open.png';
 
@@ -15,7 +15,7 @@ They are the future of programming. You’re hearing it here first.
 
 Behold!
 
-<BabbleImage src={lunchableClosedImage} alt="Lunchable closed" data-invert-on-dark />
+<ResponsiveImage src={lunchableClosedImage} alt="Lunchable closed" data-invert-on-dark />
 
 # But Actually
 
@@ -283,7 +283,7 @@ Let’s smash some apps together.
 
 To do so, check out how we would smash each part together — the semigroups:
 
-<BabbleImage src={lunchableOpenImage} alt="Lunchable open" data-invert-on-dark />
+<ResponsiveImage src={lunchableOpenImage} alt="Lunchable open" data-invert-on-dark />
 
 * **Visuals:** With React.js we usually just do what is explained above. A user-interface tree is composed of nesting and wrapping. GraphQL makes this even more true — each component’s data dependencies can be combined together into a single query. Therefore each component can live in it’s own isolated world waiting to be composed into a larger app.
 * **State:** Redux serves us well in the React world. State can be split into smaller state trees and individual reducing logic. This logic is a semigroup with [`combineReducers`](http://redux.js.org/docs/api/combineReducers.html)!

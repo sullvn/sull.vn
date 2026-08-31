@@ -19,7 +19,6 @@ const babbles = (await getCollection('babbles')).sort(
 ---
 
 <Base title="Kevin Sullivan" description="Personal site of Kevin Sullivan. Working at the intersection of technology and creativity, with occasional writing along the way.">
-  <div class="home-container">
   <div class="home">
     <section class="fun">
       <Disc3D class="disc" />
@@ -52,14 +51,9 @@ const babbles = (await getCollection('babbles')).sort(
       </BabblesNav>
     </section>
   </div>
-  </div>
 </Base>
 
 <style>
-  .home-container {
-    container-type: inline-size;
-  }
-
   .home {
     display: grid;
 

@@ -7,65 +7,59 @@ import EducationSection from '../components/EducationSection.astro';
 ---
 
 <Base title="Resume · Kevin Sullivan" description="Resume of Kevin Sullivan">
-  <div class="container">
-    <article>
-      <div>
-        <h1>Kevin Sullivan</h1>
-      </div>
+  <article>
+    <div>
+      <h1>Kevin Sullivan</h1>
+    </div>
 
-      <HilbertCurve />
-    
-    <JobSection company="Felt" time="2023 - Now">
-        Making the most intuitive GIS software on the planet. Features geospatial analysis, realtime multiplayer, and high-performance rendering.
-    </JobSection>
+    <HilbertCurve />
+  
+  <JobSection company="Felt" time="2023 - Now">
+      Making the most intuitive GIS software on the planet. Features geospatial analysis, realtime multiplayer, and high-performance rendering.
+  </JobSection>
 
-    <JobSection company="Symbiote" time="2020 - 2022">
-      <strong>Co-founder.</strong> Plant soil sensor product. Involved in app, cloud services, embedded software, manufacturing, packaging, shop, and media.
-    </JobSection>
+  <JobSection company="Symbiote" time="2020 - 2022">
+    <strong>Co-founder.</strong> Plant soil sensor product. Involved in app, cloud services, embedded software, manufacturing, packaging, shop, and media.
+  </JobSection>
 
-    <JobSection company="Uber ATG" time="2018 - 2020">
-      Built tools for artificial intelligence research in autonomous driving. Includes high-performance spatial visualizations and topology editing.
-    </JobSection>
+  <JobSection company="Uber ATG" time="2018 - 2020">
+    Built tools for artificial intelligence research in autonomous driving. Includes high-performance spatial visualizations and topology editing.
+  </JobSection>
 
-    <JobSection company="Aclima" time="2015 - 2018">
-      Interactive geospatial interfaces for hyper-dense environmental data. Featured at the U.N. and New York Times: Cities for Tomorrow.
-    </JobSection>
+  <JobSection company="Aclima" time="2015 - 2018">
+    Interactive geospatial interfaces for hyper-dense environmental data. Featured at the U.N. and New York Times: Cities for Tomorrow.
+  </JobSection>
 
-    <JobSection company="Amazon" time="2014 - 2015">
-      Worked on a generative testing system for a point-of-sales mobile app and hardware.
-    </JobSection>
+  <JobSection company="Amazon" time="2014 - 2015">
+    Worked on a generative testing system for a point-of-sales mobile app and hardware.
+  </JobSection>
 
-    <JobSection company="Popular<wbr />Pays" time="2014">
-      Started a social graph web crawler and complementary bot detection system.
-    </JobSection>
+  <JobSection company="Popular<wbr />Pays" time="2014">
+    Started a social graph web crawler and complementary bot detection system.
+  </JobSection>
 
-    <InternshipsSection jobs={[
-      { company: "Study<wbr>Cloud", time: "2013" },
-      { company: "Wolfram<wbr />Alpha", time: "2011 - 2012" }
-    ]}>
-        <strong>Intern.</strong> Web engineering and prototyping. Includes custom authentication system and social media visualizations.
-    </InternshipsSection>
+  <InternshipsSection jobs={[
+    { company: "Study<wbr>Cloud", time: "2013" },
+    { company: "Wolfram<wbr />Alpha", time: "2011 - 2012" }
+  ]}>
+      <strong>Intern.</strong> Web engineering and prototyping. Includes custom authentication system and social media visualizations.
+  </InternshipsSection>
 
-    <EducationSection
-      school="University of Illinois<br />Urbana-Champaign"
-      time="Class of 2014"
-      degree="B.S. in Computer Science"
-    />
+  <EducationSection
+    school="University of Illinois<br />Urbana-Champaign"
+    time="Class of 2014"
+    degree="B.S. in Computer Science"
+  />
 
-    <nav>
-      <a href="mailto:kevin@sull.vn">kevin@sull.vn</a>
-      <a href="https://github.com/sullvn">github.com/sullvn</a>
-      <a href="https://sull.vn">sull.vn</a>
-    </nav>
-    </article>
-  </div>
+  <nav>
+    <a href="mailto:kevin@sull.vn">kevin@sull.vn</a>
+    <a href="https://github.com/sullvn">github.com/sullvn</a>
+    <a href="https://sull.vn">sull.vn</a>
+  </nav>
+  </article>
 </Base>
 
 <style>
-  .container {
-    container-type: inline-size;
-  }
-
   article {
     display: grid;
 
@@ -148,7 +142,7 @@ import EducationSection from '../components/EducationSection.astro';
   }
 
   @media print {
-    .container {
+    article {
       font-size: 13px;
     }
 

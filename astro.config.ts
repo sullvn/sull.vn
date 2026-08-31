@@ -1,4 +1,6 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
+import { escapePath } from 'tinyglobby'
 
 import { unified } from '@astrojs/markdown-remark'
 import svelte from '@astrojs/svelte'
@@ -6,6 +8,8 @@ import mdx from '@astrojs/mdx'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import { exportRoutes } from './src/integrations/exportRoutes'
+
+const root = escapePath(fileURLToPath(new URL('.', import.meta.url)))
 
 export default defineConfig({
   publicDir: './src/public',
@@ -35,7 +39,7 @@ export default defineConfig({
     },
     server: {
       watch: {
-        ignored: ['**/dist/**', '**/.*/**'],
+        ignored: [`${root}**/dist/**`, `${root}**/.*/**`],
       },
     },
   },

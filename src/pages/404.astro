@@ -1,16 +1,59 @@
 ---
 import Base from '../layouts/Base.astro';
 import Heading from '../components/Heading.astro';
+import Prose from '../components/Prose.astro';
+import ResponsiveImage from '../components/ResponsiveImage.astro';
+import unicorn from '../assets/the-unicorn-rests-in-a-garden.png';
 ---
 
 <Base title="404" description="Page not found" class="not-found">
-  <Heading level={1}>404</Heading>
+  <section>
+    <hgroup>
+      <p class="status">404</p>
+      <Heading level={1}>Page not found</Heading>
+    </hgroup>
+    <Prose>Here's a medieval unicorn instead. It displeases me greatly.</Prose>
+  </section>
+
+  <ResponsiveImage
+    src={unicorn}
+    width={640}
+    alt="A white unicorn resting inside a small circular fence beneath a pomegranate tree, on a field of flowers. From the Unicorn Tapestries, c. 1495–1505."
+    priority
+  />
 </Base>
 
 <style>
   .not-found {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--bodyGap);
+    place-items: center;
     align-content: center;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bodyGap);
     text-align: center;
-    padding-block-end: calc(var(--bodyGap) / 2);
+  }
+
+  hgroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--proseParagraphGap);
+  }
+
+  .status {
+    font-size: var(--notFoundFontSize);
+    font-weight: var(--headingFontWeight);
+    line-height: 1;
+  }
+
+  @container (inline-size < 900px) {
+    .not-found {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

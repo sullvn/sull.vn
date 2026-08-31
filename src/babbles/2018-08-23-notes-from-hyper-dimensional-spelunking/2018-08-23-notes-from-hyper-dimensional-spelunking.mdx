@@ -5,13 +5,13 @@ title: 'Notes from Hyper-Dimensional Spelunking'
 description: 'Notes on sampling high-dimensional spaces to visualize program behavior.'
 ---
 
-import BabbleImage from '../../components/BabbleImage.astro';
+import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import introSpelunkerImage from './intro-spelunker.png';
 import randomSamplingImage from './random-sampling.png';
 import shannonNyquistSamplingImage from './shannon-nyquist-sampling.png';
 import snakeCurvesImage from './snake-curves.png';
 
-<BabbleImage src={introSpelunkerImage} alt="Intro spelunker" data-invert-on-dark />
+<ResponsiveImage src={introSpelunkerImage} alt="Intro spelunker" data-invert-on-dark />
 
 Writing software is hard. Visualizing its behavior makes it easier.
 
@@ -52,7 +52,7 @@ You _can_ look everywhere, but it may take a long time. What do you do when time
 
 You _could_ look randomly, but then you might miss important features. Check it out on some random mathematical function:
 
-<BabbleImage src={randomSamplingImage} alt="Random sampling" data-invert-on-dark />
+<ResponsiveImage src={randomSamplingImage} alt="Random sampling" data-invert-on-dark />
 
 Well, if your cave happens to be a signal then you can ask some information theorists. They're expert cave explorers, but only if it's composed of waves.
 
@@ -60,7 +60,7 @@ Well, if your cave happens to be a signal then you can ask some information theo
 
 They suggest using the [Nyquist-Shannon sampling theorem](https://en.wikipedia.org/wiki/Nyquist–Shannon_sampling_theorem). The basic idea is to sample at twice the rate as the smallest possible wavelength. Otherwise you'll never be totally sure what you're looking at.
 
-<BabbleImage src={shannonNyquistSamplingImage} alt="Shannon Nyquist sampling" data-invert-on-dark />
+<ResponsiveImage src={shannonNyquistSamplingImage} alt="Shannon Nyquist sampling" data-invert-on-dark />
 
 Cool. But our cave isn't made out of waves. And it isn't one dimensional. It's hyper-dimensional.
 
@@ -127,7 +127,7 @@ The problem is since our goal is human understanding, the best sampling method i
 
 # Don't Touch the Space-Filling Snakes
 
-<BabbleImage src={snakeCurvesImage} alt="Snake curves" data-invert-on-dark />
+<ResponsiveImage src={snakeCurvesImage} alt="Snake curves" data-invert-on-dark />
 
 Cartesian products are simple to understand, but have some drawbacks. You can't choose any number of samples and have them equally spread out. You'll have to pick favorites.
 
