@@ -28,3 +28,7 @@ pnpm-debug.log*
 
 # Playwright MCP artifacts, like logged console output
 .playwright-mcp/
+
+# Playwright test artifacts
+playwright-report/
+test-results/

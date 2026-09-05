@@ -1,26 +1,64 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig } from '@playwright/test'
+import type { VisualOptions } from './tests/visual.spec'
 
-export default defineConfig({
+const visualCases = [
+  {
+    name: 'home-chromium-1280-light',
+    route: '/',
+    browserName: 'chromium',
+    width: 1280,
+    colorScheme: 'light',
+  },
+  {
+    name: 'home-chromium-400-dark',
+    route: '/',
+    browserName: 'chromium',
+    width: 400,
+    colorScheme: 'dark',
+  },
+  {
+    name: 'resume-chromium-800-light',
+    route: '/resume',
+    browserName: 'chromium',
+    width: 800,
+    colorScheme: 'light',
+  },
+  {
+    name: 'resume-firefox-400-light',
+    route: '/resume',
+    browserName: 'firefox',
+    width: 400,
+    colorScheme: 'light',
+  },
+  {
+    name: 'lunchables-firefox-1280-dark',
+    route: '/babbles/could-we-code-with-lunchables',
+    browserName: 'firefox',
+    width: 1280,
+    colorScheme: 'dark',
+  },
+  {
+    name: 'spelunking-chromium-400-light',
+    route: '/babbles/notes-from-hyper-dimensional-spelunking',
+    browserName: 'chromium',
+    width: 400,
+    colorScheme: 'light',
+  },
+] as const
+
+export default defineConfig<VisualOptions>({
   testDir: './tests',
   fullyParallel: true,
   reporter: 'html',
-  // Safari/WebKit omitted: nixpkgs' WPE backend requires EGL display, which
-  // isn't available in headless mode on NixOS without extra plumbing.
-  projects: [
-    { name: 'chrome-desktop', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox-desktop', use: { ...devices['Desktop Firefox'] } },
-    {
-      name: 'chrome-mobile',
-      use: { ...devices['iPhone 15'], defaultBrowserType: 'chromium' },
+  projects: visualCases.map(({ name, route, browserName, width, colorScheme }) => ({
+    name,
+    use: {
+      route,
+      browserName,
+      viewport: { width, height: 800 },
+      colorScheme,
     },
-    {
-      name: 'firefox-mobile',
-      use: {
-        ...devices['Desktop Firefox'],
-        viewport: devices['iPhone 15'].viewport,
-      },
-    },
-  ],
+  })),
   webServer: {
     command: 'pnpm build && pnpm preview',
     port: 4321,

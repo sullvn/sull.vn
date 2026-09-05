@@ -7,7 +7,6 @@ import svelte from '@astrojs/svelte'
 import mdx from '@astrojs/mdx'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
-import { exportRoutes } from './src/integrations/exportRoutes'
 
 const root = escapePath(fileURLToPath(new URL('.', import.meta.url)))
 
@@ -33,7 +32,7 @@ export default defineConfig({
       },
     },
   },
-  integrations: [svelte(), mdx(), exportRoutes()],
+  integrations: [svelte(), mdx()],
   build: {
     format: 'file',
   },
