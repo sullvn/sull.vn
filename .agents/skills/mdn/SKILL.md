@@ -1,20 +1,16 @@
 ---
 name: mdn
 description: Search MDN Web Docs for web platform documentation. Use when the user asks about HTML elements, CSS properties, JavaScript APIs, Web APIs, browser APIs, DOM methods, or any web platform feature.
-argument-hint: <search query>
-context: fork
-agent: general-purpose
-allowed-tools: WebFetch, WebSearch
 ---
 
-Search MDN Web Docs for: $ARGUMENTS
+Search MDN Web Docs for: the user's query
 
 ## Instructions
 
 1. Construct the MDN search URL by URL-encoding the query:
    `https://developer.mozilla.org/en-US/search?q=<encoded-query>&page=1`
 
-2. Use WebFetch to retrieve the search results page
+2. Use the available web search or page-fetching tools to retrieve the search results
 
 3. From the results, identify the most relevant documentation pages
 

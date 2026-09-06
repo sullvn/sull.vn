@@ -24,7 +24,7 @@ pnpm-debug.log*
 .crush
 
 # claude
-.claude
+.claude/worktrees/
 
 # Playwright MCP artifacts, like logged console output
 .playwright-mcp/
