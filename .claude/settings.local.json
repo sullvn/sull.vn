@@ -1,6 +1,3 @@
 {
-  "enabledMcpjsonServers": [
-    "astro-docs",
-    "playwright"
-  ]
+  "enabledMcpjsonServers": ["astro-docs", "playwright"]
 }
