@@ -15,11 +15,11 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
-    "@astrojs/markdown-remark": "^7.2.4",
+    "@astrojs/markdown-remark": "^7.3.0",
     "@astrojs/mdx": "^7.0.8",
     "@astrojs/svelte": "^9.0.1",
-    "astro": "^7.2.9",
-    "katex": "^0.18.4",
+    "astro": "^7.3.1",
+    "katex": "^0.18.7",
     "lightningcss": "^1.33.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
@@ -28,7 +28,7 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@astrojs/language-server": "^2.16.15",
+    "@astrojs/language-server": "^2.16.16",
     "@playwright/test": "1.61.1",
     "svelte-language-server": "^0.18.4",
     "tinyglobby": "^0.2.17",

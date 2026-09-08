@@ -1,6 +1,9 @@
 import { defineConfig } from '@playwright/test'
 import type { VisualOptions } from './tests/visual.spec'
 
+const previewPort = 4322
+const previewURL = `http://127.0.0.1:${previewPort}`
+
 const visualCases = [
   {
     name: 'home-chromium-1280-light',
@@ -49,7 +52,10 @@ const visualCases = [
 export default defineConfig<VisualOptions>({
   testDir: './tests',
   fullyParallel: true,
-  reporter: 'html',
+  reporter: [['html', { host: '0.0.0.0' }]],
+  use: {
+    baseURL: previewURL,
+  },
   projects: visualCases.map(({ name, route, browserName, width, colorScheme }) => ({
     name,
     use: {
@@ -60,8 +66,10 @@ export default defineConfig<VisualOptions>({
     },
   })),
   webServer: {
-    command: 'pnpm build && pnpm preview',
-    port: 4321,
-    reuseExistingServer: true,
+    command: `pnpm build && pnpm preview --port ${previewPort} --ignore-lock`,
+    url: previewURL,
+    reuseExistingServer: false,
+    // Keep Astro in the foreground so Playwright controls the preview's lifetime.
+    env: { ASTRO_PREVIEW_BACKGROUND: '1' },
   },
 })
