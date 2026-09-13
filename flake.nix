@@ -21,6 +21,7 @@
               pkgs.nodejs_latest
               pkgs.pnpm
               pkgs.biome
+              pkgs.actionlint
               pkgs.chromium
             ];
             env = {
