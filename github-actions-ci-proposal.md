@@ -4,7 +4,7 @@
 
 The goal needs one automated test job and a GitHub rule that requires it to pass before merging. The research below contains enough information to proceed; the next useful evidence is an actual PR run.
 
-The current `pnpm test` already runs unit tests and all six screenshot checks. Those screenshot checks also trigger Astro’s checks and a production build. Adding linting or reorganizing scripts would expand the task beyond running the existing suite.
+The current `pnpm test` runs one script per tool: `test:biome` (`biome check .`), `test:astro` (`astro check`), `test:unit` (`node --test`), and `test:playwright` (`playwright test`). Playwright builds the site before running all six screenshot checks; Astro’s checks run separately through `test:astro`.
 
 ## Minimum implementation, in order
 
@@ -17,7 +17,7 @@ The current `pnpm test` already runs unit tests and all six screenshot checks. T
 
 - **Save failed screenshot reports and show build output.** These make failures much easier to diagnose; they would be the first additions.
 - **Reject accidentally focused tests.** This prevents a debugging setting from silently reducing the tests CI runs.
-- **Add Biome and workflow-file linting to `pnpm test`.** Useful additional checks, but they change the suite’s scope. Separating out type checks is similarly optional.
+- **Add workflow-file linting to `pnpm test`.** This would expand the suite’s scope. Biome and a separate Astro check are now included through the scripts listed above.
 - **Add maintenance conveniences:** automatic Action updates, a browser-version compatibility check, cancellation of superseded runs, and brief testing instructions. These reduce future upkeep.
 - **Store the merge rules in the repository.** Useful for reviewing policy changes, but unnecessary to activate enforcement through GitHub’s settings.
 
@@ -31,7 +31,7 @@ The current `pnpm test` already runs unit tests and all six screenshot checks. T
 
 ## Research
 
-The report above defines the recommended implementation scope. The earlier detailed proposal is preserved below as supporting research; its broader recommendations are optional or deferred as classified above.
+The report above defines the recommended implementation scope. The earlier detailed proposal is preserved below as supporting research; its broader recommendations are optional or deferred as classified above. Script names and proposed commands in this section are historical; use the current `package.json` for runnable commands.
 
 Reviewed 8 September 2026 · Revised through 13 September 2026 after an eighth review · Proposal only · Temporary review document; remove before merging
 

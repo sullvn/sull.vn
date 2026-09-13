@@ -66,7 +66,7 @@ export default defineConfig<VisualOptions>({
     },
   })),
   webServer: {
-    command: `pnpm build && pnpm preview --port ${previewPort} --ignore-lock`,
+    command: `pnpm exec astro build && pnpm exec astro preview --port ${previewPort} --ignore-lock`,
     url: previewURL,
     // A fresh build must encode the site's images before preview can start.
     timeout: 5 * 60 * 1000,

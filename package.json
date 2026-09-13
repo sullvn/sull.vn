@@ -7,11 +7,12 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "pnpm test:unit && pnpm test:visual",
+    "test": "pnpm test:biome && pnpm test:astro && pnpm test:unit && pnpm test:playwright",
+    "test:biome": "biome check .",
+    "test:astro": "astro check",
     "test:unit": "node --test",
-    "test:visual": "playwright test",
-    "format": "biome format --write .",
-    "check": "astro check && biome check ."
+    "test:playwright": "playwright test",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
