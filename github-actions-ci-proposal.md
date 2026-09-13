@@ -1,5 +1,38 @@
 **GitHub Actions CI proposal for sullvn/sull.vn**
 
+## Introduction
+
+The goal needs one automated test job and a GitHub rule that requires it to pass before merging. The research below contains enough information to proceed; the next useful evidence is an actual PR run.
+
+The current `pnpm test` already runs unit tests and all six screenshot checks. Those screenshot checks also trigger Astro’s checks and a production build. Adding linting or reorganizing scripts would expand the task beyond running the existing suite.
+
+## Minimum implementation, in order
+
+1. **Add one GitHub Actions job named `test` that runs whenever a PR opens or receives changes.** Use the existing Nix tool setup, download the real images through Git LFS, install the exact dependencies recorded in the lockfile, and run `pnpm test`. Keep it unconditional, with failures blocking success. This directly automates the command already used locally.
+2. **Make the existing screenshot tests work reliably on GitHub’s machine.** Use the proposed Linux ARM runner and controlled fonts to match the environment that produced the reference screenshots. Increase the build-startup allowance to five minutes initially: the research measured a fresh build taking over two minutes. Obtain a successful run with all six screenshot cases; investigate differences before replacing reference images. These changes address actual setup problems identified in the research. [Playwright explains why matching environments matters.](https://playwright.dev/docs/test-snapshots)
+3. **Make the successful `test` check mandatory in GitHub’s settings for `main`.** Require a PR, zero human approvals, and branches updated with `main`; leave the bypass list empty so the rule applies to the owner’s merges too. Select GitHub Actions as the check’s source. The settings page is sufficient—committing a ruleset JSON file is optional. Running tests and enforcing their result are separate operations. [GitHub’s merge rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
+4. **Prove that enforcement works.** Push a deliberate test failure on the implementation PR, verify that the owner cannot merge it, then fix it and confirm merging becomes available after the new run passes. This checks the actual requirement, including whether an earlier passing result can incorrectly satisfy a newer revision.
+
+## Bonus implementation steps, not strictly required
+
+- **Save failed screenshot reports and show build output.** These make failures much easier to diagnose; they would be the first additions.
+- **Reject accidentally focused tests.** This prevents a debugging setting from silently reducing the tests CI runs.
+- **Add Biome and workflow-file linting to `pnpm test`.** Useful additional checks, but they change the suite’s scope. Separating out type checks is similarly optional.
+- **Add maintenance conveniences:** automatic Action updates, a browser-version compatibility check, cancellation of superseded runs, and brief testing instructions. These reduce future upkeep.
+- **Store the merge rules in the repository.** Useful for reviewing policy changes, but unnecessary to activate enforcement through GitHub’s settings.
+
+## Probably outside this rollout
+
+- **Deployment and Cloudflare investigations.** They answer whether publishing works correctly, which is a separate goal.
+- **Dependabot’s npm-update investigation, old bot-PR cleanup, and extensive local-shell recovery changes.** These concern dependency and development maintenance.
+- **Caching, browser-download trimming, and separate CI environments.** Revisit them if actual runs show unacceptable time or download usage.
+- **Date-formatting fixes, typography changes, and broader test coverage.** These improve the site or tests; the research says the current local and CI timezones already agree.
+- **Extensive operational documentation and manual comparisons of tested versus merged Git contents.** They add process beyond the essential passing/failing merge check.
+
+## Research
+
+The report above defines the recommended implementation scope. The earlier detailed proposal is preserved below as supporting research; its broader recommendations are optional or deferred as classified above.
+
 Reviewed 8 September 2026 · Revised through 13 September 2026 after an eighth review · Proposal only · Temporary review document; remove before merging
 
 Use one required GitHub Actions job, `test`, to install dependencies and run `pnpm test` in the repository’s locked Nix development shell on an arm64 Ubuntu runner. Package scripts define the checks; a branch ruleset requires them before merging into `main`. Fetch the Git LFS images, let Playwright build before serving the site, and control fonts and dates so local and CI screenshots agree.
