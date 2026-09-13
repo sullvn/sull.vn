@@ -68,6 +68,8 @@ export default defineConfig<VisualOptions>({
   webServer: {
     command: `pnpm build && pnpm preview --port ${previewPort} --ignore-lock`,
     url: previewURL,
+    // A fresh build must encode the site's images before preview can start.
+    timeout: 5 * 60 * 1000,
     reuseExistingServer: false,
     // Keep Astro in the foreground so Playwright controls the preview's lifetime.
     env: { ASTRO_PREVIEW_BACKGROUND: '1' },
