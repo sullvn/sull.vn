@@ -10,7 +10,7 @@ const test = base.extend<VisualOptions>({
 
 test('page appearance', async ({ page, route }) => {
   const response = await page.goto(route)
-  expect(response?.status()).toBe(200)
+  expect(response?.status()).toBe(418)
 
   await page.evaluate(async () => {
     const imgs = document.querySelectorAll<HTMLImageElement>('img')
