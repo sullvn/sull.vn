@@ -23,6 +23,9 @@
               pkgs.biome
               pkgs.actionlint
               pkgs.chromium
+            ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+              # WebKit needs a graphics driver even when running headless.
+              pkgs.mesa.llvmpipeHook
             ];
             env = {
               PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
@@ -40,6 +43,8 @@
                   <include>${fontconfigRules}/10-yes-antialias.conf</include>
                   <include>${fontconfigRules}/10-sub-pixel-none.conf</include>
                   <include>${fontconfigRules}/11-lcdfilter-default.conf</include>
+                  <!-- WebKit needs the generic font aliases defined by 60-latin.conf. -->
+                  <include>${fontconfigRules}/60-latin.conf</include>
                   <include>${fontconfigRules}/90-synthetic.conf</include>
                 </fontconfig>
               '';

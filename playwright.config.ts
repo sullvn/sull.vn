@@ -13,9 +13,9 @@ const visualCases = [
     colorScheme: 'light',
   },
   {
-    name: 'home-chromium-400-dark',
+    name: 'home-webkit-400-dark',
     route: '/',
-    browserName: 'chromium',
+    browserName: 'webkit',
     width: 400,
     colorScheme: 'dark',
   },

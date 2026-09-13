@@ -6,6 +6,8 @@ The goal needs one automated test job and a GitHub rule that requires it to pass
 
 The current `pnpm test` runs one script per tool: `test:actionlint` (`actionlint`), `test:biome` (`biome check .`), `test:astro` (`astro check`), `test:unit` (`node --test`), and `test:playwright` (`playwright test`). Actionlint checks the GitHub workflows. Playwright builds the site before running all six screenshot checks; Astro’s checks run separately through `test:astro`.
 
+The six visual cases cover Chromium, Firefox, and WebKit. The narrow, dark homepage runs in WebKit because its 3D decorations include a Safari workaround. The Linux shell supplies Mesa software rendering so WebKit can run without a GPU. The earlier research suggestion to remove WebKit from the browser bundle no longer applies.
+
 ## Minimum implementation, in order
 
 1. **Add one GitHub Actions job named `test` that runs whenever a PR opens or receives changes.** Use the existing Nix tool setup, download the real images through Git LFS, install the exact dependencies recorded in the lockfile, and run `pnpm test`. Keep it unconditional, with failures blocking success. This directly automates the command already used locally.
