@@ -13,6 +13,7 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        fontconfigRules = "${pkgs.fontconfig.out}/share/fontconfig/conf.avail";
       in
         {
           devShells.default = pkgs.mkShell {
@@ -20,13 +21,34 @@
               pkgs.nodejs_latest
               pkgs.pnpm
               pkgs.biome
+              pkgs.actionlint
               pkgs.chromium
+            ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+              # WebKit needs a graphics driver even when running headless.
+              pkgs.mesa.llvmpipeHook
             ];
-            shellHook = ''
-              export PLAYWRIGHT_BROWSERS_PATH="${pkgs.playwright-driver.browsers}"
-              export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
-              export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-            '';
+            env = {
+              PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+              PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+              PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
+
+              # Match the existing screenshots without inheriting host or user fonts.
+              FONTCONFIG_FILE = pkgs.writeText "sull-vn-fonts.conf" ''
+                <?xml version="1.0"?>
+                <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+                <fontconfig>
+                  <dir>${pkgs.dejavu_fonts.minimal}</dir>
+                  <cachedir prefix="xdg">fontconfig</cachedir>
+                  <include>${fontconfigRules}/10-hinting-slight.conf</include>
+                  <include>${fontconfigRules}/10-yes-antialias.conf</include>
+                  <include>${fontconfigRules}/10-sub-pixel-none.conf</include>
+                  <include>${fontconfigRules}/11-lcdfilter-default.conf</include>
+                  <!-- WebKit needs the generic font aliases defined by 60-latin.conf. -->
+                  <include>${fontconfigRules}/60-latin.conf</include>
+                  <include>${fontconfigRules}/90-synthetic.conf</include>
+                </fontconfig>
+              '';
+            };
           };
         }
 

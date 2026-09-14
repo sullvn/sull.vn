@@ -3,15 +3,17 @@
   "type": "module",
   "version": "0.0.2",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
     "astro": "astro",
-    "test": "pnpm test:unit && pnpm test:visual",
-    "test:unit": "node --test",
-    "test:visual": "playwright test",
+    "build": "astro build",
+    "dev": "astro dev",
     "format": "biome format --write .",
-    "check": "astro check && biome check ."
+    "preview": "astro preview",
+    "test": "pnpm test:actionlint && pnpm test:astro && pnpm test:biome && pnpm test:playwright && pnpm test:unit",
+    "test:actionlint": "actionlint",
+    "test:astro": "astro check",
+    "test:biome": "biome check .",
+    "test:playwright": "playwright test",
+    "test:unit": "node --test"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
