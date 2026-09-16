@@ -5,4 +5,6 @@ import Heading from '../Heading.astro';
 type Props = HTMLAttributes<'h2'>;
 ---
 
-<Heading {...Astro.props} level={2}><slot /></Heading>
+<Heading {...Astro.props} level={2} class:list={[Astro.props.class, 'break-words']}>
+  <slot />
+</Heading>
