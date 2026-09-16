@@ -29,7 +29,7 @@ const headingGapEm = paragraphGapEm
 const headingGapTopEm = 2 * GOLDEN_RATIO
 
 export const prose: Typography = {
-  fontSize: fontScale(1),
+  fontSize: fontScale(0),
   lineHeight: 'calc(1em + 0.5rem)',
   paragraphGap: `${paragraphGapEm}em`,
   listGap: `${listGapEm}em`,
@@ -41,7 +41,7 @@ export const prose: Typography = {
 }
 
 export const backArrow = {
-  fontSize: fontScale(6),
+  fontSize: headings.h1.fontSize,
 }
 
 export const notFound = {

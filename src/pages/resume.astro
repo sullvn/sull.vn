@@ -72,7 +72,8 @@ import EducationSection from '../components/EducationSection.astro';
   }
 
   h1 {
-    font-size: 8cqi;
+    --nameFontSize: 8cqi;
+    font-size: var(--nameFontSize);
     text-wrap: nowrap;
     text-transform: uppercase;
     text-box-edge: cap alphabetic;
@@ -122,7 +123,7 @@ import EducationSection from '../components/EducationSection.astro';
     }
 
     h1 {
-      font-size: 12cqi;
+      --nameFontSize: 12cqi;
       margin-bottom: 1em;
 
       div:has(> &) {
@@ -138,6 +139,16 @@ import EducationSection from '../components/EducationSection.astro';
 
     nav {
       grid-column-start: span 2;
+    }
+  }
+
+  @media screen {
+    article {
+      font-size: var(--proseFontSize);
+    }
+
+    h1 {
+      font-size: min(var(--h1FontSize), var(--nameFontSize));
     }
   }
 

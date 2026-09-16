@@ -32,4 +32,14 @@
     /* Same as h2 */
     line-height: 24px;
   }
+
+  @media screen {
+    section :global(h2) {
+      font-size: var(--h5FontSize);
+    }
+
+    section :global(time) {
+      line-height: var(--h5FontSize);
+    }
+  }
 </style>
