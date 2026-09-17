@@ -156,6 +156,11 @@ const { title, description, ...attrs } = Astro.props;
   /* Preserve the existing print scale. */
   @media screen {
     :root {
+      /*
+       * The root size cascades through inherited text and rem-based sizing.
+       * Font-relative units in media-query conditions use the browser's
+       * initial font size instead.
+       */
       font-size: ${rootFontSize};
     }
   }

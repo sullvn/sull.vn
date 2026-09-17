@@ -1,6 +1,8 @@
 import { fontScale } from '../utils/typography'
 import { GOLDEN_RATIO } from '../utils/math'
 
+// Follow apple.com's 17px body size; our system font stack uses the same
+// Apple system font family on Apple devices.
 export const baseFontSizePx = 17
 
 // Express the design target relative to a 16px default, preserving user font preferences.
