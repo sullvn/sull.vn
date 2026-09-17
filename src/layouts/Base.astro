@@ -1,6 +1,6 @@
 ---
 import { black, white, green, red, purple } from "../config/colors";
-import { prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
+import { rootFontSize, prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
 import {
   bodyGap,
   bodyPaddingBlockStart,
@@ -75,7 +75,7 @@ const { title, description, ...attrs } = Astro.props;
     flex-direction: column;
     gap: var(--bodyGap);
 
-    max-width: 80rem; /* 1280px */
+    max-width: 80rem;
     margin: 0 auto;
 
     /*
@@ -151,6 +151,13 @@ const { title, description, ...attrs } = Astro.props;
     --backArrowFontSize: ${backArrow.fontSize};
     --notFoundFontSize: ${notFound.fontSize};
     --headingFontWeight: ${headingFontWeight.light};
+  }
+
+  /* Preserve the existing print scale. */
+  @media screen {
+    :root {
+      font-size: ${rootFontSize};
+    }
   }
 
   @media (prefers-color-scheme: dark) {

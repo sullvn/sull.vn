@@ -1,6 +1,11 @@
 import { fontScale } from '../utils/typography'
 import { GOLDEN_RATIO } from '../utils/math'
 
+export const baseFontSizePx = 17
+
+// Express the design target relative to a 16px default, preserving user font preferences.
+export const rootFontSize = `${baseFontSizePx / 16}rem`
+
 interface Typography {
   fontSize: string
   lineHeight: string
