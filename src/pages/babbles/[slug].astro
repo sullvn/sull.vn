@@ -4,7 +4,6 @@ import Base from '../../layouts/Base.astro';
 import Anchor from '../../components/Anchor.astro';
 import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import Heading from '../../components/Heading.astro';
-import H1 from '../../components/headings/H1.astro';
 import H2 from '../../components/headings/H2.astro';
 import H3 from '../../components/headings/H3.astro';
 import H4 from '../../components/headings/H4.astro';
@@ -39,11 +38,20 @@ const date = toIsoDay(entry.data.date)
         a: Anchor,
         img: ResponsiveImage,
         p: Prose,
-        h1: H1,
-        h2: H2,
-        h3: H3,
-        h4: H4,
-        h5: H5,
+
+        //
+        // Article headings start at H2, as H1 is the article title
+        // rendered elsewhere
+        //
+        h1: H2,
+        h2: H3,
+        h3: H4,
+        h4: H5,
+        h5: H6,
+
+        // Still render sixth-level article headings, although they
+        // really don't fit in our system. They should be H7 in our
+        // system, but those don't exist in HTML.
         h6: H6,
       }} />
     </section>

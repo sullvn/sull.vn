@@ -21,12 +21,12 @@ interface Typography {
 }
 
 export const headings = {
-  h1: { fontSize: fontScale(6) },
-  h2: { fontSize: fontScale(5) },
-  h3: { fontSize: fontScale(4) },
-  h4: { fontSize: fontScale(3) },
-  h5: { fontSize: fontScale(2) },
-  h6: { fontSize: fontScale(1) },
+  h1: { fontSize: fontScale(5) },
+  h2: { fontSize: fontScale(4) },
+  h3: { fontSize: fontScale(3) },
+  h4: { fontSize: fontScale(2) },
+  h5: { fontSize: fontScale(1) },
+  h6: { fontSize: fontScale(0) },
 }
 
 const paragraphGapEm = 2
