@@ -11,7 +11,6 @@ const { company, time } = Astro.props;
 
 <ResumeSection>
   <header>
-    <!-- biome-ignore lint/a11y/useHeadingContent: content provided via set:html -->
     <h2 set:html={company} />
     <time>{time}</time>
   </header>
