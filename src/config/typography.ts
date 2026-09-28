@@ -1,11 +1,41 @@
 import { fontScale } from '../utils/typography'
 import { GOLDEN_RATIO } from '../utils/math'
 
-// Follow apple.com's 17px body size; our system font stack uses the same
-// Apple system font family on Apple devices.
+/**
+ * Base font size (px)
+ *
+ *
+ * Directly used for:
+ *
+ * - Prose text size
+ * - Definition of `rem`, for various text-relative sizing
+ *
+ *
+ * Should be the default browser size (16px) or something
+ * super close.
+ *
+ * In this instance, we use 17px as it's what Apple uses
+ * for the same font stack and I'm a talentless sheep.
+ *
+ */
 export const baseFontSizePx = 17
 
-// Express the design target relative to a 16px default, preserving user font preferences.
+/**
+ * Root font size (in non-adjusted rem)
+ *
+ *
+ * There's a problem if you just set the root font size to
+ * the base font size, in pixels. This tends to override
+ * user font preferences, if they've set their browser to
+ * display larger or smaller text.
+ *
+ * A way around this is to set it in em, rem, or percent.
+ *
+ * Setting it using `rem` feels kinda weird, but I like it,
+ * as it's basically saying "define the current rem in the
+ * old rem".
+ *
+ */
 export const rootFontSize = `${baseFontSizePx / 16}rem`
 
 interface Typography {
