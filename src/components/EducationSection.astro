@@ -1,5 +1,6 @@
 ---
 import ResumeSection from './ResumeSection.astro';
+import Heading from './Heading.astro';
 
 interface Props {
   school: string;
@@ -12,7 +13,7 @@ const { school, time, degree } = Astro.props;
 
 <ResumeSection>
   <header>
-    <h2 set:html={school} />
+    <Heading level={2} class="resume-heading"><Fragment set:html={school} /></Heading>
     <div>
       <strong>{degree}</strong>
       <time>{time}</time>

@@ -24,26 +24,20 @@
     }
   }
 
-  section :global(h2) {
+  section :global(.resume-role) {
+    display: flex;
+    flex-direction: column;
+    gap: .6em;
+  }
+
+  section :global(.resume-heading) {
+    font-size: var(--h5FontSize);
     text-transform: uppercase;
   }
 
-  section :global(time) {
-    /* Same as h2 */
-    line-height: 24px;
-  }
-
-  @media screen {
-    section :global(p) {
-      overflow-wrap: anywhere;
-    }
-
-    section :global(h2) {
-      font-size: var(--h5FontSize);
-    }
-
-    section :global(time) {
-      line-height: var(--h5FontSize);
-    }
+  section :global(.resume-description) {
+    margin-bottom: 0;
+    hyphens: none;
+    overflow-wrap: anywhere;
   }
 </style>

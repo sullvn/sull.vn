@@ -1,5 +1,7 @@
 ---
 import ResumeSection from './ResumeSection.astro';
+import Heading from './Heading.astro';
+import Prose from './Prose.astro';
 
 interface Props {
   jobs: Array<{
@@ -14,14 +16,13 @@ const { jobs } = Astro.props;
 <ResumeSection>
   <header>
     {jobs.map(job => (
-      <div>
-        {/* biome-ignore lint/a11y/useHeadingContent: content provided via set:html */}
-        <h2 set:html={job.company} />
+      <div class="resume-role">
+        <Heading level={2} class="resume-heading"><Fragment set:html={job.company} /></Heading>
         <time>{job.time}</time>
       </div>
     ))}
   </header>
-  <p><slot /></p>
+  <Prose class="resume-description"><slot /></Prose>
 </ResumeSection>
 
 <style>

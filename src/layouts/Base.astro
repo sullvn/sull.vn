@@ -133,6 +133,8 @@ const { title, description, ...attrs } = Astro.props;
   -->
 <style is:global set:html={`
   :root {
+    font-size: ${rootFontSize};
+
     --proseFontSize: ${prose.fontSize};
     --proseLineHeight: ${prose.lineHeight};
     --proseParagraphGap: ${prose.paragraphGap};
@@ -151,18 +153,6 @@ const { title, description, ...attrs } = Astro.props;
     --backArrowFontSize: ${backArrow.fontSize};
     --notFoundFontSize: ${notFound.fontSize};
     --headingFontWeight: ${headingFontWeight.light};
-  }
-
-  /* Preserve the existing print scale. */
-  @media screen {
-    :root {
-      /*
-       * The root size cascades through inherited text and rem-based sizing.
-       * Font-relative units in media-query conditions use the browser's
-       * initial font size instead.
-       */
-      font-size: ${rootFontSize};
-    }
   }
 
   @media (prefers-color-scheme: dark) {
