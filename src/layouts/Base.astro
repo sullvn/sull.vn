@@ -1,6 +1,6 @@
 ---
 import { black, white, green, red, purple } from "../config/colors";
-import { prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
+import { rootFontSize, prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
 import {
   bodyGap,
   bodyPaddingBlockStart,
@@ -75,7 +75,7 @@ const { title, description, ...attrs } = Astro.props;
     flex-direction: column;
     gap: var(--bodyGap);
 
-    max-width: 80rem; /* 1280px */
+    max-width: 80rem;
     margin: 0 auto;
 
     /*
@@ -133,6 +133,8 @@ const { title, description, ...attrs } = Astro.props;
   -->
 <style is:global set:html={`
   :root {
+    font-size: ${rootFontSize};
+
     --proseFontSize: ${prose.fontSize};
     --proseLineHeight: ${prose.lineHeight};
     --proseParagraphGap: ${prose.paragraphGap};

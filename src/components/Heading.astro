@@ -1,41 +1,47 @@
 ---
+import type { HTMLAttributes } from 'astro/types';
+
 type Level = 1 | 2 | 3 | 4 | 5 | 6;
 
-const { level = 2 } = Astro.props as { level?: Level };
+interface Props extends HTMLAttributes<'h1'> {
+  level?: Level;
+}
+
+const { level = 2, ...attrs } = Astro.props;
 ---
 
 {level === 1 && (
-  <h1>
+  <h1 {...attrs}>
     <slot />
   </h1>
 )}
 
 {level === 2 && (
-  <h2>
+  <h2 {...attrs}>
     <slot />
   </h2>
 )}
 
 {level === 3 && (
-  <h3>
+  <h3 {...attrs}>
     <slot />
   </h3>
 )}
 
 {level === 4 && (
-  <h4>
+  <h4 {...attrs}>
     <slot />
   </h4>
 )}
 
 {level === 5 && (
-  <h5>
+  <h5 {...attrs}>
     <slot />
   </h5>
 )}
 
 {level === 6 && (
-  <h6>
+  <h6 {...attrs}>
     <slot />
   </h6>
 )}

@@ -20,9 +20,9 @@ const { class: className, ...rest } = Astro.props
 <style>
   .container {
     position: relative;
-    width: 10em;
-    height: 10em;
-    perspective: 25em;
+    width: 160px;
+    height: 160px;
+    perspective: 400px;
   }
 
   .spin {
@@ -39,40 +39,40 @@ const { class: className, ...rest } = Astro.props
   }
 
   .face {
-    margin: -2.5em;
-    margin-bottom: -5em;
-    width: 5em;
-    height: 5em;
+    margin: -40px;
+    margin-bottom: -80px;
+    width: 80px;
+    height: 80px;
     backface-visibility: hidden;
   }
 
   .face:nth-child(1) {
     background-color: var(--purple);
-    transform: translateZ(2.5em);
+    transform: translateZ(40px);
   }
 
   .face:nth-child(2) {
     background-color: oklch(from var(--purple) calc(l + 0.03) c h);
-    transform: rotateY(.25turn) translateZ(2.5em);
+    transform: rotateY(.25turn) translateZ(40px);
   }
 
   .face:nth-child(3) {
     background-color: oklch(from var(--purple) calc(l + 0.06) c h);
-    transform: rotateY(.5turn) translateZ(2.5em);
+    transform: rotateY(.5turn) translateZ(40px);
   }
 
   .face:nth-child(4) {
     background-color: oklch(from var(--purple) calc(l + 0.03) c h);
-    transform: rotateY(.75turn) translateZ(2.5em);
+    transform: rotateY(.75turn) translateZ(40px);
   }
 
   .face:nth-child(5) {
     background-color: oklch(from var(--purple) calc(l + 0.09) c h);
-    transform: rotateX(.25turn) translateZ(2.5em);
+    transform: rotateX(.25turn) translateZ(40px);
   }
 
   .face:nth-child(6) {
     background-color: oklch(from var(--purple) calc(l + 0.09) c h);
-    transform: rotateX(-.25turn) translateZ(2.5em);
+    transform: rotateX(-.25turn) translateZ(40px);
   }
 </style>

@@ -1,0 +1,8 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Heading from '../Heading.astro';
+
+type Props = HTMLAttributes<'h4'>;
+---
+
+<Heading {...Astro.props} level={4}><slot /></Heading>

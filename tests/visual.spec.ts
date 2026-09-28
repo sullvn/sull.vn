@@ -23,5 +23,11 @@ test('page appearance', async ({ page, route }) => {
     await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
   })
 
+  const { contentWidth, viewportWidth } = await page.evaluate(() => ({
+    contentWidth: document.documentElement.scrollWidth,
+    viewportWidth: window.innerWidth,
+  }))
+  expect(contentWidth, 'Page content should fit the viewport').toBeLessThanOrEqual(viewportWidth)
+
   await expect(page).toHaveScreenshot('page.png', { fullPage: true, animations: 'disabled' })
 })

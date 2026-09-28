@@ -1,5 +1,7 @@
 ---
 import ResumeSection from './ResumeSection.astro';
+import Heading from './Heading.astro';
+import Prose from './Prose.astro';
 
 interface Props {
   company: string;
@@ -10,10 +12,9 @@ const { company, time } = Astro.props;
 ---
 
 <ResumeSection>
-  <header>
-    <!-- biome-ignore lint/a11y/useHeadingContent: content provided via set:html -->
-    <h2 set:html={company} />
+  <header class="resume-role">
+    <Heading level={2} class="resume-heading"><Fragment set:html={company} /></Heading>
     <time>{time}</time>
   </header>
-  <p><slot /></p>
+  <Prose class="resume-description"><slot /></Prose>
 </ResumeSection>
