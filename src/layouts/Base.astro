@@ -7,6 +7,7 @@ import {
   bodyPaddingBlockEnd,
   bodyPaddingInlineStart,
   bodyPaddingInlineEnd,
+  printBodyPaddingBlockStart,
 } from "../config/layout";
 import BackArrow from "../components/BackArrow.astro";
 import Tombstone from "../components/Tombstone.astro";
@@ -112,6 +113,10 @@ const { title, description, ...attrs } = Astro.props;
     header {
       display: none;
     }
+
+    body {
+      padding-block-start: var(--printBodyPaddingBlockStart);
+    }
   }
 </style>
 
@@ -179,6 +184,7 @@ const { title, description, ...attrs } = Astro.props;
     --bodyPaddingBlockEnd: ${bodyPaddingBlockEnd};
     --bodyPaddingInlineStart: ${bodyPaddingInlineStart};
     --bodyPaddingInlineEnd: ${bodyPaddingInlineEnd};
+    --printBodyPaddingBlockStart: ${printBodyPaddingBlockStart};
   }
 `}></style>
 
