@@ -2,13 +2,17 @@ import { test as base, expect } from '@playwright/test'
 
 export interface VisualOptions {
   route: string
+  media: 'screen' | 'print'
 }
 
 const test = base.extend<VisualOptions>({
   route: ['/', { option: true }],
+  media: ['screen', { option: true }],
 })
 
-test('page appearance', async ({ page, route }) => {
+test('page appearance', async ({ page, route, media }) => {
+  await page.emulateMedia({ media })
+
   const response = await page.goto(route)
   expect(response?.status()).toBe(200)
 
@@ -28,6 +32,14 @@ test('page appearance', async ({ page, route }) => {
     viewportWidth: window.innerWidth,
   }))
   expect(contentWidth, 'Page content should fit the viewport').toBeLessThanOrEqual(viewportWidth)
+
+  if (media === 'print') {
+    const { contentHeight, viewportHeight } = await page.evaluate(() => ({
+      contentHeight: document.body.getBoundingClientRect().bottom,
+      viewportHeight: window.innerHeight,
+    }))
+    expect(contentHeight, 'Printed page should fit on one page').toBeLessThanOrEqual(viewportHeight)
+  }
 
   await expect(page).toHaveScreenshot('page.png', { fullPage: true, animations: 'disabled' })
 })

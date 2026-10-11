@@ -30,6 +30,7 @@ export default defineConfig({
         light: 'material-theme-lighter',
         dark: 'material-theme-darker',
       },
+      defaultColor: 'light-dark()',
     },
   },
   integrations: [svelte(), mdx()],

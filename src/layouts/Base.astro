@@ -1,12 +1,13 @@
 ---
 import { black, white, green, red, purple } from "../config/colors";
-import { rootFontSize, prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
+import { rootFontSize, printRootFontSize, prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
 import {
   bodyGap,
   bodyPaddingBlockStart,
   bodyPaddingBlockEnd,
   bodyPaddingInlineStart,
   bodyPaddingInlineEnd,
+  printBodyPaddingBlockStart,
 } from "../config/layout";
 import BackArrow from "../components/BackArrow.astro";
 import Tombstone from "../components/Tombstone.astro";
@@ -112,6 +113,10 @@ const { title, description, ...attrs } = Astro.props;
     header {
       display: none;
     }
+
+    body {
+      padding-block-start: var(--printBodyPaddingBlockStart);
+    }
   }
 </style>
 
@@ -160,6 +165,13 @@ const { title, description, ...attrs } = Astro.props;
       --headingFontWeight: ${headingFontWeight.dark};
     }
   }
+
+  @media print {
+    :root {
+      font-size: ${printRootFontSize};
+      --headingFontWeight: ${headingFontWeight.light};
+    }
+  }
 `}></style>
 
 <!--
@@ -172,6 +184,7 @@ const { title, description, ...attrs } = Astro.props;
     --bodyPaddingBlockEnd: ${bodyPaddingBlockEnd};
     --bodyPaddingInlineStart: ${bodyPaddingInlineStart};
     --bodyPaddingInlineEnd: ${bodyPaddingInlineEnd};
+    --printBodyPaddingBlockStart: ${printBodyPaddingBlockStart};
   }
 `}></style>
 
@@ -184,20 +197,20 @@ const { title, description, ...attrs } = Astro.props;
   }
 
   :root {
-    --fg: var(--black);
-    --bg: var(--white);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --fg: var(--white);
-      --bg: var(--black);
-    }
+    --fg: light-dark(var(--black), var(--white));
+    --bg: light-dark(var(--white), var(--black));
   }
 
   :root {
     color: var(--fg);
     background: var(--bg);
+  }
+
+  @media print {
+    :root {
+      color-scheme: light;
+      background: none;
+    }
   }
 </style>
 
