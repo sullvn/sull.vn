@@ -112,11 +112,6 @@ const { title, description, ...attrs } = Astro.props;
     header {
       display: none;
     }
-
-    body {
-      padding: 0;
-      min-height: auto;
-    }
   }
 </style>
 
@@ -169,6 +164,7 @@ const { title, description, ...attrs } = Astro.props;
   @media print {
     :root {
       font-size: ${printRootFontSize};
+      --headingFontWeight: ${headingFontWeight.light};
     }
   }
 `}></style>
@@ -195,20 +191,20 @@ const { title, description, ...attrs } = Astro.props;
   }
 
   :root {
-    --fg: var(--black);
-    --bg: var(--white);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --fg: var(--white);
-      --bg: var(--black);
-    }
+    --fg: light-dark(var(--black), var(--white));
+    --bg: light-dark(var(--white), var(--black));
   }
 
   :root {
     color: var(--fg);
     background: var(--bg);
+  }
+
+  @media print {
+    :root {
+      color-scheme: light;
+      background: none;
+    }
   }
 </style>
 

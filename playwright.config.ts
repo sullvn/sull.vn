@@ -62,8 +62,9 @@ const visualCases: VisualCase[] = [
     route: '/resume',
     browserName: 'chromium',
     width: 716,
-    height: 1026,
-    colorScheme: 'light',
+    height: 1045,
+    // Test print media forces light mode
+    colorScheme: 'dark',
     media: 'print',
   },
 ]
