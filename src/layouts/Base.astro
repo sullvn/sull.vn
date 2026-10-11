@@ -1,6 +1,6 @@
 ---
 import { black, white, green, red, purple } from "../config/colors";
-import { rootFontSize, prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
+import { rootFontSize, printRootFontSize, prose, headings, backArrow, notFound, headingFontWeight } from "../config/typography";
 import {
   bodyGap,
   bodyPaddingBlockStart,
@@ -112,6 +112,11 @@ const { title, description, ...attrs } = Astro.props;
     header {
       display: none;
     }
+
+    body {
+      padding: 0;
+      min-height: auto;
+    }
   }
 </style>
 
@@ -158,6 +163,12 @@ const { title, description, ...attrs } = Astro.props;
   @media (prefers-color-scheme: dark) {
     :root {
       --headingFontWeight: ${headingFontWeight.dark};
+    }
+  }
+
+  @media print {
+    :root {
+      font-size: ${printRootFontSize};
     }
   }
 `}></style>

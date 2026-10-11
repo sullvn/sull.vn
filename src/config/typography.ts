@@ -38,6 +38,26 @@ export const baseFontSizePx = 17
  */
 export const rootFontSize = `${baseFontSizePx / 16}rem`
 
+/**
+ * Base font size when printing (px)
+ *
+ *
+ * Paper is read closer than a screen, so a smaller base
+ * size reads comfortably and fits more on a page.
+ *
+ */
+export const printFontSizePx = 13
+
+/**
+ * Root font size when printing (in non-adjusted rem)
+ *
+ *
+ * Same approach as `rootFontSize`, to respect user font
+ * preferences.
+ *
+ */
+export const printRootFontSize = `${printFontSizePx / 16}rem`
+
 interface Typography {
   fontSize: string
   lineHeight: string

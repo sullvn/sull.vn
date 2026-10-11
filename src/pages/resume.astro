@@ -111,45 +111,43 @@ import EducationSection from '../components/EducationSection.astro';
     display: none;
   }
 
-  @container (max-width: 640px) {
-    article :global(wbr) {
-      display: inline;
-    }
-
-    article {
-      grid-template-columns: min-content 1fr;
-      grid-template-rows: repeat(10, auto);
-    }
-
-    article :global(svg) {
-      display: none;
-    }
-
-    .resume-name {
-      font-size: 12cqi;
-      margin-bottom: 1em;
-
-      div:has(> &) {
-        grid-column-start: span 2;
-        justify-self: center;
+  @media screen {
+    @container (max-width: 640px) {
+      article :global(wbr) {
+        display: inline;
       }
-    }
 
-    article :global(section:last-of-type header) {
-      justify-self: center;
-      text-align: center;
-    }
+      article {
+        grid-template-columns: min-content 1fr;
+        grid-template-rows: repeat(10, auto);
+      }
 
-    nav {
-      grid-column-start: span 2;
+      article :global(svg) {
+        display: none;
+      }
+
+      .resume-name {
+        font-size: 12cqi;
+        margin-bottom: 1em;
+
+        div:has(> &) {
+          grid-column-start: span 2;
+          justify-self: center;
+        }
+      }
+
+      article :global(section:last-of-type header) {
+        justify-self: center;
+        text-align: center;
+      }
+
+      nav {
+        grid-column-start: span 2;
+      }
     }
   }
 
   @media print {
-    article {
-      --proseFontSize: 13px;
-    }
-
     :global(footer) {
       display: none;
     }
