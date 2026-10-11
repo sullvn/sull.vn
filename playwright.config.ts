@@ -4,7 +4,17 @@ import type { VisualOptions } from './tests/visual.spec'
 const previewPort = 4322
 const previewURL = `http://127.0.0.1:${previewPort}`
 
-const visualCases = [
+interface VisualCase {
+  name: string
+  route: string
+  browserName: 'chromium' | 'firefox' | 'webkit'
+  width: number
+  colorScheme: 'light' | 'dark'
+  height?: number
+  media?: 'screen' | 'print'
+}
+
+const visualCases: VisualCase[] = [
   {
     name: 'home-chromium-1280-light',
     route: '/',
@@ -47,7 +57,16 @@ const visualCases = [
     width: 400,
     colorScheme: 'light',
   },
-] as const
+  {
+    name: 'resume-chromium-print-a4',
+    route: '/resume',
+    browserName: 'chromium',
+    width: 716,
+    height: 1026,
+    colorScheme: 'light',
+    media: 'print',
+  },
+]
 
 export default defineConfig<VisualOptions>({
   testDir: './tests',
@@ -56,15 +75,18 @@ export default defineConfig<VisualOptions>({
   use: {
     baseURL: previewURL,
   },
-  projects: visualCases.map(({ name, route, browserName, width, colorScheme }) => ({
-    name,
-    use: {
-      route,
-      browserName,
-      viewport: { width, height: 800 },
-      colorScheme,
-    },
-  })),
+  projects: visualCases.map(
+    ({ name, route, browserName, width, height = 800, colorScheme, media = 'screen' }) => ({
+      name,
+      use: {
+        route,
+        media,
+        browserName,
+        viewport: { width, height },
+        colorScheme,
+      },
+    }),
+  ),
   webServer: {
     command: `pnpm exec astro build && pnpm exec astro preview --port ${previewPort} --ignore-lock`,
     url: previewURL,
