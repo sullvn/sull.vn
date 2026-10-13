@@ -7,6 +7,7 @@ use std::num::ParseIntError;
 /// ```
 /// assert_eq!(smoke::greet("Ada"), "Hello, Ada!", "greets by name");
 /// ```
+///
 #[must_use]
 pub fn greet(name: &str) -> String {
     format!("Hello, {name}!")
@@ -23,6 +24,7 @@ pub fn sum(values: &[f64]) -> f64 {
 /// # Errors
 ///
 /// If `s` is not a number from 0 to 255.
+///
 pub fn parse_byte(s: &str) -> Result<u8, ParseIntError> {
     s.parse()
 }
