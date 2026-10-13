@@ -1,4 +1,3 @@
-# Cargo.toml can't hold these options and silently ignores them if moved there.
 allow-unwrap-in-tests = true
 allow-expect-in-tests = true
 allow-panic-in-tests = true

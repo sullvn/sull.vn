@@ -5,7 +5,15 @@ resolver = "3"
 [workspace.package]
 edition = "2024"
 
+#
+# Lints
+#
+# Strictness is turned all the way up.
+#
+
 [workspace.lints.rust]
+# Groups need -1 priority so later, more specific rules
+# can fine tune them
 let_underscore = { level = "warn", priority = -1 }
 rust_2018_idioms = { level = "warn", priority = -1 }
 unused = { level = "warn", priority = -1 }
@@ -18,29 +26,29 @@ unused_qualifications = "warn"
 [workspace.lints.clippy]
 pedantic = { level = "warn", priority = -1 }
 nursery = { level = "warn", priority = -1 }
-redundant_pub_crate = "allow" # contradicts `unreachable_pub`
-as_conversions = "warn"
-exit = "warn"
-expect_used = "warn"
-indexing_slicing = "warn"
-missing_assert_message = "warn"
-panic = "warn"
-panic_in_result_fn = "warn"
-string_slice = "warn"
-unreachable = "warn"
-unwrap_used = "warn"
 allow_attributes = "warn"
 allow_attributes_without_reason = "warn"
+as_conversions = "warn"
+clone_on_ref_ptr = "warn"
 dbg_macro = "warn"
+empty_structs_with_brackets = "warn"
+exit = "warn"
+expect_used = "warn"
+if_then_some_else_none = "warn"
+indexing_slicing = "warn"
+missing_assert_message = "warn"
+mod_module_files = "warn"
+panic = "warn"
+panic_in_result_fn = "warn"
 print_stderr = "warn"
 print_stdout = "warn"
-todo = "warn"
-unimplemented = "warn"
-clone_on_ref_ptr = "warn"
-empty_structs_with_brackets = "warn"
-if_then_some_else_none = "warn"
-mod_module_files = "warn"
+redundant_pub_crate = "allow" # Troublesome overlap with `unreachable_pub`
 redundant_type_annotations = "warn"
 str_to_string = "warn"
+string_slice = "warn"
+todo = "warn"
 try_err = "warn"
+unimplemented = "warn"
+unreachable = "warn"
 unused_result_ok = "warn"
+unwrap_used = "warn"
