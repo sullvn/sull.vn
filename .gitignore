@@ -1,16 +1,19 @@
-# build output
+# Astro build output
 dist/
 
-# generated types
+# Rust build output
+target/
+
+# Generated types
 .astro/
 
-# dependencies
+# JavaScript dependencies
 node_modules/
 
-# logs
+# Logs
 pnpm-debug.log*
 
-# environment variables
+# Environment variables
 .env
 .env.production
 
@@ -20,10 +23,7 @@ pnpm-debug.log*
 # direnv
 .direnv
 
-# crush
-.crush
-
-# claude
+# Claude
 .claude/worktrees/
 
 # Playwright MCP artifacts, like logged console output

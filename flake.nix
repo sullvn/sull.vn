@@ -2,17 +2,22 @@
   description = "sull.vn";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.systems.url = "github:nix-systems/default";
+  inputs.rust-overlay = {
+    url = "github:oxalica/rust-overlay";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
   inputs.flake-utils = {
     url = "github:numtide/flake-utils";
     inputs.systems.follows = "systems";
   };
 
   outputs =
-    { nixpkgs, flake-utils, ... }:
+    { nixpkgs, flake-utils, rust-overlay, ... }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        rust-bin = rust-overlay.lib.mkRustBin { } pkgs;
         fontconfigRules = "${pkgs.fontconfig.out}/share/fontconfig/conf.avail";
       in
         {
@@ -23,6 +28,7 @@
               pkgs.biome
               pkgs.actionlint
               pkgs.chromium
+              (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
             ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
               # WebKit needs a graphics driver even when running headless.
               pkgs.mesa.llvmpipeHook

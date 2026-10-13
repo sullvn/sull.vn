@@ -1,0 +1,6 @@
+[package]
+name = "smoke"
+edition.workspace = true
+
+[lints]
+workspace = true

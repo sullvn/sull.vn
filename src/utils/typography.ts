@@ -26,6 +26,7 @@ import { GOLDEN_RATIO } from './math.ts'
  *     10  |  4.000  ← base × ratio²
  *
  * @see https://spencermortensen.com/articles/typographic-scale/
+ *
  */
 export function typographyScale(i: number, options: TypographyScaleOptions): number {
   const { base, ratio, notes } = options

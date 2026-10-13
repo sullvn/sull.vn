@@ -7,6 +7,28 @@ description: Code quality standards to apply when writing or reviewing code.
 
 Write comments that explain unusual logic or provide high-level summaries. Avoid low-value comments that merely restate what the code does.
 
+When a comment has more than one paragraph, end it with an empty comment line too. This applies to every language and comment style:
+
+```ts
+/**
+ * Root font size
+ *
+ * Set in `rem` to respect user font preferences.
+ *
+ */
+```
+
+```rust
+/// Parses a decimal byte.
+///
+/// # Errors
+///
+/// If `s` is not a number from 0 to 255.
+///
+```
+
+Single-paragraph comments, even multi-line ones, don't get the trailing empty line.
+
 ## Organization
 
 Sort module-scope declarations with exports first, then non-exports. Within each group, sort topologically—a function should appear before the functions or constants that use it.

@@ -95,6 +95,7 @@ const { title, description, ...attrs } = Astro.props;
      *
      * Use `svh` as it allows the footer to display over any bottom browser
      * interface elements
+     *
      */
     min-height: 100svh;
   }
@@ -105,6 +106,7 @@ const { title, description, ...attrs } = Astro.props;
      *
      * An alternative could be to expand the footer instead, and
      * have the footer's tombstone aligned to the bottom.
+     *
      */
     flex-grow: 1;
   }
@@ -232,6 +234,7 @@ const { title, description, ...attrs } = Astro.props;
      *
      * Makes it way easier to align text with other elements
      * along the vertical axis.
+     *
      */
     text-box-edge: cap alphabetic;
     text-box-trim: trim-both;
@@ -254,6 +257,7 @@ const { title, description, ...attrs } = Astro.props;
      * System font stack
      *
      * See: https://systemfontstack.com
+     *
      */
     font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
 
@@ -264,6 +268,7 @@ const { title, description, ...attrs } = Astro.props;
      * - Other operating systems
      *
      * See: https://dbushell.com/2024/11/05/webkit-font-smoothing/
+     *
      */
     -webkit-font-smoothing: antialiased;
 
@@ -286,6 +291,7 @@ const { title, description, ...attrs } = Astro.props;
     * configured, because lightningcss's compat data
     * wrongly believes Safari supports the unprefixed
     * property.
+    *
     */
     -webkit-text-size-adjust: 100%;
   }
@@ -302,6 +308,7 @@ const { title, description, ...attrs } = Astro.props;
      * Omit headers (h1, etc) as hyphens were too aggressive
      * in babble and resume headers, while not really helping in
      * practice. Header titles don't seem to have problematic text.
+     *
      */
     hyphens: auto;
   }
