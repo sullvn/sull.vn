@@ -13,6 +13,7 @@ Everything should be as simple, ergonomic, understandable, modern, and strict as
 Decisions so far:
 
 - Test page lives at `/rust-wasm-test`.
+- The workspace will also hold native crates, so nothing assumes every crate targets wasm: the integration builds only crates that depend on wasm-bindgen, lints suit native code too, and size settings live in a wasm-only profile.
 - Use the latest stable Rust, pinned by `flake.lock`.
 - Update the project flake as needed.
 - No supply-chain checks (`cargo-deny`, `cargo-shear`) yet.
@@ -23,11 +24,11 @@ Decisions so far:
 
 1. **Update dependencies:** `nix flake update`, bump astro to 7.3.8 (brings Vite's security fix).
 2. **CI and deploys:** run CI on pushes to `main` too (so caches are shared), deploy previews and production from GitHub Actions with `cloudflare/wrangler-action`, turn off Cloudflare's own builds.
-3. **Rust workspace:** rust-overlay toolchain from `rust-toolchain.toml` (`channel = "stable"`), `wasm-bindgen-cli` matched to `Cargo.lock`, workspace `Cargo.toml` with strict lints, rustfmt/clippy config, `test:cargo` script with `--target host-tuple`, `Swatinem/rust-cache` in CI.
-4. **Astro integration:** `integrations/rust.ts` builds crates with `cargo` + `wasm-bindgen`, fixes Astro's prerender wasm bug, rebuilds on Rust edits in dev; `#rust/*` import alias; `svelte-check`.
-5. **Test crate and page:** `crates/smoke`, `/rust-wasm-test` page using it at build time, in a client script, and in a Svelte island; Playwright test in Chromium, Firefox, and WebKit.
+3. **Rust workspace and test crate:** rust-overlay toolchain from `rust-toolchain.toml` (`channel = "stable"`), `wasm-bindgen-cli` matched to `Cargo.lock`, workspace `Cargo.toml` with strict lints and a `wasm` profile, `clippy.toml`, `crates/smoke` with native tests, `test:cargo` script, `Swatinem/rust-cache` in CI.
+4. **Astro integration:** `src/integrations/rust.ts` builds the wasm-bindgen crates with `cargo` + `wasm-bindgen`, fixes Astro's prerender wasm bug, rebuilds on Rust edits in dev; `#rust/*` import alias.
+5. **Test page:** `/rust-wasm-test` uses `crates/smoke` at build time and in a client `<script>`; Playwright test in Chromium, Firefox, and WebKit.
 
-Optional, after measuring: `magic-nix-cache-action` for the Rust toolchain, `CARGO_PROFILE_DEV_DEBUG=0` in CI, migrating from Pages to Workers static assets.
+Then, only after measuring: [optional extras](#optional-explore-after-measuring).
 
 ## Implementation steps (detailed)
 
@@ -50,7 +51,7 @@ Useful on its own, before any Rust: the existing Astro image cache is never shar
 
   ```yaml
   - name: Deploy
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'push' || !github.event.pull_request.head.repo.fork
     uses: cloudflare/wrangler-action@<sha> # v4.1.3
     with:
       apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -60,8 +61,9 @@ Useful on its own, before any Rust: the existing Astro image cache is never shar
   ```
 
   - `main` deploys production; any other branch gets a `<branch>.sullvn.pages.dev` preview.
-  - The `if` skips fork and Dependabot PRs, which can't read secrets.
+  - The `if` skips fork PRs, which can't read secrets. The repo has no Dependabot config; if one is added, its PRs also can't read secrets and need `github.actor != 'dependabot[bot]'`.
   - Deploys only happen when tests pass.
+  - Deploying from the test job, rather than a separate one, avoids passing `dist/` between jobs as an artifact.
 
 #### Manual steps (owner)
 
@@ -71,34 +73,33 @@ Useful on its own, before any Rust: the existing Astro image cache is never shar
 
 Trade-off: the Cloudflare bot's PR comment and check run become a GitHub Deployment link.
 
-### 3. Rust workspace
+### 3. Rust workspace and test crate
 
 #### `flake.nix`
 
-Add the rust-overlay input, with its nixpkgs following ours, and apply its overlay. Add to the devShell:
+Add the rust-overlay input, with its nixpkgs following ours. No overlay: `rust-overlay.lib.mkRustBin { } pkgs` gives the same `rust-bin` on the existing `nixpkgs.legacyPackages`, so `pkgs` doesn't need re-importing with `overlays` (tested: evaluates to Rust 1.99.0 on aarch64-linux). Add to the devShell:
 
 ```nix
 let
+  inherit (pkgs) lib;
+  rust-bin = rust-overlay.lib.mkRustBin { } pkgs;
   # wasm-bindgen-cli must match the wasm-bindgen crate in Cargo.lock exactly.
   # Evaluation fails if nixpkgs has no package for that version.
-  wasmBindgen = pkgs.lib.findFirst (p: p.name == "wasm-bindgen") (throw "wasm-bindgen is not in Cargo.lock") (
-    builtins.fromTOML (builtins.readFile ./Cargo.lock)
-  ).package;
-  wasm-bindgen-cli =
-    pkgs."wasm-bindgen-cli_${builtins.replaceStrings [ "." ] [ "_" ] wasmBindgen.version}";
+  wasmBindgen = lib.findFirst (p: p.name == "wasm-bindgen") (throw "wasm-bindgen is not in Cargo.lock")
+    (lib.importTOML ./Cargo.lock).package;
+  wasm-bindgen-cli = pkgs."wasm-bindgen-cli_${lib.replaceStrings [ "." ] [ "_" ] wasmBindgen.version}";
 in
 # ...
 packages = [
   # ...existing packages
-  (pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
+  (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
   wasm-bindgen-cli
-  pkgs.binaryen # wasm-opt
 ];
 ```
 
-`Cargo.lock` must be committed (and tracked by git) for the flake to read it.
+`Cargo.lock` must be committed (and tracked by git) for the flake to read it. Reading the version from `Cargo.lock` means it lives in one place; the cost is that the lockfile must be tracked, `.envrc` must watch it, and a crate depending on wasm-bindgen must exist from this step on.
 
-**Update flow:** `nix flake update` brings the latest stable Rust (rust-overlay) and the latest `wasm-bindgen-cli` (nixpkgs). Then set the `=` pin on wasm-bindgen in `Cargo.toml` to the nixpkgs version. If they disagree, `nix develop` fails with an error listing the versions nixpkgs has.
+**Update flow:** `nix flake update` brings the latest stable Rust (rust-overlay) and the latest `wasm-bindgen-cli` (nixpkgs). Then `cargo update -p wasm-bindgen --precise <nixpkgs version>`. If `Cargo.lock` names a version nixpkgs lacks (say, after a plain `cargo update`), `nix develop` fails with an error listing the versions nixpkgs has.
 
 #### `rust-toolchain.toml`
 
@@ -115,29 +116,137 @@ profile = "minimal"
 #### `Cargo.toml` (repo root, next to `package.json`)
 
 - `[workspace]`: `members = ["crates/*"]`, `resolver = "3"`.
-- `[workspace.package]`: `edition = "2024"`, `publish = false`. No `rust-version`.
-- `[workspace.dependencies]`: `wasm-bindgen = "=0.2.129"`.
-- `[workspace.lints.rust]`: `unsafe_code = "forbid"`, `missing_docs`, `missing_debug_implementations`, `unreachable_pub`, `unused_qualifications`, `rust_2018_idioms`, `let_underscore_drop`, `meta_variable_misuse`, `redundant_lifetimes`, `single_use_lifetimes`, `trivial_casts`, `trivial_numeric_casts`, `unit_bindings`, `unnameable_types`, `unused_import_braces`, `unused_lifetimes`, `unused_macro_rules`.
-- `[workspace.lints.clippy]`:
-  - Groups: `pedantic`, `nursery`, `cargo` (each `priority = -1`).
-  - Restriction lints: `allow_attributes`, `allow_attributes_without_reason`, `as_conversions`, `clone_on_ref_ptr`, `dbg_macro`, `empty_structs_with_brackets`, `expect_used`, `get_unwrap`, `if_then_some_else_none`, `indexing_slicing`, `missing_assert_message`, `mod_module_files`, `panic`, `print_stderr`, `print_stdout`, `redundant_type_annotations`, `str_to_string`, `string_slice`, `tests_outside_test_module`, `todo`, `try_err`, `undocumented_unsafe_blocks`, `unimplemented`, `unused_result_ok`, `unwrap_used`.
-  - Turned off, each with a comment: `missing_const_for_fn` (wasm-bindgen rejects `const fn`), `multiple_crate_versions` (wasm-bindgen's own dependencies trigger it).
-- `[profile.release]`: `opt-level = "s"`, `lto = true`, `codegen-units = 1`, `strip = true`.
+- `[workspace.package]`: `edition = "2024"`. No `rust-version`. No `version`, which also makes every crate unpublishable (`"publish": []`; `cargo publish` refuses, tested), so no `publish = false`.
+- `[workspace.dependencies]`: `wasm-bindgen = "0.2"`. `Cargo.lock` is the only place the exact version lives, and the flake reads it from there. A minimum like `"0.2.129"` would repeat it, and would block `cargo update --precise` to an older version when nixpkgs lags.
+- `[profile.wasm]`: `inherits = "release"`, `opt-level = "s"`, `lto = true`, `codegen-units = 1`, `strip = true`. A custom profile, so native release builds keep Cargo's defaults (`opt-level = 3`); the integration builds with `--profile wasm` (tested; with `--target`, output lands in `target/wasm32-unknown-unknown/wasm/`). `strip` matters: without it the final wasm was 46% larger (see research).
+- Lints: groups wherever one exists, single lints only where no group covers them.
 
-Lints are warnings while working; `CARGO_BUILD_WARNINGS=deny` turns them into errors in `pnpm test` and CI.
+  ```toml
+  [workspace.lints.rust]
+  let_underscore = { level = "warn", priority = -1 }
+  rust_2018_idioms = { level = "warn", priority = -1 }
+  unused = { level = "warn", priority = -1 } # also enables the off-by-default unused_* lints
+  missing_debug_implementations = "warn"
+  missing_docs = "warn"
+  unreachable_pub = "warn"
+  unsafe_code = "forbid"
+  unused_qualifications = "warn"
+
+  [workspace.lints.clippy]
+  pedantic = { level = "warn", priority = -1 }
+  nursery = { level = "warn", priority = -1 }
+  missing_const_for_fn = "allow" # wasm-bindgen rejects `const fn`, and workspace lints apply to every crate
+  redundant_pub_crate = "allow"  # contradicts `unreachable_pub`
+  # Restriction lints, cherry-picked (the group as a whole contradicts itself).
+  # Hidden panics, exits, and silent truncation (on wasm, a panic traps with no message):
+  as_conversions = "warn"
+  exit = "warn"
+  expect_used = "warn"
+  indexing_slicing = "warn"
+  missing_assert_message = "warn"
+  panic = "warn"
+  panic_in_result_fn = "warn"
+  string_slice = "warn"
+  unreachable = "warn"
+  unwrap_used = "warn"
+  # `#[expect]` with a reason instead of `#[allow]`:
+  allow_attributes = "warn"
+  allow_attributes_without_reason = "warn"
+  # Debug leftovers:
+  dbg_macro = "warn"
+  print_stderr = "warn"
+  print_stdout = "warn"
+  todo = "warn"
+  unimplemented = "warn"
+  # Style:
+  clone_on_ref_ptr = "warn"
+  empty_structs_with_brackets = "warn"
+  if_then_some_else_none = "warn"
+  mod_module_files = "warn"
+  redundant_type_annotations = "warn"
+  str_to_string = "warn"
+  try_err = "warn"
+  unused_result_ok = "warn"
+  ```
+
+  - **Groups:** rustc has no pedantic or "all" group, only topic groups, so the useful lints that belong to none are listed by hand. `rust_2018_idioms` is still the latest idioms group; 2021 and 2024 added none, and `rust_2024_compatibility` only helps migrate older code to 2024. Not clippy's `cargo` group: for unpublished crates its only lint that fires is `multiple_crate_versions`, which wasm-bindgen's own dependencies trigger.
+  - **`priority = -1` on every group, none on single lints.** Cargo orders the flags by priority and later flags win, so single lints override groups. Clippy's `lint_groups_priority` (an error by default) rejects any group at the same priority as any single lint in the table, even one outside the group.
+  - **Levels:** `warn`, so a half-finished edit still builds and reloads, and false positives can take a local `#[expect(clippy::x, reason = "...")]`. `CARGO_BUILD_WARNINGS=deny` turns every warning into an error in `pnpm test` and CI. `unsafe_code` is `forbid`, which no `#[allow]` can override; if a crate ever needs `unsafe`, change it to `deny` and add `#[expect(unsafe_code, reason = "...")]` where needed.
+  - **Restriction lints:** 25, grouped by purpose with a comment per group, chosen to suit native crates as well as wasm ones. `clippy.toml` relaxes `unwrap`, `expect`, `panic`, and indexing in tests; `unreachable` and `exit` have no such setting, but rarely appear in tests. `exit` doesn't fire in `main`.
+  - **Tests under these lints:** `missing_assert_message` and `panic_in_result_fn` also apply inside tests, and `clippy.toml` has no setting to relax either (tested for `panic_in_result_fn`). So every assertion carries a message, and a test that asserts doesn't return `Result`: it uses `.unwrap()` or `.expect()`, which tests allow, instead of `?`. If this proves noisy, relax them later.
+  - **Binaries:** `print_stdout`/`print_stderr` steer CLI output to `writeln!` on a locked `io::stdout()`, which returns an error on a closed pipe instead of panicking. A binary that prints a lot can take a crate-level `#![expect(clippy::print_stdout, reason = "...")]`.
+  - **Left out:** `tests_outside_test_module` fires on every test in a crate's `tests/` directory (tested), which native crates use for integration tests.
+  - **Overlaps aren't tracked.** rustc and clippy sometimes flag the same code twice; that's harmless and changes between releases. When two lints contradict each other, allow one with a comment saying why, like the two `allow`s above.
+
+#### `crates/smoke`
+
+```toml
+[package]
+name = "smoke"
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen.workspace = true
+
+[lints]
+workspace = true
+```
+
+One export per kind of value that crosses the boundary:
+
+- `greet`: strings
+- `sum(&[f64])`: typed arrays in, numbers out
+- `parse_byte`: `Result<u8, JsError>`, thrown as an exception in JS
+- `Counter`: a class with methods, for state
+
+**Thin wrappers.** Logic lives in plain Rust functions; `#[wasm_bindgen]` exports only convert at the boundary. Native tests can't call anything that creates a `JsValue` or `JsError`, so the logic must be reachable without them. `JsError` implements `From<E: std::error::Error>`, so a fallible export is one line:
+
+```rust
+/// Parses a decimal byte.
+///
+/// # Errors
+///
+/// If `s` is not a number from 0 to 255.
+#[wasm_bindgen]
+pub fn parse_byte(s: &str) -> Result<u8, JsError> {
+    Ok(parse(s)?)
+}
+
+fn parse(s: &str) -> Result<u8, ParseIntError> {
+    s.parse()
+}
+```
+
+Unit tests live in a `#[cfg(test)] mod tests` at the bottom of each file, plus doctests. They run natively via `cargo test`.
+
+**Who tests what:**
+
+- `cargo test` (native): the logic. Fast, no browser or Node.
+- Playwright (step 5): the boundary, meaning the real build crossing into JS in three engines, including errors arriving as JS exceptions and class state.
+- No `wasm-bindgen-test` for now; add it if crates later get heavy `web-sys` / `js-sys` code that needs fast Rust-level boundary tests.
 
 #### Other files
 
-- `rustfmt.toml`: `style_edition = "2024"`, `use_field_init_shorthand = true`, `use_try_shorthand = true` (stable options only).
+- No `rustfmt.toml`: every entry point (`cargo fmt`, rust-analyzer) passes the crate's edition, and every useful option is nightly-only. The `rustfmt` toolchain component stays, since `cargo fmt` runs it.
 - `clippy.toml`: `allow-unwrap-in-tests`, `allow-expect-in-tests`, `allow-panic-in-tests`, `allow-indexing-slicing-in-tests`, `avoid-breaking-exported-api = false`.
-- `.gitignore`: `target/`, `crates/*/pkg/`.
-- `.envrc`: `watch_file Cargo.lock`.
-- No `.cargo/config.toml`. In particular, no `[build] target = "wasm32-unknown-unknown"`: it would make plain `cargo test` build for wasm and stop native tests running. The integration passes `--target` explicitly.
+- `.gitignore`: `target/`, `crates/*/pkg/`. Biome already honours `.gitignore` (`vcs.useIgnoreFile`), so it skips both.
+- `tsconfig.json`: add `target` to `exclude`, next to `dist`. Its `include` is `**/*`, so TypeScript would otherwise walk the whole of `target/`, which has no TypeScript in it. `pkg/` stays included, since its `.d.ts` files are the types.
+- `.envrc`: `watch_file Cargo.lock`, since the devShell depends on it and nix-direnv only watches `flake.nix`, `flake.lock`, and `devshell.toml`.
 
 #### `package.json` scripts
 
-- `test:cargo`: `cargo fmt --check`, clippy (native `--all-targets` and `--target wasm32-unknown-unknown`), `cargo test`, `cargo doc --no-deps`, all with `CARGO_BUILD_WARNINGS=deny`. Added to `test`.
-  - The native clippy, test, and doc commands pass `--target host-tuple`. Without it, the wasm32 commands recompile every dependency including wasm-bindgen's proc-macros; with it, proc-macros and build scripts compile once and are shared by every command except the release build. `target/` shrinks from 351 MB to 223 MB, so the CI cache does too.
+- `test:cargo`, added to `test` before `test:astro`, so lint and native test failures show before `astro check` compiles the crates. pnpm runs scripts with `sh`, so one `export` covers every command:
+
+  ```json
+  "test:cargo": "export CARGO_BUILD_WARNINGS=deny && cargo fmt --check && cargo clippy --all-targets && cargo test"
+  ```
+
+  - One native clippy run covers every crate, native and wasm, including test code (`--all-targets`). A wasm32 run would fail on native-only crates, and on our wasm crates it reported the same as the native run (tested); wasm-bindgen's generated code isn't linted on either target. Add a wasm32 run for wasm crates only if they gain `cfg(target_arch = "wasm32")` code.
+  - No wasm build here: `astro check` and Playwright's `astro build` build the crates through the integration.
+  - No `cargo doc`: nobody reads the rustdoc HTML. Doc comments reach readers through wasm-bindgen's `.d.ts` and editor hovers, and `missing_docs`, clippy's doc lints, and doctests already check them. `cargo doc` would only add broken intra-doc link checks, at the cost of another compile.
 - `format`: also runs `cargo fmt`.
 
 #### CI caching
@@ -150,12 +259,10 @@ Add `Swatinem/rust-cache` (v2.9.2, pinned by SHA) to `checks.yaml`, after `Insta
   with:
     cmd-format: nix develop --no-update-lock-file -c {0}
     save-if: ${{ github.ref == 'refs/heads/main' }}
-    cache-bin: false
 ```
 
-- Caches `~/.cargo` and compiled dependencies in `target/`, keyed on the Rust version, `Cargo.lock`, `Cargo.toml`, `rust-toolchain.toml`, and `CARGO*`/`RUST*` env vars.
+- Caches `~/.cargo` and compiled dependencies in `target/`, keyed on the Rust version, `Cargo.lock`, `Cargo.toml`, `rust-toolchain.toml`, and `CARGO*`/`RUST*` env vars. Sets `CARGO_INCREMENTAL=0` itself.
 - `save-if` means only `main` saves; PRs restore `main`'s cache and don't fill the 10 GB limit.
-- Cargo 1.99 already disables incremental builds when `CI` is set, so no `CARGO_INCREMENTAL=0`.
 
 Expected CI time: about 75–90 s (vs. about 67 s today, and about 105–110 s with Rust and no caching). See research for the breakdown.
 
@@ -164,322 +271,176 @@ Expected CI time: about 75–90 s (vs. about 67 s today, and about 105–110 s w
 #### `package.json`
 
 ```jsonc
-"imports": { "#rust/*": "./crates/*/pkg/index.js" }   // import { add } from '#rust/smoke'
+"imports": { "#rust/*": "./crates/*/pkg/index.js" }   // import { greet } from '#rust/smoke'
 ```
 
-#### `integrations/rust.ts`
+#### `src/integrations/rust.ts`
 
-About 60 lines, registered in `astro.config.ts`.
+About 50 lines, registered in `astro.config.ts`. `src/integrations/` is where the site's last integration (`exportRoutes.ts`) lived.
 
 - **Build on `astro:config:setup`.** Runs for `dev`, `build`, and `sync` (which `astro check` runs first), so the generated package and its types exist before anything reads them. Skipped for `preview`.
-  1. `cargo metadata` lists the cdylib crates.
-  2. `cargo build --target wasm32-unknown-unknown` builds them (`--release` for `astro build`).
-  3. `wasm-bindgen --target bundler --out-name index` writes each crate's `pkg/`.
-  4. Release builds run `wasm-opt -Os` with the six default Rust wasm features enabled.
-- **Prerender fix.** A `configEnvironment` plugin inlines `.wasm` for every environment except `client`. File the Astro bug upstream and link it from a comment.
-- **Dev rebuilds on `astro:server:setup`.** Watch `crates/*/src` and `Cargo.toml`, rebuild without blocking the dev server, and coalesce saves made during a build into one more build. Log cargo errors; the page keeps the last good build. Vite picks up the regenerated `pkg/` and reloads.
-- **Config:** add `**/target/**` to `vite.server.watch.ignored`.
+  1. `cargo metadata --no-deps --format-version=1` lists the workspace's packages; the wasm crates are the ones that depend on `wasm-bindgen` (tested). If there are none, stop: a bare `cargo build` would build the whole workspace.
+  2. `cargo build --target wasm32-unknown-unknown --message-format=json-render-diagnostics -p <crate>…` (`--profile wasm` unless `dev`, which stays on debug so rebuilds stay fast as crates grow; `sync` builds the wasm profile too, so in `pnpm test` and CI the later `astro build` reuses `astro check`'s compile). Only wasm crates, because a native crate may not compile for wasm32. Cargo prints errors to stderr in its usual human format and only JSON messages on stdout (tested). Each `compiler-artifact` line with a `.wasm` filename is a cdylib crate, so a wasm-bindgen helper library without one is built but skipped; no crate-type filtering, no `-` → `_` name mapping.
+  3. `wasm-bindgen --target bundler --out-name index --out-dir <dirname(manifest_path)>/pkg` for each, on every build. It takes under 0.1 s per crate. The cost is an unneeded page reload in dev when an edit leaves a wasm crate unchanged (e.g. an edit to a native crate). If that gets annoying, skip artifacts cargo reports as `"fresh": true`, but only on dev rebuilds: after `astro dev`, `pkg/` holds debug output, and a later `astro build` whose wasm-profile artifact is still fresh would otherwise ship it.
+- **Prerender fix.** A `configEnvironment` plugin inlines `.wasm` for every environment except `client`. Written as one expression, which also avoids TS 7030 without an explicit `return undefined`:
+
+  ```ts
+  configEnvironment: (name) =>
+    name === 'client' ? undefined : { build: { assetsInlineLimit: (file) => file.endsWith('.wasm') || undefined } },
+  ```
+
+  File the Astro bug upstream and link it from a comment.
+- **Dev rebuilds on `astro:server:setup`.** On any `*.rs`, `Cargo.toml`, or `Cargo.lock` change from Vite's watcher (which already watches the project, so `build.rs` and new crates are covered too), rebuild without blocking the dev server. A rebuild runs the same three steps, so new crates are picked up. Two flags coalesce saves: `building` is set during a build, and a change while it's set only sets `dirty`; when the build finishes, it runs once more if `dirty` is set. No queue, no debounce timer. Cargo's errors reach the terminal through stderr. In `dev`, a failed build is only logged and the page keeps the last good build, so broken Rust never stops the dev server, even at startup. Elsewhere a failed build throws, so `astro build` and `astro check` fail. Vite picks up the regenerated `pkg/` and reloads.
+- **Config:** add `${root}target/**` to `vite.server.watch.ignored`, matching the existing `${root}**/dist/**` entry. The workspace has a single `target/`, at the root.
 
 Types come from wasm-bindgen's generated `index.d.ts`: no `.rs` imports, no hand-written type files, no wasm-pack, no wasm plugins.
 
-#### Svelte type checking
+**Usage rules** (from the prior design's testing), kept as a comment at the top of `src/integrations/rust.ts` so they outlive this plan:
 
-Add `svelte-check` as a `test:svelte` script, since `astro check` skips `.svelte` files.
+- No browser APIs in code that runs at build time (frontmatter, server render of `client:load` islands). Shared functions should take data and return plain values.
+- Always call imported functions directly; hot updates replace the module, so cached references go stale.
+- Frontmatter and client imports are separate instances that share no memory; pass state through the HTML.
 
-### 5. Test crate, page, and end-to-end test
+### 5. Test page and end-to-end test
 
-- **`crates/smoke`**, one export per kind of value that crosses the boundary:
-  - `add`: numbers
-  - `greet`: strings
-  - `sum(&[f64])`: typed arrays
-  - `parse_byte`: `Result<u8, JsError>`, thrown as an exception in JS
-  - `Counter`: a class with methods, for state
-- **Thin wrappers.** Logic lives in plain Rust functions; `#[wasm_bindgen]` exports only convert at the boundary. Native tests can't call anything that creates a `JsValue` or `JsError`, so the logic must be reachable without them:
+- **`src/pages/rust-wasm-test.astro`** uses `crates/smoke` two ways, which between them cover build time and the browser:
+  - in frontmatter, baked into the HTML at build time, including the thrown error's message
+  - in a plain `<script>`, which wires a `Counter` to a button: the same Vite wasm import, loaded in the browser
+  - No Svelte island: the site has no `.svelte` files yet, and an island's server render runs in the same environment as the frontmatter. Add one when real wasm code lives in islands.
+- **`tests/rust-wasm.spec.ts`** checks the build-time HTML, clicks the counter, and checks the error message. Runs as three new Playwright projects, one expression next to `visualCases.map`:
 
-  ```rust
-  /// Parses a decimal byte.
-  #[wasm_bindgen]
-  pub fn parse_byte(s: &str) -> Result<u8, JsError> {
-      parse(s).map_err(|e| JsError::new(&e.to_string()))
-  }
-
-  fn parse(s: &str) -> Result<u8, ParseIntError> {
-      s.parse()
-  }
+  ```ts
+  ...(['chromium', 'firefox', 'webkit'] as const).map((browserName) => ({
+    name: `rust-wasm-${browserName}`,
+    testMatch: 'rust-wasm.spec.ts',
+    use: { browserName },
+  })),
   ```
 
-- **Rust tests**, in a `#[cfg(test)] mod tests` at the bottom of each file (enforced by `tests_outside_test_module`), plus doctests. They run natively via `cargo test`, locally or through `pnpm test:cargo` in CI.
-- **Who tests what:**
-  - `cargo test` (native): the logic. Fast, no browser or Node.
-  - Playwright: the boundary, meaning the real build crossing into JS in three engines, including errors arriving as JS exceptions and class state.
-  - No `wasm-bindgen-test` for now; add it if crates later get heavy `web-sys` / `js-sys` code that needs fast Rust-level boundary tests.
+  The existing visual projects get `testMatch: 'visual.spec.ts'`.
 
 ### Optional: explore after measuring
 
-Only once real CI timings exist, and only if they justify the extra moving part:
+Only once real CI timings or real crates exist, and only if they justify the extra moving part:
 
-- **`DeterminateSystems/magic-nix-cache-action`** (v15). Caches Nix store paths that aren't on cache.nixos.org, which here is just the rust-overlay toolchain. It doesn't overlap with anything existing: `cachix/install-nix-action` only installs Nix, and cache.nixos.org (Nix's built-in binary cache) keeps serving everything nixpkgs builds. Estimated saving 10–15 s, unverified. Measure the toolchain setup time on the first runs; add it only if that's a meaningful share.
+- **`wasm-opt`** (binaryen, 90 MB in the devShell). Saved about 11% (1.7 KB) on the toy crate. If added: `wasm`-profile builds only, `-Os` with the six default Rust wasm target features enabled explicitly (see research).
+- **`.cargo/config.toml` with `build.target = "host-tuple"`.** Lets proc-macros and build scripts compile once and be shared between native and wasm32 commands; `target/` shrank from 351 MB to 223 MB. With rust-cache, cold builds only happen when dependencies change, and with clippy and tests both native the sharing gain is smaller. Costs a file and moves native output to `target/<host-tuple>/`. Not `target = "wasm32-unknown-unknown"`: it would make plain `cargo test` build for wasm.
+- **`DeterminateSystems/magic-nix-cache-action`** (v15). Caches Nix store paths that aren't on cache.nixos.org, which here is just the rust-overlay toolchain. It doesn't overlap with anything existing: `cachix/install-nix-action` only installs Nix, and cache.nixos.org keeps serving everything nixpkgs builds. Estimated saving 10–15 s, unverified. Measure the toolchain setup time on the first runs; add it only if that's a meaningful share.
 - **`CARGO_PROFILE_DEV_DEBUG=0`** as a CI env var: smaller `target/`, faster linking. rust-cache folds it into its key automatically.
 - **Workers static assets** instead of Pages (`wrangler deploy` with an `assets` directory, `wrangler preview` for PRs). Cloudflare now steers new projects to Workers, but it's a separate migration (URLs move to workers.dev) and not needed for Rust.
-- **`src/pages/rust-wasm-test.astro`** uses the crate three ways:
-  - in frontmatter, baked into the HTML at build time
-  - in a client `<script>`
-  - in a Svelte island, `src/components/RustCounter.svelte` with `client:load`
-  - It also shows the thrown error.
-- **`tests/rust-wasm.spec.ts`** checks the build-time HTML, clicks through the client script and the island, and checks the error message. Runs as three new Playwright projects (Chromium, Firefox, WebKit). The existing visual projects get `testMatch: 'visual.spec.ts'`.
 
 ## Research
 
-Researched 2026-10-12, by four parallel research passes (Rust workspace, wasm toolchain, Vite/Astro integration, Nix) plus follow-up prototypes. Versions and behaviour were checked against primary sources and, where noted, by running real builds in scratch projects on this machine (aarch64-linux, same arch as CI).
+Researched 2026-10-12, by four parallel research passes (Rust workspace, wasm toolchain, Vite/Astro integration, Nix) plus follow-up prototypes. Versions and behaviour were checked against primary sources and, where noted, by running real builds in scratch projects on this machine (aarch64-linux, same arch as CI). Facts that don't bear on a decision are left out.
 
 ### Ecosystem status
 
-- **rustwasm org sunset:** announced 2025-07-21 by Alex Crichton, archived September 2025. https://blog.rust-lang.org/inside-rust/2025/07/21/sunsetting-the-rustwasm-github-org/
-- **wasm-bindgen** moved to https://github.com/wasm-bindgen/wasm-bindgen (`rustwasm/wasm-bindgen` redirects). The org also holds `wasm-pack`, `walrus`, `weedle`, and two experimental repos with no releases, `js-bindgen` and `ts-gen`.
-  - Latest **0.2.129** (2026-09-25). Recent: 0.2.128 (09-04), 0.2.127 (08-08), 0.2.126 (06-24), 0.2.125 (06-12), 0.2.123 (06-08), 0.2.122 (05-22), 0.2.121 (05-07).
-  - Cadence is every 2–5 weeks. The 0.2.x series still has small breaking changes (0.2.122 and 0.2.123 had some).
-  - Library MSRV is 1.81 as of 0.2.129.
-  - Companion crates release in lockstep (all 2026-09-25): js-sys 0.3.106, web-sys 0.3.106, wasm-bindgen-futures 0.4.79, wasm-bindgen-test 0.3.79, wasm-bindgen-cli-support 0.2.129.
-  - wasm-bindgen 0.2.129 pulls in `syn v3.0.9`, so duplicate syn 2/3 versions are likely as crates are added.
-  - Releases: https://github.com/wasm-bindgen/wasm-bindgen/releases
-- **wasm-pack** was transferred, not archived: https://github.com/wasm-bindgen/wasm-pack, README says "maintained by drager".
-  - v0.15.0 (2026-05-15): wasm64, `--panic-unwind`, fixed npm installer. v0.14.0 (2026-01-20): any wasm target, `--profile`, `--split-linked-modules`. Before that v0.13.1 (2024-10-29). Last push 2026-08-12.
-  - What it adds, from its source: reads the wasm-bindgen version from `Cargo.lock` (`src/lockfile.rs`); uses a `wasm-bindgen` on `PATH` only if `--version` matches exactly, otherwise downloads a prebuilt binary, then falls back to `cargo install` (`src/install/mod.rs`); `--mode no-install` disables downloads; downloads binaryen (master pins `version_130`) and runs `wasm-opt` on release builds, taking any `wasm-opt` on `PATH` without a version check (`src/wasm_opt.rs`); writes `package.json` and README for npm.
-  - In a Nix setup the runtime downloads are a downside.
-- **gloo** moved to ranile/gloo (not archived); 0.12.0 (2026-03-25), first release since 2023. crates.io metadata still points at the old rustwasm URL.
-- **console_error_panic_hook** is archived: last release 0.1.7 (2021-10-11).
-- **cargo-component** is dormant: last release v0.21.1 (April 2025), last push 2025-07-14.
-- **Component model / jco** is active: `rolldown-plugin-jco` v0.2.0 (2026-10-08), preview2-shim 0.28 and preview3-shim 0.9 (2026-10-06). For browser + Node it means WIT files, WASI shims, and a transpile step; DOM access is awkward. Not tested; not the simpler option today.
-- **Trunk** v0.22.0-rc.2 (2026-10-06) is for Rust-only apps, not this use case.
+- **rustwasm org sunset:** announced 2025-07-21, archived September 2025. https://blog.rust-lang.org/inside-rust/2025/07/21/sunsetting-the-rustwasm-github-org/
+- **wasm-bindgen** moved to https://github.com/wasm-bindgen/wasm-bindgen. Latest **0.2.129** (2026-09-25), released every 2–5 weeks; the 0.2.x series still has small breaking changes (0.2.122, 0.2.123). Library MSRV 1.81. Companion crates (js-sys, web-sys, wasm-bindgen-futures, wasm-bindgen-test) release in lockstep. 0.2.129 pulls in `syn v3`, so duplicate syn 2/3 versions are likely as crates are added.
+- **wasm-pack** (v0.15.0, 2026-05-15) is maintained. What it adds, from its source: reads the wasm-bindgen version from `Cargo.lock`, uses a matching `wasm-bindgen` on `PATH` or downloads one, downloads binaryen and runs `wasm-opt` on release builds, and writes npm `package.json`/README. In a Nix setup the downloads are a downside and the rest is a few lines in the integration.
+- **console_error_panic_hook** is archived (last release 2021); see Panics.
+- **Component model / jco:** active, but for browser + Node it means WIT files, WASI shims, and a transpile step; DOM access is awkward. Not the simpler option today.
 
 ### Rust toolchain and language
 
-- Current stable: **1.99.0** (2026-10-01; manifest says `1.99.0 (b940084d7 2026-09-28)`). 2026 point releases: 1.98.1 (Sep 3), 1.97.1, 1.96.1. https://blog.rust-lang.org/releases/, https://static.rust-lang.org/dist/channel-rust-stable.toml
-- Edition **2024** (shipped in 1.85) is still the latest. No 2027 edition is announced: the edition guide has no 2027 chapter, none of the 81 goals in the 2026 Project Goals slate is an edition goal (https://goals.rust-lang.org/2026/goals.html), and an internals thread still debates 2027 vs 2028 (https://internals.rust-lang.org/t/we-have-only-two-years-to-prepare-the-rust-2027-edition/22494).
-- Recent changes from https://raw.githubusercontent.com/rust-lang/rust/stable/RELEASES.md:
-  - 1.97 stabilized Cargo `build.warnings` (`CARGO_BUILD_WARNINGS=deny`).
-  - 1.98: "UNSAFE_CODE lint now emitted consistently for all unsafe attributes" (re-tested against wasm-bindgen; still fine).
-  - 1.99 added a built-in `debug` profile and turns off incremental builds when the `CI` env var is set.
-- **Resolver 3** is the edition-2024 default but a virtual workspace has no package edition, so set it explicitly. It sets `incompatible-rust-versions = "fallback"`: prefers dependency versions whose `rust-version` fits, never errors. Clippy also uses `rust-version` as its MSRV. Without `rust-version`, resolution uses the toolchain in use. https://doc.rust-lang.org/cargo/reference/resolver.html
-- **`CARGO_BUILD_WARNINGS=deny`** beats `RUSTFLAGS=-Dwarnings`: RUSTFLAGS invalidates the build cache, applies to dependencies' build scripts, and overrides config rustflags. Tested: fails `cargo clippy` with "warnings are denied by `build.warnings` configuration" (exit 101), and fails `cargo doc` on a broken intra-doc link, so `RUSTDOCFLAGS=-D warnings` isn't needed. Keep it out of `.cargo/config.toml` so local work isn't blocked. https://doc.rust-lang.org/cargo/reference/config.html#buildwarnings
-- Cargo's own `[lints.cargo]` is still nightly-only. https://doc.rust-lang.org/cargo/reference/lints.html
-- Lints are not inherited implicitly; each crate needs `[lints] workspace = true`.
-- `#[expect]` and `reason = "..."` stable since 1.81. Pairing `clippy::allow_attributes` with `allow_attributes_without_reason` was tested: both fire on a bare `#[allow]`.
-- **rustfmt** (https://github.com/rust-lang/rustfmt/blob/main/Configurations.md; stable rustfmt prints "unstable features are only available in nightly channel" for nightly ones):
-  - Stable: `style_edition`, `edition`, `use_field_init_shorthand`, `use_try_shorthand`, `newline_style`, `max_width`, `reorder_imports`.
-  - Nightly-only: `imports_granularity` (#4991), `group_imports` (#5083), `reorder_impl_items` (#3363), `wrap_comments` (#3347), `format_code_in_doc_comments` (#3348), `imports_layout` (#3361).
-  - `style_edition` defaults to 2015 for bare `rustfmt`; `cargo fmt` passes the crate edition. Setting it keeps editors consistent.
+- Current stable: **1.99.0** (2026-10-01). Edition **2024** is the latest; no 2027 edition is announced.
+- 1.97 stabilized Cargo `build.warnings` (`CARGO_BUILD_WARNINGS=deny`). 1.98 made `unsafe_code` fire consistently for unsafe attributes (re-tested against wasm-bindgen; still fine). 1.99 turns off incremental builds when `CI` is set.
+- **Resolver 3** is the edition-2024 default but a virtual workspace has no package edition, so set it explicitly. Without `rust-version`, resolution and clippy's MSRV use the toolchain in use. https://doc.rust-lang.org/cargo/reference/resolver.html
+- **`CARGO_BUILD_WARNINGS=deny`** beats `RUSTFLAGS=-Dwarnings`: RUSTFLAGS invalidates the build cache, applies to dependencies' build scripts, and overrides config rustflags. Tested: fails `cargo clippy` (exit 101) and fails `cargo doc` on a broken intra-doc link, so `RUSTDOCFLAGS` isn't needed. Kept out of config so local work isn't blocked.
+- Cargo's `[lints.cargo]` is still nightly-only. Lints aren't inherited implicitly; each crate needs `[lints] workspace = true`.
+- `#[expect]` and `reason = "..."` stable since 1.81. `clippy::allow_attributes` with `allow_attributes_without_reason` was tested: both fire on a bare `#[allow]`.
+- **rustfmt:** `imports_granularity`, `group_imports`, `reorder_impl_items`, `wrap_comments`, `format_code_in_doc_comments` are all nightly-only. `style_edition` defaults to 2015 for bare `rustfmt`, but `cargo fmt` and rust-analyzer pass the crate's edition, so no `rustfmt.toml` is needed.
 - **clippy.toml:** unknown keys error, so all chosen keys are verified accepted by clippy 1.99. `check-private-items = true` made `missing_panics_doc` fire on `assert_eq!` inside tests; left off.
-- **rust-toolchain.toml:** rustup accepts `channel = stable | beta | nightly | <major.minor> | <major.minor.patch>` plus `components`, `targets`, `profile`. Ranks below `cargo +x`, `RUSTUP_TOOLCHAIN`, and `rustup override`, above the default toolchain. https://rust-lang.github.io/rustup/overrides.html
-  - Plain `"stable"` with rustup silently changes lints every 6 weeks; with rust-overlay, `flake.lock` pins what "stable" means, which removes that downside.
-- **Workspace layout:** `Cargo.toml` at the repo root next to `package.json`, members in `crates/*`, `[workspace.package]` inheritance, `[workspace.dependencies]`. wasm crates need `crate-type = ["cdylib", "rlib"]`; `rlib` lets native tests and doctests work.
+- **rust-toolchain.toml:** plain `"stable"` with rustup silently changes lints every 6 weeks; with rust-overlay, `flake.lock` pins what "stable" means.
+- wasm crates need `crate-type = ["cdylib", "rlib"]`; `rlib` lets native tests and doctests work.
 
 ### Strict lints vs. wasm-bindgen
 
-Tested on Rust 1.95 and 1.99, native and `--target wasm32-unknown-unknown`, exercising: free functions, a struct with an impl block (constructor, `&mut self` methods), getters/setters, `pub` fields, a C-style enum, an `extern "C"` import with `js_namespace`, `Result<_, JsError>`, `Option<String>`, `&JsValue`, `Vec<f64>` and `&[f64]`, `typescript_custom_section`, and `#[wasm_bindgen(start)]`.
+Tested on Rust 1.95 and 1.99, native and `--target wasm32-unknown-unknown`, exercising free functions, a struct with an impl block, getters/setters, `pub` fields, a C-style enum, an `extern "C"` import, `Result<_, JsError>`, `Option<String>`, `&JsValue`, `Vec<f64>` and `&[f64]`, `typescript_custom_section`, and `#[wasm_bindgen(start)]`.
 
-- **`unsafe_code = "forbid"` works.** The expansion (`-Zunpretty=expanded`) contains 22 `unsafe` tokens plus `#[no_mangle]`, `#[export_name]`, and `#[link_section]`, yet nothing fires. A hand-written `unsafe {}` in the same crate does error ("usage of an unsafe block").
-- **No noise from generated code** with `missing_docs`, `missing_debug_implementations`, `unreachable_pub`, `unused_qualifications`, pedantic, nursery, or the chosen restriction lints.
-- **`clippy::missing_const_for_fn`** (nursery) suggests `const fn`, but then the macro fails: `error: can only #[wasm_bindgen] non-const functions`. Allow it workspace-wide; per-function `#[expect(clippy::missing_const_for_fn, reason = "...")]` also works.
-- **`clippy::missing_inline_in_public_items`** fires on every export; pure noise.
-- **`unused_crate_dependencies`** fires for dev-dependencies in lib-test and integration-test crates ("extern crate `demo` is unused in crate `web`"); left out.
-- **`clippy::cargo`:** with `publish = false`, `cargo_common_metadata` didn't fire without description/repository/license (observed, not documented). `multiple_crate_versions` will fire because of syn 2/3.
+- **`unsafe_code = "forbid"` works.** The expansion contains 22 `unsafe` tokens plus `#[no_mangle]`, `#[export_name]`, and `#[link_section]`, yet nothing fires. A hand-written `unsafe {}` does error.
+- **No noise from generated code** with `missing_docs`, `missing_debug_implementations`, `unreachable_pub`, `unused_qualifications`, pedantic, nursery, or the chosen restriction lints. The full set passed with zero warnings on native and wasm32.
+- **`clippy::missing_const_for_fn`** suggests `const fn`, but then the macro fails: `error: can only #[wasm_bindgen] non-const functions`.
+- **`Ok(parse(s)?)`** into `Result<u8, JsError>` passes the full lint set (no `needless_question_mark`, since the error type changes). Rust 1.99, wasm-bindgen 0.2.129.
+- Left out as noisy: `missing_inline_in_public_items` (fires on every export), `unused_crate_dependencies` (fires for dev-dependencies), `exhaustive_structs`, `std_instead_of_core`/`alloc` (only for `no_std`), `missing_docs_in_private_items`, `arithmetic_side_effects`, `min_ident_chars`, `pub_use`, `shadow_unrelated`, `single_char_lifetime_names`, `wildcard_enum_match_arm`. Enabling all of `clippy::restriction` is discouraged by clippy itself.
+- **Restriction lints from r/rust** (https://www.reddit.com/r/rust/comments/1m0r3s7/do_you_use_clippyrestriction_lints/, read via the PullPush archive 2026-10-13): most of what commenters use is already here (`clone_on_ref_ptr`, `if_then_some_else_none`, `str_to_string`, `try_err`, `as_conversions`, `dbg_macro`, `print_*`, `unwrap_used`/`expect_used`, `indexing_slicing`, `allow_attributes_without_reason`, `mod_module_files`). The rest, tested with clippy 1.95 on a crate with wasm-bindgen exports, fired on none of wasm-bindgen's generated code. Left out: `absolute_paths` (fires on idiomatic `std::mem::forget`-style calls), `pattern_type_mismatch` (fights match ergonomics), `shadow_reuse` (fires on `let s = s.trim()`), `impl_trait_in_params` (taste; wasm-bindgen exports can't take `impl Trait` anyway), `mem_forget` (wasm-bindgen leaks through `Closure::forget`, which it doesn't flag), the `unsafe`/safety-comment lints (`unsafe_code` is forbidden), `exhaustive_enums` (nothing is published), `std_instead_of_*` and `missing_docs_in_private_items` (above). Adopted: `unreachable` (the `panic` lint doesn't cover `unreachable!`), `exit` (flags `process::exit` outside `main`), and `panic_in_result_fn` (flags `assert!` and `panic!` in functions that return `Result`; it also fires in tests, with no `clippy.toml` exemption, so tests that assert don't return `Result`).
 - `needless_pass_by_value` (pedantic) correctly flags `Vec<f64>` params; `&[f64]` works with wasm-bindgen.
-- `exhaustive_structs` works with `#[non_exhaustive]` on wasm-bindgen structs; left out for simplicity.
-- Left out as noisy or poor fit: `std_instead_of_core`, `std_instead_of_alloc`, `alloc_instead_of_core` (only for `no_std`), `missing_docs_in_private_items`, `arithmetic_side_effects`, `min_ident_chars`, `pub_use`, `shadow_unrelated`, `single_char_lifetime_names`, `wildcard_enum_match_arm`.
-- Enabling all of `clippy::restriction` is discouraged by clippy's own `blanket_clippy_restriction_lints`.
 - `clippy::string_to_string` has been removed (merged into `implicit_clone`).
-- The full chosen lint set passed with zero warnings on native and wasm32.
+- **The groups-first config** (step 3) passed on a crate with `greet`, `parse_byte`, a `Counter` class, a private module with a `pub(crate)` fn, and a test module, native and wasm32 (Rust 1.99, wasm-bindgen 0.2.129). The `unused` group added no noise from generated code; its only warning was a deliberately unused macro rule (`unused_macro_rules`, off by default but in the group).
+
+### Lint configuration
+
+- **rustc lint groups** (`rustc -W help`, 1.99): `warnings` (only lints already at warn), `deprecated_safe`, `future_incompatible`, `keyword_idents`, `let_underscore` (`let_underscore_drop`, `let_underscore_lock`), `nonstandard_style`, `refining_impl_trait`, `rust_2018_compatibility`, `rust_2018_idioms`, `rust_2021_compatibility`, `rust_2024_compatibility`, `unknown_or_malformed_diagnostic_attributes`, `unused`. No pedantic or "everything" group, and no idioms group after 2018. Setting a group's level sets it for every member, including off-by-default ones like `unused_macro_rules`.
+- **`rust_2018_idioms` on edition 2024:** `bare_trait_objects` and `ellipsis_inclusive_range_patterns` are hard errors since 2021; what still does something is `elided_lifetimes_in_paths` (requires `Formatter<'_>`), `unused_extern_crates`, and `explicit_outlives_requirements`.
+- **Priorities:** Cargo's reference says lower priorities "show up first on the command-line to tools like rustc" and are overridden by higher ones; the order inside the TOML table is ignored. Dropping `priority = -1` from the rustc groups failed clippy with `error: lint group 'let_underscore' has the same priority (0) as a lint`, pointing at `unsafe_code`, which isn't in that group (`clippy::lint_groups_priority`, deny by default). https://doc.rust-lang.org/cargo/reference/manifest.html#the-lints-section
+- **`redundant_pub_crate` vs `unreachable_pub` (tested):** in a private module, `pub(crate) fn` triggers `redundant_pub_crate` (use `pub`), and `pub fn` triggers `unreachable_pub` (use `pub(crate)`). No visibility satisfies both. `redundant_pub_crate` has been in nursery since 2020. Keeping `unreachable_pub` means `pub` always marks the real exported API, which for wasm-bindgen crates is the JS API. https://github.com/rust-lang/rust-clippy/blob/master/clippy_lints/src/redundant_pub_crate.rs
+- **Overlap between rustc and clippy is common:** e.g. rustc's `unused_lifetimes`, `unit_bindings`, and `single_use_lifetimes` fire on the same code as clippy's `extra_unused_lifetimes`, `let_unit_value`, and `needless_lifetimes`/`elidable_lifetime_names` (tested). No guide recommends tracking this; it only means two warnings for one mistake.
+- **Clippy's guidance** (https://doc.rust-lang.org/clippy/usage.html): pedantic "may have some intentional false positives", so "you can expect to sprinkle multiple `#[allow(..)]`s" (Clippy lints itself with the whole group). For restriction, "you shouldn't enable the whole lint group, but cherry-pick lints from this group. Some lints in this group will even contradict other Clippy lints!" Clippy "is meant to be used with a generous sprinkling of `#[allow(..)]`s", and "if you disagree with a lint, don't feel bad disabling them for parts of your code or the whole project."
+- Other write-ups (e.g. https://rustprojectprimer.com/checks/lints.html) mix rustc and clippy lints in one `[lints]` table without discussing overlap.
 
 ### Nix toolchain
 
-Package versions at the repo's locked nixpkgs `aa48d347` (2026-10-05), via `nix eval`:
-
-| Package | Locked rev | nixpkgs-unstable head `8edc0c72` (2026-10-08) | Upstream latest |
-| --- | --- | --- | --- |
-| rustc / cargo / clippy | 1.98.1 | 1.98.1 | 1.99.0 |
-| rust-analyzer | 2026-09-28 | | |
-| wasm-bindgen-cli | 0.2.127 | 0.2.129 | 0.2.129 |
-| binaryen | 132 | 132 | version_133 (2026-09-21) |
-| wasm-pack | 0.15.0 | 0.15.0 | 0.15.0 |
-| lld | 21.1.8 | | |
-
-- The `nixpkgs` in the local flake registry is an older 26.05 snapshot (rustc 1.95.0, wasm-bindgen-cli 0.2.121). Use the flake's pinned input, not `nix shell nixpkgs#...`.
-- Versioned attrs at the locked rev: `wasm-bindgen-cli_0_2_93`, `_95`, `_99`, `_100`, `_104`, `_105`, `_106`, `_108`, `_114`, `_117`, `_118`, `_120`, `_121`, `_122`, `_125`, `_126`, `_127`. Plain `wasm-bindgen-cli` is an alias: `pkgs/top-level/aliases.nix:2735: wasm-bindgen-cli = wasm-bindgen-cli_0_2_127;`.
-- Each versioned attr is a `buildWasmBindgenCli { src = fetchCrate {…; hash}; cargoDeps = rustPlatform.fetchCargoVendor {…; hash}; }` (`pkgs/by-name/wa/wasm-bindgen-cli_0_2_127/package.nix`). Writing one yourself, with two hashes, is the fallback for a version nixpkgs lacks.
-- crane's trunk example hard-codes `wasm-bindgen-cli = pkgs.wasm-bindgen-cli_0_2_114; # must match the one from Cargo.lock` (https://github.com/ipetkov/crane/blob/master/examples/trunk/flake.nix). Reading it from `Cargo.lock` is the same idea without a second copy. Leptos and Bevy setups weren't checked.
-- **Mismatch behaviour:**
-  - `wasm-bindgen-cli_0_2_126` on 0.2.127 crate output exited 0 with no warning.
-  - CLI 0.2.121 on crate 0.2.129 errored:
-    ```
-    rust Wasm file schema version: 0.2.129
-       this binary schema version: 0.2.121
-    Currently the bindgen format is unstable enough that these two schema versions must exactly match.
-    ```
-  - With the `Cargo.lock`-derived selection, setting the lockfile to 0.2.128 (absent from nixpkgs) fails at eval: `Did you mean one of wasm-bindgen-cli_0_2_108, wasm-bindgen-cli_0_2_118, ...?`
+- At the repo's locked nixpkgs (2026-10-05): wasm-bindgen-cli 0.2.127, rustc 1.98.1, binaryen 132. nixpkgs head (2026-10-08) has wasm-bindgen-cli 0.2.129. Use the flake's pinned input, not the local registry's older `nixpkgs`.
+- nixpkgs has versioned attrs (`wasm-bindgen-cli_0_2_127`, `_126`, `_125`, …); plain `wasm-bindgen-cli` is an alias for the newest. Each is a `buildWasmBindgenCli` call with two hashes, which is the fallback for a version nixpkgs lacks. crane's trunk example hard-codes the attr ("must match the one from Cargo.lock"); reading it from `Cargo.lock` is the same idea without a second copy.
+- **Mismatch behaviour:** CLI 0.2.126 on 0.2.127 crate output exited 0 with no warning (so silent drift is possible). CLI 0.2.121 on 0.2.129 errored ("schema versions must exactly match"). With the `Cargo.lock`-derived selection, a lockfile on 0.2.128 (absent from nixpkgs) fails at eval with `Did you mean one of wasm-bindgen-cli_0_2_108, ...?`.
 - **Toolchain options:**
-  - **nixpkgs rustc/cargo:** ships std for `wasm32-unknown-unknown` and `wasm32v1-none` (`pkgs/development/compilers/rust/rustc.nix`). nixpkgs replaces `rust-lld` with `lld` in target specs ("This is not an appropriate default for Nixpkgs, where there is no rust-lld"), so without `pkgs.lld` the build fails with ``error: linker `lld` not found``. Pinned by `flake.lock`, cached on all platforms, but lags stable and can't pick an exact version or nightly. A tested devShell with it passed `cargo build`, `cargo clippy -- -D warnings`, and `nix flake check`. It needed `RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}"` for rust-analyzer.
-  - **rust-overlay (chosen):** `rust-bin.fromRustupToolchainFile ./rust-toolchain.toml` needs no hash; manifests are vendored and pinned by `flake.lock`. README: "We target nixos-unstable … on x86_64-linux … Other platforms … not guaranteed." Very active (last commit 2026-10-12, 1.6k stars). https://github.com/oxalica/rust-overlay
-  - **fenix:** `fromToolchainFile` needs the manifest `sha256` in pure eval ("required in pure evaluation mode"), so the version lives in two places. Cachix cache covers x86_64-darwin, aarch64-darwin, x86_64-linux, not aarch64-linux. Active (last commit 2026-10-12, 1.1k stars). https://github.com/nix-community/fenix
-  - **rustup in the devShell:** impure, downloads into `~/.rustup`, not pinned by `flake.lock`, CI re-downloads each run.
-- **rust-overlay tested** with nixpkgs head `8edc0c72` and rust-overlay `404b7a5` (2026-10-12), `channel = "stable"`:
-  ```
-  rustc 1.99.0 (b940084d7 2026-09-28)
-  cargo 1.99.0 (5f94df478 2026-08-27)
-  clippy 0.1.99 (b940084d7e 2026-09-28)
-  rust-analyzer 1.99.0 (b940084 2026-09-28)
-  wasm-bindgen 0.2.129
-  wasm-opt version 132
-  ```
-  No `lld` or `rust-lld` on `PATH`; the release wasm build still worked (rust-lld is bundled in the toolchain's sysroot). `wasm-bindgen --target bundler` and `wasm-opt -Os` with the six feature flags passed.
-- The current devShell already fails to evaluate on Darwin because of `chromium` ("not available on the requested hostPlatform"); all the Rust/wasm attrs evaluate fine on aarch64-darwin. Not run on a real Mac.
-- Binary cache: wasm-bindgen-cli (aarch64-linux, aarch64-darwin) and darwin rustc are on cache.nixos.org; nothing builds from source. The nixpkgs Rust packages' own NARs are about 56 MB.
-- The nixpkgs manual's Rust section only covers `wasm32-wasip1` via pkgsCross and says nothing about wasm-bindgen.
-- **CI caching:** nothing needed now. `Swatinem/rust-cache` v2.9.2 supports Nix via `cmd-format: nix develop -c {0}` if target/ builds get slow. magic-nix-cache-action (v15) wouldn't help since nothing builds from source.
-- nix-direnv may already reload on `Cargo.lock`; not verified, hence `watch_file Cargo.lock`.
+  - **nixpkgs rustc/cargo:** ships wasm32 std, but needs `pkgs.lld` (nixpkgs patches out `rust-lld`) and `RUST_SRC_PATH` for rust-analyzer, and lags stable.
+  - **rust-overlay (chosen):** `rust-bin.fromRustupToolchainFile` needs no hash; pinned by `flake.lock`. Officially targets x86_64-linux; works on aarch64-linux. Very active. https://github.com/oxalica/rust-overlay
+  - **fenix:** `fromToolchainFile` needs the manifest `sha256` in pure eval, so the version lives in two places. No aarch64-linux cache.
+  - **rustup in the devShell:** impure, not pinned by `flake.lock`, CI re-downloads each run.
+- **rust-overlay tested** (nixpkgs head, rust-overlay 2026-10-12, `channel = "stable"`): rustc/cargo/clippy/rust-analyzer 1.99.0, wasm-bindgen 0.2.129. No `lld` on `PATH`; the release wasm build still worked (rust-lld is bundled in the sysroot).
+- The current devShell already fails to evaluate on Darwin because of `chromium`; the Rust/wasm attrs evaluate fine on aarch64-darwin (not run on a real Mac).
+- wasm-bindgen-cli comes from cache.nixos.org; the rust-overlay toolchain doesn't (see CI and deploy speed).
+- nix-direnv's `use flake` watches only `flake.nix`, `flake.lock`, and `devshell.toml`, so `Cargo.lock` needs an explicit `watch_file`.
 
-### wasm-bindgen output targets
+### wasm-bindgen output and Node
 
-`--help` (0.2.121) lists `bundler`, `web`, `nodejs`, `no-modules`, `deno`, `experimental-nodejs-module`, `module`. Each writes `x.js`, `x.d.ts`, `x_bg.wasm`, `x_bg.wasm.d.ts`; `bundler` adds `x_bg.js`; `experimental-nodejs-module` adds a `package.json` with `"type":"module"`.
-
-Key generated lines:
-
-- **bundler:** `import * as wasm from "./x_bg.wasm";` and `import { __wbg_set_wasm } from "./x_bg.js";`. The `.wasm` imports `"./x_bg.js"` back.
-- **web:** `export { initSync, __wbg_init as default };`; default init uses `new URL('x_bg.wasm', import.meta.url)` → `fetch` → `instantiateStreaming`.
-- **module** (new in 0.2.102): `import source wasmModule from "./x_bg.wasm";` then `new WebAssembly.Instance(wasmModule, __wbg_get_imports())`.
-- **experimental-nodejs-module:** `readFileSync(new URL('x_bg.wasm', import.meta.url))`, synchronous.
-- **nodejs:** CommonJS, `require('fs').readFileSync`.
-
-Running directly in Node:
-
-| Output | Node 22.23.3 | Node 24.21.0 | Node 26.10.0 |
-| --- | --- | --- | --- |
-| bundler | works, ExperimentalWarning | works, ExperimentalWarning | works, ExperimentalWarning |
-| module | SyntaxError on `import source` | works | works |
-| web + `initSync({ module: readFileSync(...) })` | works | works | works |
-| web + default `init()` | | | fails, "fetch failed" |
-| experimental-nodejs-module | works | works | works |
-
-The warning reads "Importing WebAssembly module instances is an experimental feature".
-
-CLI flags:
-
-- `--weak-refs` and `--reference-types` are gone: deprecated in 0.2.91 (runtime detection) and 0.2.96 (detected from target features).
-- TypeScript output is on by default (`--no-typescript` disables it) and clean, keeping doc comments, e.g. `export function add(a: number, b: number): number;`.
-- `--omit-default-module-path` drops the default `new URL(...)` path. `--split-linked-modules` is "recommended if possible" but needs bundler setup. New in 0.2.128: `--split-debug-info`, `--ts-typed-array-buffers`.
-- `--remove-name-section --remove-producers-section` saved about 100 B on a toy crate.
+- Targets: `bundler`, `web`, `nodejs`, `no-modules`, `deno`, `experimental-nodejs-module`, `module`. `bundler` emits `import * as wasm from "./x_bg.wasm"`, which Vite 8.1+ handles natively; `web` uses `fetch`, which fails under Node at build time; `module` uses `import source`, which Vite/Rolldown don't support.
+- TypeScript output is on by default and keeps doc comments, e.g. `export function add(a: number, b: number): number;`.
+- `--weak-refs` and `--reference-types` are gone (detected automatically). `--remove-name-section --remove-producers-section` saved about 100 B on a toy crate.
+- Node 22.19+/24.5+ import bundler output directly with an "Importing WebAssembly module instances is an experimental feature" warning. Vite's server build and dev module runner inline their own glue, so they don't depend on Node's support.
 
 ### Rust wasm target, size, and panics
 
-- Default target features from `rustc --print cfg` (1.99): bulk-memory, multivalue, mutable-globals, nontrapping-fptoint, reference-types, sign-ext. reference-types and multivalue became defaults in 1.82 (https://blog.rust-lang.org/2024/09/24/webassembly-targets-change-in-default-target-features/); bulk-memory and nontrapping-fptoint in 1.87 with LLVM 20 (https://doc.rust-lang.org/rustc/platform-support/wasm32-unknown-unknown.html).
-- `wasm32v1-none` is the `no_std` MVP + mutable-globals target; `-Ctarget-cpu=mvp` needs nightly build-std. Neither is needed for current browsers.
-- **wasm-opt** must be told the features: plain `wasm-opt -Oz` (binaryen 129) fails with "memory.copy operations require bulk memory operations". Use `--all-features` or explicit `--enable-bulk-memory --enable-nontrapping-float-to-int --enable-reference-types --enable-multivalue --enable-sign-ext --enable-mutable-globals`.
-- wasm-bindgen does no optimization itself; its guide says it only strips unneeded bindings.
-- `strip = true` did not break wasm-bindgen's custom sections.
-- **Sizes**, toy crate (`add`, `greet`), `opt-level = "s"`, LTO, `codegen-units = 1`, strip, `panic = "abort"`:
-
-  | Stage | Size |
-  | --- | --- |
-  | cargo output | 30,130 B |
-  | after wasm-bindgen | 15,562 B |
-  | + `--remove-name-section --remove-producers-section` | 15,457 B |
-  | then `wasm-opt -Oz --all-features` | 13,768 B (6,255 B gzipped) |
-
-  `wasm-opt` alone on the 15,562 B file gave 13,830 B (about 11% smaller).
-- **Sizes**, larger demo crate (struct, enum, imports, etc.), LTO, `codegen-units = 1`, strip:
-
-  | opt-level | raw | after wasm-bindgen | after `wasm-opt -O` |
-  | --- | --- | --- | --- |
-  | "s" | 41,599 B | 20,981 B | 19,109 B |
-  | "z" | 43,185 B | 22,378 B | 20,034 B |
-  | 3 | 39,436 B | 19,393 B | 17,948 B |
-
-  On this crate `"z"` was largest and `3` smallest. Start with `"s"` and re-measure with real code.
-- **Panics:** `panic = "abort"` is the wasm32-unknown-unknown default (target spec `"panic-strategy": "abort"`), so setting it in the profile is redundant and leaving it out keeps native tests normal. A panic is a trap with no message; `console_error_panic_hook` 0.1.7 still works but is archived.
-  - `panic = "unwind"` turns panics into JS `PanicError` exceptions and marks the instance terminated (wasm-bindgen 0.2.114+). It needs nightly + `-Zbuild-std=std,panic_unwind` (plus `-Cllvm-args=-wasm-use-legacy-eh=false`), and since 0.2.122 emits exnref exception handling, which needs Node 22.22.3+ / 24.15.0+. No plans to make it default. https://github.com/wasm-bindgen/wasm-bindgen/blob/main/guide/src/reference/catch-unwind.md
-  - `--experimental-reset-state-function` still exists, plus `handler::schedule_reinit` and `set_on_abort` / `set_on_reinit` hooks.
-  - The plan avoids panics instead: strict lints and `Result<_, JsError>`.
+- Default target features (1.99): bulk-memory, multivalue, mutable-globals, nontrapping-fptoint, reference-types, sign-ext. Current browsers support them; `wasm32v1-none` / `-Ctarget-cpu=mvp` aren't needed.
+- **wasm-opt** must be told the features: plain `wasm-opt -Oz` fails with "memory.copy operations require bulk memory operations". Use `--enable-bulk-memory --enable-nontrapping-float-to-int --enable-reference-types --enable-multivalue --enable-sign-ext --enable-mutable-globals`.
+- wasm-bindgen does no optimization itself; it only strips unneeded bindings.
+- **`strip = true`**, measured on the smoke-style crate (`greet`, `parse_byte`), Rust 1.99, wasm-bindgen 0.2.129: cargo output 34,787 B vs 1,678,160 B without; after wasm-bindgen 19,242 B vs 28,093 B; gzipped 8,461 B vs 10,555 B. It doesn't break wasm-bindgen's custom sections.
+- **Sizes**, toy crate (`add`, `greet`), `opt-level = "s"`, LTO, `codegen-units = 1`, strip: cargo 30,130 B → wasm-bindgen 15,562 B → `wasm-opt -Oz` 13,830 B (about 11% smaller).
+- **opt-level**, larger demo crate, after wasm-bindgen: `"s"` 20,981 B, `"z"` 22,378 B, `3` 19,393 B. Start with `"s"` and re-measure with real code.
+- **Panics:** `panic = "abort"` is the wasm32-unknown-unknown default, so leaving it out of the profile keeps native tests normal. A panic is a trap with no message; `console_error_panic_hook` still works but is archived. `panic = "unwind"` (JS `PanicError` exceptions) needs nightly + `-Zbuild-std`. The plan avoids panics instead: strict lints and `Result<_, JsError>`.
 
 ### Testing options
 
-- Native `cargo test` for pure logic and doctests: passed.
-- **Native tests can't cross into JS.** In the rust-overlay scratch flake (Rust 1.99.0, wasm-bindgen 0.2.129), native tests calling `add(2, 3)` and `parse_byte("7")` passed, but `parse_byte("300")`, whose error path calls `JsError::new`, panicked:
-  ```
-  thread 'tests::parse_error' panicked at .../wasm-bindgen-0.2.129/src/lib.rs:1227:1:
-  cannot call wasm-bindgen imported functions on non-wasm targets
-  ```
-  The same applies to anything that creates or reads a `JsValue`, `JsError`, `js_sys`, or `web_sys` value. Hence the thin-wrapper pattern.
-- **Host target is implicit.** The scratch `rust-toolchain.toml` listed only `wasm32-unknown-unknown` in `targets`, and native `cargo test` still compiled and ran: the host's std is always part of the toolchain.
-- **wasm-bindgen-test 0.3.79** as a dev-dependency with `runner = "wasm-bindgen-test-runner"` under `[target.wasm32-unknown-unknown]` in `.cargo/config.toml`, then `cargo test --target wasm32-unknown-unknown`: ran under Node by default ("test greet_works ... ok").
-  - `cargo test -q` fails because the runner rejects `--quiet`.
-  - Plain `#[test]` items were not run on wasm ("no tests to run!").
-  - `wasm_bindgen_test_configure!(run_in_browser)` or `WASM_BINDGEN_USE_BROWSER=1` with `CHROMEDRIVER` switches to a browser (not tested).
-  - Doctests on wasm need Rust 1.89+.
-  - https://wasm-bindgen.github.io/wasm-bindgen/wasm-bindgen-test/usage.html
-- `wasm-bindgen --target nodejs` output called from Node worked (`5 Hello, node! 1 yes 3`).
-- The plan skips wasm-bindgen-test: the Playwright test runs the real build in three browser engines, which covers the boundary better with no extra runner.
-
-### Hygiene tools (not adopted yet)
-
-- **cargo-deny** 0.20.2 (2026-07-09; nixpkgs 0.19.6): advisories, licenses, bans, sources. A tested `deny.toml` passed ("advisories ok, bans ok, licenses ok, sources ok") with `[graph] targets` for wasm32 + linux, `unmaintained = "all"`, `yanked = "deny"`, licenses `MIT`, `Apache-2.0`, `Unicode-3.0` (needed for unicode-ident), `multiple-versions = "warn"`, `wildcards = "deny"`, unknown registries/git denied. The current format has no `version = 2` key. https://embarkstudios.github.io/cargo-deny/checks/cfg.html
-- **cargo-shear** 1.14.0 (2026-09-22; nixpkgs 1.13.4): unused deps on stable. Preferred over cargo-machete 0.9.2 (regex-based). Both reported clean.
-- cargo-udeps 0.1.61 needs nightly. cargo-hack 0.6.45 is pointless without features. cargo-nextest 0.9.148 not needed.
+- **Native tests can't cross into JS.** A native test of `parse_byte("300")`, whose error path calls `JsError::new`, panicked with `cannot call wasm-bindgen imported functions on non-wasm targets`. The same applies to any `JsValue`, `JsError`, `js_sys`, or `web_sys` value. Hence the thin-wrapper pattern.
+- **Host target is implicit:** with only `wasm32-unknown-unknown` in `targets`, native `cargo test` still compiled and ran.
+- **wasm32 vs. native clippy** (`cargo clippy --all-targets --target wasm32-unknown-unknown`) reported a `dbg!` inside `#[cfg(test)] mod tests` and a missing `# Errors` section, the same as the native run (Rust 1.99).
+- **wasm-bindgen-test 0.3.79** with `runner = "wasm-bindgen-test-runner"` ran under Node. `cargo test -q` fails (runner rejects `--quiet`), plain `#[test]` items don't run on wasm, and browsers need `CHROMEDRIVER`. Skipped: the Playwright test covers the boundary in three engines with no extra runner.
 
 ### Vite 8
 
 Changelog: https://raw.githubusercontent.com/vitejs/vite/main/packages/vite/CHANGELOG.md. Current Vite is 8.3.4 (2026-10-08).
 
-- **8.0.0:** SSR support for `.wasm?init` (#21102).
-- **8.1.0** (2026-06-23): "direct .wasm imports (WASM ESM Integration)", https://github.com/vitejs/vite/pull/21779 (merged 2026-06-11).
-- **8.2.0:** unwraps `WebAssembly.Global` exports, enables js-string builtins (#22674).
-- **8.3.3 / 8.2.4 / 8.1.6** (2026-10-06): fix GHSA-vfpm-58rq-9qcg, `?vite-wasm-instance` requests bypassed `server.fs` checks (https://github.com/vitejs/vite/pull/23655). The repo is on 8.2.2 with `host: true` and `allowedHosts: true`. astro 7.3.8 requires vite ^8.3.1.
-- The feature is Vite's own `vite:wasm-helper` plugin, which parses the binary and generates glue with top-level await. Rolldown's old wasm-fallback plugin was removed (rolldown #9775).
-- From `dist/node/chunks/node.js` (8.2.2): client uses `fetch` + `instantiateStreaming`; server (`consumer === 'server'`) uses `readFile(new URL(file, import.meta.url))`, or a base64 `data:` URL if inlined; dev serves a file URL.
-- Vite docs: "a directly imported `.wasm` file behaves as an async module and requires top-level `await`"; server-side only in Node-compatible runtimes. https://vite.dev/guide/features#webassembly
-- `?init` returns a function giving a `WebAssembly.Instance`; `?url` gives the asset URL.
-- Plain `vite build --ssr` needs `build.ssrEmitAssets: true`, otherwise ENOENT on the `.wasm`.
-- Client build output for the toy crate: `addc_bg-*.wasm` 15.56 kB (6.71 kB gzipped).
-- **Source-phase imports are not supported** by Vite/Rolldown:
-  ```
-  [MISSING_EXPORT] "default" is not exported by "src/pkg-bundler/hello_bg.wasm".
-     │ import source mod from "../pkg-bundler/hello_bg.wasm";
-  ```
-- **Browsers:** Chromium 154 headless supports neither feature natively, so Vite's glue is required:
-  - `import source m from './hello_bg.wasm'` → `Uncaught SyntaxError: Unexpected identifier 'm'`
-  - bundler glue imported directly → `TypeError: Failed to fetch dynamically imported module`
-  - Firefox and Safari not tested.
-- **Environment API** (https://vite.dev/guide/api-environment-plugins): `configEnvironment(name, config, env)` is the documented place for per-environment settings. `hotUpdate` runs once per environment with `this.environment`. `buildStart` and `watchChange` run only for the client environment in dev unless `perEnvironmentStartEndDuringDev` / `perEnvironmentWatchChangeDuringDev` are set.
+- **8.1.0** (2026-06-23): direct `.wasm` imports (WASM ESM Integration), https://github.com/vitejs/vite/pull/21779. Vite's own `vite:wasm-helper` generates the glue with top-level await: client uses `fetch` + `instantiateStreaming`, server uses `readFile(new URL(file, import.meta.url))` or an inlined `data:` URL.
+- **8.3.3 / 8.2.4 / 8.1.6** (2026-10-06): fix GHSA-vfpm-58rq-9qcg, `?vite-wasm-instance` requests bypassed `server.fs` checks. The repo is on 8.2.2 with `host: true` and `allowedHosts: true`. astro 7.3.8 requires vite ^8.3.1.
+- **Source-phase imports** (`import source`) are not supported by Vite/Rolldown, and Chromium 154 supports neither them nor native wasm ESM imports, so Vite's glue is required.
+- **Environment API:** `configEnvironment(name, config, env)` is the documented place for per-environment settings. https://vite.dev/guide/api-environment-plugins
 - Running an external build synchronously in `resolveId` blocks every resolve, runs per environment, and fires repeatedly; avoid it.
-- Rerunning `wasm-bindgen` into a watched directory during `astro dev` worked: Vite logged `watch crates/hello/pkg/hello_bg.wasm` and the next request served the new output, server-rendered and client-side.
-
-### Node
-
-- Wasm ESM integration unflagged since **v24.5.0 / v22.19.0**; instance-phase imports are Stability 1.1, source phase (`import source`, added v24.0.0) is 1.2; JS string builtins are on automatically. https://nodejs.org/api/esm.html#wasm-modules
-- On Node 26.10.0, importing bundler `pkg/hello.js` directly gave `5 Hi, node!` plus the ExperimentalWarning; `import source` returned a `WebAssembly.Module`.
-- Vite's server build and dev module runner inline their own glue, so they don't depend on Node's support (unless the package is externalized).
+- Rerunning `wasm-bindgen` into a watched directory during `astro dev` worked: the next request served the new output, server-rendered and client-side.
 
 ### Astro 7
 
-- **Docs:** only "Imports reference → WASM" with `WebAssembly.instantiateStreaming(fetch('/example.wasm'))` (https://docs.astro.build/en/guides/imports/#wasm). The Cloudflare adapter documents `.wasm?module`. No wasm integration.
-- **Prerender bug:** in `dist/core/build/static-build.js`, static output runs `ssrMoveAssets()` before `generatePages()`; server output runs them the other way. The prerender chunk still points at `new URL("../_astro/hello_bg.CN7ZGbTL.wasm", import.meta.url)` inside `dist/.prerender/`, which has been moved to `dist/_astro/`:
+- **Docs:** only `WebAssembly.instantiateStreaming(fetch('/example.wasm'))`. No wasm integration.
+- **Prerender bug:** in `dist/core/build/static-build.js`, static output runs `ssrMoveAssets()` before `generatePages()`. The prerender chunk still points at `new URL("../_astro/hello_bg.<hash>.wasm", import.meta.url)` inside `dist/.prerender/`, which has been moved to `dist/_astro/`:
   ```
-  ├─ /sub/nested.html [ERROR] Error: ENOENT: no such file or directory, open '.../site/dist/.prerender/_astro/hello_bg.CN7ZGbTL.wasm'
-  [ERROR] [build] Caught error rendering /sub/nested: Error: ENOENT: ...
+  [ERROR] Error: ENOENT: no such file or directory, open '.../site/dist/.prerender/_astro/hello_bg.CN7ZGbTL.wasm'
   ```
-  - Reproduces with `build.format` `'file'` and `'directory'`, on astro 7.3.5 (vite 8.2.2) and 7.3.8 (vite 8.3.4). The code is unchanged in 7.3.8.
-  - `--target web` with `readFileSync(new URL(..., import.meta.url))` in frontmatter fails the same way.
-  - A web search found no existing issue (inconclusive).
-- **`vite.environments.prerender.build.*` is silently dropped:** `core/build/vite-build-config.js` rebuilds `environments.prerender.build` and only keeps `rolldownOptions.output`. A debug plugin printed `DBG prerender 4096` after setting `assetsInlineLimit` there. A plugin's `configEnvironment` does take effect.
-- **Fix (tested):** a plugin returning `{ build: { assetsInlineLimit: (f) => f.endsWith('.wasm') || undefined } }` from `configEnvironment` for non-client environments. Results: `/index.html` contained `Hello, ssr! 5`, Svelte island SSR output `Hello, svelte! 1`, `/sub/nested.html` contained `2`. In `astro preview` with headless Chromium: `<p id="client">Hello, client! 42</p>`, both `client:load` and `client:only` rendered, `/_astro/*.wasm` served as `application/wasm`.
-  - Inlining costs nothing in output since `dist/.prerender` is deleted after generation. With a server adapter it would embed base64 in the server bundle.
-  - A global `build.assetsInlineLimit` also works but inlines the wasm into client JS too.
-  - `astro check` flags (TS 7030) a `configEnvironment` that doesn't return on every path; add an explicit `return undefined`.
-- **Option B (tested):** externalize the package for non-client environments (`resolve: { external: ['hello'] }`), so Node loads it natively. Build passed (`Hey, pkg-ssr! 5 2`) with the ExperimentalWarning. Would probably defeat dev module invalidation (untested).
-- **Didn't work:** top-level `vite.ssr.external: ['hello']` (ignored for prerender, same ENOENT); `--target web` with `await init()` in frontmatter (`TypeError: fetch failed … Caused by: not implemented... yet...`).
-- `astro dev` server rendering worked without the fix; the client got `import * as wasm from "/src/wasm/addc_bg.wasm?import"`.
-- `astro check` runs integrations' `astro:config:setup` with `command = "sync"`.
-- `astro check` does not type-check `.svelte` files: a deliberate error in `Counter.svelte` was reported only by `svelte-check`. The repo's `test:astro` misses Svelte type errors today.
-- Astro 7's `astro dev` backgrounds itself by default (`Stop: astro dev stop`); `ASTRO_DEV_BACKGROUND=1` keeps it in the foreground, like the existing `ASTRO_PREVIEW_BACKGROUND=1` in the Playwright config.
+  Reproduces with both `build.format` values, on astro 7.3.5 and 7.3.8. A web search found no existing issue (inconclusive).
+- **`vite.environments.prerender.build.*` is silently dropped** by `core/build/vite-build-config.js`. A plugin's `configEnvironment` does take effect.
+- **Fix (tested):** `configEnvironment` returning `{ build: { assetsInlineLimit: (f) => f.endsWith('.wasm') || undefined } }` for non-client environments. Frontmatter, Svelte island SSR, and nested pages all rendered; in `astro preview` the client loaded `/_astro/*.wasm` as `application/wasm`. Inlining costs nothing in output since `dist/.prerender` is deleted after generation. `astro check` flags (TS 7030) a `configEnvironment` that doesn't return on every path; the prototype added an explicit `return undefined`. The plan's single-ternary form returns on every path, but hasn't been run through `astro check` yet.
+- **Alternatives:** externalizing the package for server environments worked but would probably break dev invalidation; a global `assetsInlineLimit` also inlines into client JS; `vite.ssr.external` is ignored for prerender.
+- `astro check` runs integrations' `astro:config:setup` with `command = "sync"`, and does not type-check `.svelte` files (only `svelte-check` caught a deliberate error).
+- Astro 7's `astro dev` backgrounds itself by default; `ASTRO_DEV_BACKGROUND=1` keeps it in the foreground, like the existing `ASTRO_PREVIEW_BACKGROUND=1`.
 
 ### Import styles compared
 
@@ -487,155 +448,83 @@ All tested for build, dev, and types.
 
 | Style | Result |
 | --- | --- |
-| Relative path to `pkg/x.js` | Works; types from wasm-bindgen's `.d.ts`; `astro check` caught `Type 'number' is not assignable to type 'string'`. Long paths. |
-| **package.json `"imports"`** (chosen) | Works in Vite build and dev; `astro check` and `svelte-check` resolve types; no plugin, no `.d.ts`, no `allowArbitraryExtensions`; resolved lazily so `pnpm install` doesn't need `pkg/`. Wildcard `"#rust/*": "./crates/*/pkg/index.js"` tested. |
-| pnpm workspace (`packages: [crates/*/pkg]`, `"hello": "workspace:*"`) | Works, linked as source so the dep optimizer leaves it alone, but `pkg/` must exist before `pnpm install`. |
-| Virtual `rust:x` module or `.rs` imports | Needs a plugin plus types via tsconfig `paths` or `allowArbitraryExtensions` + `lib.d.rs.ts`; ambient `declare module` can't re-export relative paths. More machinery for no gain. |
+| Relative path to `pkg/x.js` | Works; types from wasm-bindgen's `.d.ts`. Long paths. |
+| **package.json `"imports"`** (chosen) | Works in Vite build and dev; `astro check` and `svelte-check` resolve types; no plugin, no `.d.ts`; resolved lazily so `pnpm install` doesn't need `pkg/`. Wildcard `"#rust/*"` tested. |
+| pnpm workspace (`packages: [crates/*/pkg]`) | Works, but `pkg/` must exist before `pnpm install`. |
+| Virtual `rust:x` module or `.rs` imports | Needs a plugin plus types via tsconfig `paths` or `allowArbitraryExtensions`. More machinery for no gain. |
 
-### Existing plugins (npm, 2026-10-12)
+### Existing plugins
 
-| Package | Version | Last modified | Notes |
-| --- | --- | --- | --- |
-| vite-plugin-wasm | 3.6.0 | 2026-03-15 | Peer vite ^2–^8; redundant on Vite 8.1+. Still the option for Astro 6 (Vite 7). |
-| vite-plugin-top-level-await | 1.6.0 | 2025-07-17 | Redundant; Astro targets esnext. |
-| @wasm-tool/rollup-plugin-rust | 3.1.6 | 2026-06-05 | Imports `Cargo.toml`. Built on Astro 7.3.8 / Vite 8.3.4 (prior design) but inlined the wasm as base64 in the JS bundle and gave no types. |
-| vite-plugin-rsw | 2.0.11 | 2026-03-21 | |
-| vite-plugin-wasm-pack | 0.1.12 | 2022 | Abandoned. |
-| @rolldown/plugin-wasm | | | Doesn't exist (404). |
-
-None addresses the Astro prerender bug.
+`vite-plugin-wasm` and `vite-plugin-top-level-await` are redundant on Vite 8.1+. `@wasm-tool/rollup-plugin-rust` 3.1.6 inlined the wasm as base64 in the JS bundle and gave no types. `vite-plugin-rsw` and `vite-plugin-wasm-pack` are stale. None addresses the Astro prerender bug.
 
 ### Prior design (from an earlier chat)
 
-A handoff page from an earlier chat ("Import Rust files directly in Astro", tested 2026-10-10 on Astro 7.3.8, Vite 8.3.4 / Rolldown 1.2.13, wasm-pack 0.15.0, wasm-bindgen 0.2.129, rustc 1.97.0, @astrojs/svelte 9.0.1, Svelte 5.57.2, TypeScript 6.0.3, Node 22).
+A 58-line Vite plugin, tested 2026-10-10 on Astro 7.3.8: on a `.rs` import, `resolveId` ran `wasm-pack build` synchronously and wrote `lib.d.rs.ts` files for types; `configEnvironment` inlined `.wasm` for non-client environments; `server.watcher` rebuilt on Rust changes. Results: Rust edits reloaded in about 0.6–0.8 s, compile errors kept the last good build, Svelte `client:load` hydrated without warnings. Caveats: `execFileSync` paused the dev server while cargo compiled, and `astro build` had to run before `astro check` on a fresh checkout. Its usage rules are kept in step 4.
 
-- **Design:** a 58-line Vite plugin, `rust.mjs`. On a `.rs` import, `resolveId` walks up to the nearest `Cargo.toml`, runs `wasm-pack build --target bundler` synchronously once per crate (`--dev` under `astro dev`), and returns `pkg/<name>.js`. It writes `lib.d.rs.ts` next to `lib.rs` (`export * from '../pkg/<main>'`) for types with `allowArbitraryExtensions`. `configEnvironment` inlines `.wasm` for non-client environments. `server.watcher` rebuilds on `.rs` / `Cargo.toml` changes; `server.watch.ignored` covers `**/target/**`.
-- **Its test results** (headless Chromium, `astro dev` and `astro build` + `astro preview`):
-  - Client script, production: separate hashed `.wasm` in `dist/_astro/`, served as `application/wasm`.
-  - Dev edit to `lib.rs`: page reloaded in about 0.6–0.8 s.
-  - Rust compile error in dev: printed in the terminal; page kept the last good build and recovered.
-  - Frontmatter only: built to a single 141-byte `index.html`; frontmatter output also updated after a Rust edit in dev.
-  - Svelte `client:load`: Rust output in built HTML, interactive after hydration, no hydration warnings. `client:only`: browser only.
-  - Svelte dev edit to `lib.rs`: updated in place without a page reload; the component remounts, so state resets.
-  - `astro check` flagged `add("2", 3)` in `.astro` files; `svelte-check` needed for `.svelte`.
-- **Its caveats:**
-  - No browser APIs in code that runs at build time (frontmatter, server render of `client:load` islands). Shared functions should take data and return plain values.
-  - Always call imported functions directly; hot updates replace the module, so cached references go stale.
-  - Crate must live inside the project so Vite's watcher sees it.
-  - On a fresh checkout, types point into gitignored `pkg/`, so `astro build` had to run before `astro check`.
-  - `execFileSync` pauses the dev server while cargo compiles.
-  - Netlify, Vercel, and Cloudflare Pages build images weren't checked; the build host needs the Rust toolchain.
-  - Pre-rendering an interactive: import the crate in frontmatter for initial markup and again in the client script; the two copies share no memory, so pass state through the HTML.
-- **Its alternatives:** separate `wasm-pack` step + `init()` per crate (works, more boilerplate and a separate watch process); `vite-plugin-wasm-pack` and `vite-plugin-rsw` stale; `vite-plugin-wasm` not needed on Vite 8.1+.
-- **What this plan keeps and changes:** keeps native Vite wasm imports, the `configEnvironment` inlining, and watcher-driven rebuilds. Replaces wasm-pack with `cargo` + `wasm-bindgen` from Nix, the `.rs` resolver and `lib.d.rs.ts` with the `#rust/*` alias, and the synchronous `resolveId` build with async builds in Astro hooks. Building on `astro:config:setup` also removes the "build before check" ordering problem.
+This plan keeps native Vite wasm imports, the `configEnvironment` inlining, and watcher-driven rebuilds. It replaces wasm-pack with `cargo` + `wasm-bindgen` from Nix, the `.rs` resolver with the `#rust/*` alias, and the synchronous build with async builds in Astro hooks. Building on `astro:config:setup` removes the "build before check" problem.
 
 ### CI and deploy speed
 
-#### Current state (GitHub API, runs on 2026-10-11)
+#### Current state (runs on 2026-10-11)
 
-- CI runs only on `pull_request`, on `ubuntu-24.04-arm`. Latest run, 67 s total: set up 1 s, checkout 4 s, install Nix 3 s, **install packages (`nix develop -c pnpm install`) 30 s**, cache images 2 s, **tests 24 s**. Recent runs took 72–75 s; two earlier ones 3.5–4.5 min.
-- Nothing caches the Nix store: `cachix/install-nix-action` only installs Nix, and every run downloads the devShell from cache.nixos.org. The only `actions/cache` step caches Astro's optimized images.
-- Deploys use Cloudflare Pages' git integration (check run app "Cloudflare Workers and Pages", project `sullvn`, previews at `<hash>.sullvn.pages.dev`), building in Cloudflare's image. The dashboard build command and image version are unknown.
+- CI runs only on `pull_request`, on `ubuntu-24.04-arm`. Latest run, 67 s: install Nix 3 s, **`pnpm install` 30 s**, cache images 2 s, **tests 24 s**.
+- Nothing caches the Nix store; every run downloads the devShell from cache.nixos.org. The only `actions/cache` step caches Astro's optimized images.
+- Deploys use Cloudflare Pages' git integration (project `sullvn`), building in Cloudflare's image.
 
-#### Measured Rust cost (this machine: 4 cores, 16 GB, aarch64, same as the GitHub ARM runner)
+#### Measured Rust cost (4 cores, aarch64, same as the GitHub ARM runner)
 
-Toolchain (Rust 1.99.0 via rust-overlay):
-
-| Download (xz) | Size |
-| --- | --- |
-| rustc | 66 MB |
-| rust-std (aarch64) | 31 MB |
-| rust-std (wasm32) | 23 MB |
-| cargo | about 11 MB |
-| rust-analyzer | 8 MB |
-| rust-src | 6 MB |
-| clippy | about 4 MB |
-| rustfmt | 2 MB |
-
-- About 150 MB to download, about 1.2 GB unpacked (`nix path-info -S` of `rust-minimal-1.99.0`). wasm-bindgen-cli 0.2.129 is 82.5 MB and binaryen 132 is 90.4 MB unpacked, both from cache.nixos.org.
-- rust-overlay builds the toolchain on the runner from these tarballs (they're not on cache.nixos.org). `nix build --rebuild` of every toolchain derivation, one at a time, including re-fetching the tarballs: **17 s**. Real runs parallelize, so this is an upper bound. Separately, the research pass measured the rustc download at 0.4 s and its decompression at 2.7 s.
-
-Cargo, smoke-style crate with wasm-bindgen 0.2.129, `CI=1`, fresh `target/`, without `--target host-tuple`:
-
-| Command | Cold | No changes | After editing `lib.rs` |
-| --- | --- | --- | --- |
-| `cargo clippy --workspace --all-targets` | 4.8 s | 0 s | 0 s |
-| `cargo clippy --workspace --target wasm32-unknown-unknown` | 5.6 s | | |
-| `cargo test --workspace` | 4.8 s | 0 s | 0.2 s |
-| `cargo doc --workspace --no-deps` | under 0.1 s | | |
-| `cargo build --target wasm32-unknown-unknown` (dev) | 0.9 s | | |
-| `cargo build --target wasm32-unknown-unknown --release` | 5.0 s | 0 s | 0.1 s |
-| `wasm-bindgen` + `wasm-opt` | under 0.1 s | | |
-
-- Cold total about 21 s; `target/` 352 MB. With cached dependencies, only our own crates rebuild (about 1–2 s).
-- Estimate: with no caching, CI goes from about 67 s to about 105–110 s; with rust-cache, about 75–90 s.
-
-#### Sharing build artifacts between cargo commands
-
-Measured by the research pass (Rust 1.99.0, wasm-bindgen 0.2.129), counting units rebuilt from a fresh `target/`:
-
-- Plain `cargo test`, `check`, `clippy --all-targets` (no `--target`): the wasm32 clippy run rebuilt all 19 units, proc-macros included. `check` after `test` rebuilt syn, quote, and the wasm-bindgen macros, because host-only builds give them a different profile.
-- `clippy --all-targets` after `check`, then `doc --no-deps`, rebuilt only the smoke crate: those always share.
-- **`--target host-tuple`** (a literal Cargo has accepted since 1.91) on native clippy, test, and doc: proc-macros and build scripts compiled once and were reused by `clippy --target wasm32`, the wasm dev build, native clippy, test, and doc. Each extra configuration rebuilt only about 6–7 target-side units. Doctests still ran.
-- The release wasm build always rebuilt everything (20 units); tuning `[profile.release.build-override]` didn't make it share.
-- Disk: 223 MB with `host-tuple`, 351 MB without.
-- Cargo 1.99 (2026-10-01): "Incremental compilation is now disabled by default when running in CI. CI is detected via the CI environment variable" (#17220, https://doc.rust-lang.org/nightly/cargo/CHANGELOG.html). GitHub Actions, Cloudflare Pages, and Workers Builds all set `CI=true`. 1.99 also added a built-in `debug` profile, identical to `dev` for now.
+- Toolchain: about 150 MB of xz downloads (rustc 66 MB, two std libs 54 MB, the rest small), about 1.2 GB unpacked. rust-overlay builds it on the runner from these tarballs; rebuilding every toolchain derivation one at a time took **17 s**, an upper bound.
+- Cargo, smoke-style crate, `CI=1`, fresh `target/`: clippy 4.8 s (native) / 5.6 s (wasm32), `cargo test` 4.8 s, release wasm build 5.0 s, `wasm-bindgen` under 0.1 s. Cold total about 21 s, `target/` 352 MB. With cached dependencies only our own crates rebuild (about 1–2 s).
+- **Sharing between commands:** without an explicit target, a wasm32 command rebuilds all 19 units including proc-macros. With `--target host-tuple` on native commands, proc-macros compiled once and each extra configuration rebuilt only 6–7 units; `target/` was 223 MB vs 351 MB. The release wasm build always rebuilds everything (20 units).
 
 #### GitHub Actions caching
 
-- **Scoping** (https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching): a run restores caches from its own branch, its base branch, or the default branch. A cache saved by a `pull_request` run is scoped to `refs/pull/N/merge` and "can only be restored by re-runs of the pull request". So with PR-only CI, no cache is shared across PRs, including the existing `astro-images` cache. A `push` (or scheduled) run on `main` fixes it.
-- **Limits:** entries unused for 7 days are evicted; 10 GB per repo by default, raisable on paid storage (e.g. 50 GB for $2.80/month); 200 uploads/min, 1,500 downloads/min.
-- **Cache service v2:** the legacy service was sunset 2025-02-01. actions/cache v5 moved to Node 24 (runner 2.327.1+); v6.0.0 (2026-06-23) moved to ESM; v6.1.0 (2026-06-26), the repo's version, handles read-only cache access.
-- **Swatinem/rust-cache** v2.9.2 (2026-08-06): caches `~/.cargo` (registry cache, git deps, bin) and dependency artifacts in `./target`, not workspace crates. Skips `registry/src`, drops incremental files, prunes artifacts unused for a week. Key: job id, rustc release/host/hash, env vars matching `CARGO`, `CC`, `CFLAGS`, `CXX`, `CMAKE`, `RUST`, hash of all `Cargo.lock`/`Cargo.toml`, plus `rust-toolchain*` and `.cargo/config.toml`; falls back to caches from older lockfiles. `cache-on-failure` defaults to false; `save-if` controls saving; `cmd-format: nix develop -c {0}` supports Nix; sets `CARGO_INCREMENTAL=0` itself.
-- **sccache** (sccache-action v0.0.11, 2026-07-29) with the GitHub cache backend: per-object and subject to rate limits; not worth it for a small workspace.
+- **Scoping:** a run restores caches from its own branch, its base branch, or the default branch. A `pull_request` run's cache "can only be restored by re-runs of the pull request", so with PR-only CI no cache is shared across PRs, including `astro-images`. A `push` run on `main` fixes it. https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching
+- **Limits:** entries unused for 7 days are evicted; 10 GB per repo.
+- **Swatinem/rust-cache** v2.9.2 (2026-08-06): caches `~/.cargo` and dependency artifacts in `./target` (not workspace crates), prunes stale artifacts, falls back to caches from older lockfiles. `cmd-format` supports Nix.
+- **sccache** with the GitHub backend: per-object and rate-limited; not worth it for a small workspace.
 
 #### Nix store caching
 
-- **magic-nix-cache-action** v15 (2026-09-09), active. Determinate announced end-of-life in February 2025, then reversed it: daemon v0.1.5 (2025-06-11) added "Support for GitHub Actions Cache v2", action v11 (2025-06-13) removed the deprecation warnings. Free; stores only paths not on cache.nixos.org (here, the rust-overlay toolchain). Same scoping rules, so it also needs the `main` run.
-- **nix-community/cache-nix-action** v7.0.2 (2026-01-30): saves and restores all of `/nix` as one entry, with `gc-max-store-size` and purge options. README warns it "may slow down your workflow"; here it would also archive Chromium and the Playwright browsers, likely slower than cache.nixos.org.
-- **cachix:** free 5 GB "for open source projects" (https://www.cachix.org/pricing); repo is public; cachix-action v17; needs an auth token secret. Paid prices aren't published.
-- **FlakeHub Cache:** flakehub-cache-action v3.23.1 (2026-10-06); paid, pricing page didn't load (unverified).
-- None of these overlaps with anything in the current workflow. magic-nix-cache is the only one that would cache exactly the missing piece without re-caching what cache.nixos.org already serves.
+- **magic-nix-cache-action** v15 (2026-09-09), active again after a reversed end-of-life. Free; stores only paths not on cache.nixos.org (here, the rust-overlay toolchain).
+- **cache-nix-action** would archive all of `/nix`, including Chromium and the Playwright browsers; likely slower than cache.nixos.org. **cachix** needs a token secret; **FlakeHub Cache** is paid.
 
-#### Cloudflare Pages builds (checked 2026-10-12)
+#### Cloudflare builds
 
-- **Build image** (https://developers.cloudflare.com/pages/configuration/build-image/, updated 2026-09-18): v3 is the last version ("There will be no further build image version changes"), with rolling updates. v1 projects were moved to v3 on 2026-09-15; v2 projects move on 2027-02-23. x86_64, in a gVisor container.
-  - v3 preinstalls Go 1.24.3, Node 22.16.0, Bun 1.2.15, Python 3.13.3, Ruby 3.4.4, pnpm 10.11.1, Hugo 0.147.7, Zola 0.22.1, among others.
-  - **No Rust, cargo, rustup, wasm32 target, or wasm-pack.** No Cloudflare build doc mentions Rust.
-  - Build CPU and RAM aren't documented.
-- **Limits** (https://developers.cloudflare.com/pages/platform/limits/): 20-minute build timeout; free plan 500 builds/month, 1 concurrent build.
-- **Build cache** (https://developers.cloudflare.com/pages/configuration/build-caching/): only fixed directories (`.npm`, `.cache/yarn`, `.pnpm-store`, `.bun/install/cache`, and for Astro `node_modules/.astro`). No custom directories, so `~/.cargo`, `~/.rustup`, and `target/` can't be cached. 10 GB per project, purged 7 days after last read, needs build system v2+. Pointing `CARGO_HOME`/`RUSTUP_HOME`/`CARGO_TARGET_DIR` into `node_modules/.astro` might work (unverified).
-- **Installing Rust there:** `curl https://sh.rustup.rs | sh -s -- -y --profile minimal`, then rustup reads `rust-toolchain.toml`. x86_64 downloads for 1.99.0: rustc 84 MB, std 31.6 MB, wasm32 std 23.2 MB, cargo 11 MB, plus clippy, rustfmt, rust-src, rust-analyzer: about 165 MB of xz per build. Estimated 30–60 s per build (unverified). rustup installs every listed component, and `channel = "stable"` resolves to the current release on the day, not what `flake.lock` pins, so the toolchain could drift from CI's.
-- **Prebuilt tools:** wasm-bindgen 0.2.129 ships only a musl build for x86_64 Linux (`wasm-bindgen-0.2.129-x86_64-unknown-linux-musl.tar.gz`, 11.7 MB, with `.sha256sum`; https://github.com/wasm-bindgen/wasm-bindgen/releases/tag/0.2.129). binaryen version_133 is `binaryen-version_133-x86_64-linux.tar.gz`, 111 MB (https://github.com/WebAssembly/binaryen/releases/tag/version_133); lighter options are npm `binaryen@132.0.0` (JS/wasm, slower) or `binaryen-version_133-node.tar.gz` (2.3 MB).
-- **Pages vs Workers:** the Pages docs home now opens with "Are you sure you want to use Pages? … [Workers] is Cloudflare's primary platform for building applications. Start new projects with Workers." (https://developers.cloudflare.com/pages/, updated 2026-08-25). Not formally deprecated; the build-image policy runs through 2027.
-- **Workers Builds** (https://developers.cloudflare.com/workers/ci-cd/builds/build-image/, `/limits-and-pricing/`): Ubuntu 24.04 x86_64, Node 24.18.0, no Rust. Free 2 vCPU, paid 4 vCPU; 8 GB RAM, 20 GB disk, 20-minute timeout; 3,000 build minutes/month free, 6,000 paid. Same fixed-directory cache, so moving to Workers doesn't solve the Rust problem.
+- The Pages build image (v3, x86_64) has **no Rust, cargo, rustup, or wasm32 target**, and its build cache only covers fixed directories (`.pnpm-store`, `node_modules/.astro`, …), so `~/.cargo` and `target/` can't be cached. Installing Rust there would download about 165 MB per build, and `channel = "stable"` would drift from `flake.lock`. Workers Builds has the same limits. Hence building in GitHub Actions.
+- Cloudflare's Pages docs now say "Start new projects with Workers"; Pages isn't formally deprecated.
 
 #### Deploying from GitHub Actions
 
-- `cloudflare/wrangler-action` v4.1.3 (2026-09-24), defaults to Wrangler v4; npm wrangler is 4.149.0.
-- A git-connected Pages project "cannot switch to Direct Upload later" (https://developers.cloudflare.com/pages/configuration/git-integration/), but turning off automatic deployments (Settings > Build > Branch control: untick automatic production deployments, preview branches "None") lets "you use Wrangler to deploy directly to your Pages project". The project, domain, and URLs stay. Drag-and-drop uploads don't work on git projects; wrangler does.
-- `wrangler pages deploy dist --project-name=sullvn --branch=<name>` gives `<branch>.sullvn.pages.dev`; wrangler detects the branch from git. Also `--commit-hash`, `--commit-message`, `--commit-dirty`.
-- Secrets (https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/): `CLOUDFLARE_API_TOKEN` (Account > Cloudflare Pages > Edit), `CLOUDFLARE_ACCOUNT_ID`; workflow permission `deployments: write` and `gitHubToken` for a GitHub Deployment. Action outputs `deployment-url` and `pages-deployment-alias-url`.
-- Lost: the Cloudflare bot's PR comment and check run (a sticky-comment action could replace the comment). Fork and Dependabot PRs get no preview (no secrets).
-- **Workers static-assets equivalent:** `wrangler.jsonc` with `"assets": {"directory": "./dist"}`, `wrangler deploy` for production, **Workers Previews** (`wrangler preview --name pr-N`; docs say Wrangler 4.135.0+, the action README says 4.136.3) at `<preview>-<worker>.<subdomain>.workers.dev`, 100 previews per Worker on the free plan, token template "Edit Cloudflare Workers". https://developers.cloudflare.com/workers/previews/, https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/
+- `cloudflare/wrangler-action` v4.1.3 (2026-09-24), Wrangler v4.
+- **Wrangler from Nix instead:** nixpkgs has `wrangler` 4.148.0 for aarch64-linux on cache.nixos.org, but it is a 171 MB download (664 MB unpacked), paid on every CI run without a Nix store cache. The npm package wrangler-action installs is about 170 MB unpacked, most of it `workerd`.
+- A git-connected Pages project can't switch to Direct Upload, but turning off automatic deployments (Branch control) lets wrangler deploy to it. Project, domain, and URLs stay. https://developers.cloudflare.com/pages/configuration/git-integration/
+- `wrangler pages deploy dist --project-name=sullvn --branch=<name>` gives `<branch>.sullvn.pages.dev`. Needs `CLOUDFLARE_API_TOKEN` (Account > Cloudflare Pages > Edit), `CLOUDFLARE_ACCOUNT_ID`, and `deployments: write` + `gitHubToken` for a GitHub Deployment.
+- **Workers equivalent:** `wrangler.jsonc` with `"assets": {"directory": "./dist"}`, `wrangler deploy`, and Workers Previews (`wrangler preview`) at `<preview>-<worker>.<subdomain>.workers.dev`. https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/
 
-### Tested in scratch projects (this chat)
+### Hygiene tools (not adopted yet)
 
-- **rust-overlay** with `channel = "stable"`: Rust 1.99.0, release wasm build, `wasm-bindgen` 0.2.129, `wasm-opt` with the six feature flags; no separate `lld`.
-- **Integration prototype** (Astro 7.3.5, Vite 8.2.2, wasm-bindgen 0.2.127 from the locked nixpkgs), with a crate exporting `add`, `greet`, `sum(&[f64])`, and `parse_byte -> Result<u8, JsError>`:
+- **cargo-deny** 0.20.2: a tested `deny.toml` passed with `[graph] targets` for wasm32 + linux, `unmaintained = "all"`, `yanked = "deny"`, licenses `MIT`, `Apache-2.0`, `Unicode-3.0`, `multiple-versions = "warn"`, `wildcards = "deny"`.
+- **cargo-shear** 1.14.0: unused deps on stable; preferred over regex-based cargo-machete.
+
+### Tested in scratch projects
+
+- **rust-overlay** with `channel = "stable"`: Rust 1.99.0, release wasm build, `wasm-bindgen` 0.2.129.
+- **Integration prototype** (Astro 7.3.5, Vite 8.2.2, wasm-bindgen 0.2.127):
   - `#rust/*` wildcard imports resolve; `const x: string = add(1, 2)` fails `astro check` with TS2322.
   - `astro check` logged `config:setup command=sync` and `built crates (debug) in 8408ms` before type-checking.
-  - `astro build` produced `<p id="ssr">Hello, ssr! 5 4 number too large to fit in target type` (the thrown `JsError` message from `parse_byte('300')`) and `dist/_astro/index_bg.CjxKB4-W.wasm`.
-  - In `astro dev`, a Rust edit was live in about 2 s (`built crates (debug) in 135ms`). A syntax error logged cargo's `unclosed delimiter` error, the page kept serving, and it recovered on the next save.
+  - `astro build` rendered the thrown `JsError` message (`number too large to fit in target type`) into the HTML and emitted `dist/_astro/index_bg.<hash>.wasm`.
+  - In `astro dev`, a Rust edit was live in about 2 s (`built crates (debug) in 135ms`). A syntax error logged cargo's error, the page kept serving, and it recovered on the next save.
+- **`--message-format=json-render-diagnostics`** (Rust 1.99): stdout held only `compiler-artifact`, `build-script-executed`, and `build-finished` lines, with the `.wasm` path in `filenames`; a syntax error printed cargo's usual rendered error on stderr, exit 101.
 - Svelte islands with `client:load` and `client:only` worked in build and preview (headless Chromium).
 
 ### Not yet verified
 
 - That an already-open tab updates during dev (only fresh requests checked).
 - That Firefox and WebKit run the client wasm (covered by the new Playwright test).
-- That the flake change works in CI.
-- Actual CI timings with Rust on the GitHub runner, and how much magic-nix-cache would save over rust-overlay's CDN downloads.
-- Cloudflare's Rust install cost, Pages build CPU/RAM, and the `node_modules/.astro` cache hack (moot if deploys move to GitHub Actions).
+- That the flake change works in CI (the `mkRustBin` toolchain was only evaluated, not built).
+- The integration's changes since the prototype, which only exist on paper: picking crates with `cargo metadata`, `--profile wasm` with `--target wasm32-unknown-unknown`, the `building`/`dirty` coalescing, and the single-ternary `configEnvironment` passing `astro check`.
+- Actual CI timings with Rust on the GitHub runner, and how much magic-nix-cache would save.
 - The current Pages dashboard build command and image version.
 - That the `dist/` built for Playwright is identical to a production build (no difference in build env is visible).
 - Server-adapter output (not needed for this static site).
