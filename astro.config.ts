@@ -47,7 +47,7 @@ export default defineConfig({
     },
     server: {
       watch: {
-        ignored: [`${root}**/dist/**`, `${root}**/.*/**`],
+        ignored: [`${root}**/dist/**`, `${root}**/.*/**`, `${root}target/**`],
       },
     },
   },

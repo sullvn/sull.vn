@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# rust build output
+target/
+
 # generated types
 .astro/
 
