@@ -24,8 +24,8 @@ Decisions so far:
 
 1. **Update dependencies:** `nix flake update`, bump astro to 7.3.8 (brings Vite's security fix).
 2. **CI and deploys:** run CI on pushes to `main` too (so caches are shared), deploy previews and production from GitHub Actions with `cloudflare/wrangler-action`, turn off Cloudflare's own builds.
-3. **Rust workspace and test crate:** rust-overlay toolchain from `rust-toolchain.toml` (`channel = "stable"`), `wasm-bindgen-cli` matched to `Cargo.lock`, workspace `Cargo.toml` with strict lints and a `wasm` profile, `clippy.toml`, `crates/smoke` with native tests, `test:cargo` script, `Swatinem/rust-cache` in CI.
-4. **Astro integration:** `src/integrations/rust.ts` builds the wasm-bindgen crates with `cargo` + `wasm-bindgen`, fixes Astro's prerender wasm bug, rebuilds on Rust edits in dev; `#rust/*` import alias.
+3. **Rust workspace and test crate** (done on `rust-workspace`, native only): rust-overlay toolchain from `rust-toolchain.toml` (`channel = "stable"`), workspace `Cargo.toml` with strict lints, `clippy.toml`, `crates/smoke` with native tests, `test:cargo` script.
+4. **Astro integration:** the wasm parts of step 3 first (wasm32 target, `wasm` profile, wasm-bindgen in `crates/smoke`, `wasm-bindgen-cli` matched to `Cargo.lock`, `watch_file Cargo.lock`, `Swatinem/rust-cache` in CI), then `src/integrations/rust.ts` builds the wasm-bindgen crates with `cargo` + `wasm-bindgen`, fixes Astro's prerender wasm bug, rebuilds on Rust edits in dev; `#rust/*` import alias.
 5. **Test page:** `/rust-wasm-test` uses `crates/smoke` at build time and in a client `<script>`; Playwright test in Chromium, Firefox, and WebKit.
 
 Then, only after measuring: [optional extras](#optional-explore-after-measuring).
@@ -74,6 +74,10 @@ Useful on its own, before any Rust: the existing Astro image cache is never shar
 Trade-off: the Cloudflare bot's PR comment and check run become a GitHub Deployment link.
 
 ### 3. Rust workspace and test crate
+
+**Status:** the native parts landed on `rust-workspace`: toolchain (no wasm32 target yet), workspace and lints, `clippy.toml`, `crates/smoke` as plain Rust with native tests, `test:cargo`, and ignores for `target/`. The wasm parts below (wasm32 target, `[profile.wasm]`, `[workspace.dependencies]`, wasm-bindgen exports, `wasm-bindgen-cli`, `watch_file Cargo.lock`, `crates/*/pkg/` ignore, CI caching) move to step 4. A workspace with no crate under `crates/` fails to load, so the workspace and its first crate land together.
+
+**Editor:** rust-analyzer comes from the toolchain. Clippy-on-save (`check.command = "clippy"`) and a separate target directory (`cargo.targetDir = true`) are set in the editor's LSP settings (nixvim in `/etc/nixos/home.nix`), not in a repo `rust-analyzer.toml`: rust-analyzer 1.99 reads both settings for its checks only from client settings, ignoring the project file (tested).
 
 #### `flake.nix`
 
@@ -135,8 +139,7 @@ profile = "minimal"
   [workspace.lints.clippy]
   pedantic = { level = "warn", priority = -1 }
   nursery = { level = "warn", priority = -1 }
-  missing_const_for_fn = "allow" # wasm-bindgen rejects `const fn`, and workspace lints apply to every crate
-  redundant_pub_crate = "allow"  # contradicts `unreachable_pub`
+  redundant_pub_crate = "allow" # contradicts `unreachable_pub`
   # Restriction lints, cherry-picked (the group as a whole contradicts itself).
   # Hidden panics, exits, and silent truncation (on wasm, a panic traps with no message):
   as_conversions = "warn"
@@ -176,7 +179,8 @@ profile = "minimal"
   - **Tests under these lints:** `missing_assert_message` and `panic_in_result_fn` also apply inside tests, and `clippy.toml` has no setting to relax either (tested for `panic_in_result_fn`). So every assertion carries a message, and a test that asserts doesn't return `Result`: it uses `.unwrap()` or `.expect()`, which tests allow, instead of `?`. If this proves noisy, relax them later.
   - **Binaries:** `print_stdout`/`print_stderr` steer CLI output to `writeln!` on a locked `io::stdout()`, which returns an error on a closed pipe instead of panicking. A binary that prints a lot can take a crate-level `#![expect(clippy::print_stdout, reason = "...")]`.
   - **Left out:** `tests_outside_test_module` fires on every test in a crate's `tests/` directory (tested), which native crates use for integration tests.
-  - **Overlaps aren't tracked.** rustc and clippy sometimes flag the same code twice; that's harmless and changes between releases. When two lints contradict each other, allow one with a comment saying why, like the two `allow`s above.
+  - **`missing_const_for_fn` stays on.** wasm-bindgen can't export a `const fn`, so when the lint flags an export, silence it on that item only: `#[expect(clippy::missing_const_for_fn, reason = "wasm-bindgen rejects const fn")]`. Tested on a free function and on a method in a `#[wasm_bindgen] impl` (Rust 1.99, wasm-bindgen 0.2.129). Plain Rust logic behind the exports can still be `const fn`.
+  - **Overlaps aren't tracked.** rustc and clippy sometimes flag the same code twice; that's harmless and changes between releases. When two lints contradict each other, allow one with a comment saying why, like the `allow` above.
 
 #### `crates/smoke`
 
@@ -231,7 +235,7 @@ Unit tests live in a `#[cfg(test)] mod tests` at the bottom of each file, plus d
 #### Other files
 
 - No `rustfmt.toml`: every entry point (`cargo fmt`, rust-analyzer) passes the crate's edition, and every useful option is nightly-only. The `rustfmt` toolchain component stays, since `cargo fmt` runs it.
-- `clippy.toml`: `allow-unwrap-in-tests`, `allow-expect-in-tests`, `allow-panic-in-tests`, `allow-indexing-slicing-in-tests`, `avoid-breaking-exported-api = false`.
+- `clippy.toml`: `allow-unwrap-in-tests`, `allow-expect-in-tests`, `allow-panic-in-tests`, `allow-indexing-slicing-in-tests`, `avoid-breaking-exported-api = false`. These can't live in `Cargo.toml`: its `[lints]` table only carries levels, and Cargo silently ignores these keys there or in `[workspace.metadata.clippy]` (tested).
 - `.gitignore`: `target/`, `crates/*/pkg/`. Biome already honours `.gitignore` (`vcs.useIgnoreFile`), so it skips both.
 - `tsconfig.json`: add `target` to `exclude`, next to `dist`. Its `include` is `**/*`, so TypeScript would otherwise walk the whole of `target/`, which has no TypeScript in it. `pkg/` stays included, since its `.d.ts` files are the types.
 - `.envrc`: `watch_file Cargo.lock`, since the devShell depends on it and nix-direnv only watches `flake.nix`, `flake.lock`, and `devshell.toml`.
@@ -360,7 +364,7 @@ Tested on Rust 1.95 and 1.99, native and `--target wasm32-unknown-unknown`, exer
 
 - **`unsafe_code = "forbid"` works.** The expansion contains 22 `unsafe` tokens plus `#[no_mangle]`, `#[export_name]`, and `#[link_section]`, yet nothing fires. A hand-written `unsafe {}` does error.
 - **No noise from generated code** with `missing_docs`, `missing_debug_implementations`, `unreachable_pub`, `unused_qualifications`, pedantic, nursery, or the chosen restriction lints. The full set passed with zero warnings on native and wasm32.
-- **`clippy::missing_const_for_fn`** suggests `const fn`, but then the macro fails: `error: can only #[wasm_bindgen] non-const functions`.
+- **`clippy::missing_const_for_fn`** suggests `const fn`, but then the macro fails: `error: can only #[wasm_bindgen] non-const functions`. A per-item `#[expect(clippy::missing_const_for_fn, reason = "...")]` silences it on a free function and on a method in a `#[wasm_bindgen] impl` (tested natively, 2026-10-13).
 - **`Ok(parse(s)?)`** into `Result<u8, JsError>` passes the full lint set (no `needless_question_mark`, since the error type changes). Rust 1.99, wasm-bindgen 0.2.129.
 - Left out as noisy: `missing_inline_in_public_items` (fires on every export), `unused_crate_dependencies` (fires for dev-dependencies), `exhaustive_structs`, `std_instead_of_core`/`alloc` (only for `no_std`), `missing_docs_in_private_items`, `arithmetic_side_effects`, `min_ident_chars`, `pub_use`, `shadow_unrelated`, `single_char_lifetime_names`, `wildcard_enum_match_arm`. Enabling all of `clippy::restriction` is discouraged by clippy itself.
 - **Restriction lints from r/rust** (https://www.reddit.com/r/rust/comments/1m0r3s7/do_you_use_clippyrestriction_lints/, read via the PullPush archive 2026-10-13): most of what commenters use is already here (`clone_on_ref_ptr`, `if_then_some_else_none`, `str_to_string`, `try_err`, `as_conversions`, `dbg_macro`, `print_*`, `unwrap_used`/`expect_used`, `indexing_slicing`, `allow_attributes_without_reason`, `mod_module_files`). The rest, tested with clippy 1.95 on a crate with wasm-bindgen exports, fired on none of wasm-bindgen's generated code. Left out: `absolute_paths` (fires on idiomatic `std::mem::forget`-style calls), `pattern_type_mismatch` (fights match ergonomics), `shadow_reuse` (fires on `let s = s.trim()`), `impl_trait_in_params` (taste; wasm-bindgen exports can't take `impl Trait` anyway), `mem_forget` (wasm-bindgen leaks through `Closure::forget`, which it doesn't flag), the `unsafe`/safety-comment lints (`unsafe_code` is forbidden), `exhaustive_enums` (nothing is published), `std_instead_of_*` and `missing_docs_in_private_items` (above). Adopted: `unreachable` (the `panic` lint doesn't cover `unreachable!`), `exit` (flags `process::exit` outside `main`), and `panic_in_result_fn` (flags `assert!` and `panic!` in functions that return `Result`; it also fires in tests, with no `clippy.toml` exemption, so tests that assert don't return `Result`).
