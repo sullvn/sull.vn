@@ -35,6 +35,7 @@
     "@playwright/test": "1.63.0",
     "svelte-language-server": "^0.18.4",
     "tinyglobby": "^0.2.17",
-    "typescript-language-server": "^6.0.2"
+    "typescript-language-server": "^6.0.2",
+    "wrangler": "^4.149.0"
   }
 }
