@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import { escapePath } from 'tinyglobby'
@@ -47,8 +48,19 @@ export default defineConfig({
     },
     server: {
       watch: {
-        ignored: [`${root}**/dist/**`, `${root}**/.*/**`, `${root}target/**`],
+        ignored: [...gitignored(), `${root}**/.*/**`],
       },
     },
   },
 })
+
+function gitignored(): string[] {
+  return readFileSync(new URL('.gitignore', import.meta.url), 'utf8')
+    .split('\n')
+    .filter((line) => line && !line.startsWith('#'))
+    .flatMap((line) => {
+      const path = line.replace(/\/$/, '')
+      const glob = path.includes('/') ? `${root}${path.replace(/^\//, '')}` : `${root}**/${path}`
+      return [glob, `${glob}/**`]
+    })
+}
