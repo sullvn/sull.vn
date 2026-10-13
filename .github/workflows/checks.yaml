@@ -2,18 +2,25 @@ name: Checks
 
 on:
   pull_request:
+  # Pushes to main deploy production and save caches that PRs can restore
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cut off a production deploy
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
+    environment:
+      name: ${{ github.event_name == 'push' && 'production' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -41,3 +48,18 @@ jobs:
 
       - name: Tests
         run: nix develop --no-update-lock-file -c pnpm test
+
+      # Uploads the dist/ that Playwright tested. Main deploys production, and
+      # other branches deploy previews at <branch>.<project>.pages.dev.
+      - name: Deploy
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # A variable, not a secret: GitHub drops outputs containing secrets,
+          # and the deployment URL contains the project name
+          CLOUDFLARE_PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler.ndjson
+        run: |
+          nix develop --no-update-lock-file -c pnpm exec wrangler pages deploy dist --project-name="$CLOUDFLARE_PROJECT_NAME" --branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          jq -r 'select(.type == "pages-deploy-detailed") | "url=\(.alias // .url)"' "$WRANGLER_OUTPUT_FILE_PATH" >> "$GITHUB_OUTPUT"
