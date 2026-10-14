@@ -17,15 +17,16 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        inherit (pkgs) lib;
+
         rust-bin = rust-overlay.lib.mkRustBin { } pkgs;
-        # Must exactly match the wasm-bindgen crate in Cargo.lock
-        wasm-bindgen-cli =
-          let
-            crate = lib.findFirst (p: p.name == "wasm-bindgen") (throw "wasm-bindgen is not in Cargo.lock")
-              (lib.importTOML ./Cargo.lock).package;
-          in
-          pkgs."wasm-bindgen-cli_${lib.replaceString "." "_" crate.version}";
+        crateVersions = pkgs.lib.listToAttrs (
+          map (crate: pkgs.lib.nameValuePair crate.name crate.version) (pkgs.lib.importTOML ./Cargo.lock).package
+        );
+        rust-toolchain = rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+
+        # wasm-bindgen requires the CLI and library to be the same version
+        wasm-bindgen-cli = pkgs."wasm-bindgen-cli_${pkgs.lib.replaceString "." "_" crateVersions.wasm-bindgen}";
+
         fontconfigRules = "${pkgs.fontconfig.out}/share/fontconfig/conf.avail";
       in
         {
@@ -36,10 +37,10 @@
               pkgs.biome
               pkgs.actionlint
               pkgs.chromium
-              (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
+              rust-toolchain
               wasm-bindgen-cli
-              pkgs.binaryen # wasm-opt
-            ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+              pkgs.binaryen
+            ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
               # WebKit needs a graphics driver even when running headless.
               pkgs.mesa.llvmpipeHook
             ];
