@@ -2,7 +2,6 @@ name: Checks
 
 on:
   pull_request:
-  # Pushes to main deploy production and save caches that PRs can restore
   push:
     branches: [main]
 
@@ -11,7 +10,6 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Never cut off a production deploy
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -49,15 +47,17 @@ jobs:
       - name: Tests
         run: nix develop --no-update-lock-file -c pnpm test
 
-      # Uploads the dist/ that Playwright tested. Main deploys production, and
-      # other branches deploy previews at <branch>.<project>.pages.dev.
       - name: Deploy
         id: deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # A variable, not a secret: GitHub drops outputs containing secrets,
-          # and the deployment URL contains the project name
+          #
+          # Required to be a GitHub variable, not a secret.
+          #
+          # GitHub drops outputs containing secrets. And the deployment URL
+          # contains the project name!
+          #
           CLOUDFLARE_PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
           WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler.ndjson
         run: |
