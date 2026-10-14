@@ -17,7 +17,15 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        inherit (pkgs) lib;
         rust-bin = rust-overlay.lib.mkRustBin { } pkgs;
+        # Must exactly match the wasm-bindgen crate in Cargo.lock
+        wasm-bindgen-cli =
+          let
+            crate = lib.findFirst (p: p.name == "wasm-bindgen") (throw "wasm-bindgen is not in Cargo.lock")
+              (lib.importTOML ./Cargo.lock).package;
+          in
+          pkgs."wasm-bindgen-cli_${lib.replaceString "." "_" crate.version}";
         fontconfigRules = "${pkgs.fontconfig.out}/share/fontconfig/conf.avail";
       in
         {
@@ -29,7 +37,9 @@
               pkgs.actionlint
               pkgs.chromium
               (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
-            ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+              wasm-bindgen-cli
+              pkgs.binaryen # wasm-opt
+            ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
               # WebKit needs a graphics driver even when running headless.
               pkgs.mesa.llvmpipeHook
             ];

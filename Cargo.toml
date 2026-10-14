@@ -52,3 +52,22 @@ unimplemented = "warn"
 unreachable = "warn"
 unused_result_ok = "warn"
 unwrap_used = "warn"
+
+# Smallest wasm binaries; native release builds keep Cargo's defaults
+[profile.wasm-release]
+# Start from Cargo's release profile
+inherits = "release"
+
+# Optimize for size, giving up loop vectorization (little use without wasm SIMD)
+opt-level = "z"
+
+# Optimize across all crates at link time, removing unused code
+lto = "fat"
+
+# Compile each crate as one unit, so the optimizer sees all of it at once
+codegen-units = 1
+
+# Strip symbols and debug info from the binary
+strip = true
+
+# No `panic = "abort"`: wasm32-unknown-unknown already aborts on panic
