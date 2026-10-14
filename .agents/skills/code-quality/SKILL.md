@@ -7,6 +7,8 @@ description: Code quality standards to apply when writing or reviewing code.
 
 Write comments that explain unusual logic or provide high-level summaries. Avoid low-value comments that merely restate what the code does.
 
+Prefer comments that explain why over ones that explain what: the reason for a choice, the constraint it works around, or what would break otherwise. The code already shows what it does.
+
 When a comment has more than one paragraph, end it with an empty comment line too. This applies to every language and comment style:
 
 ```ts
