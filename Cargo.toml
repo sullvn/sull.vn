@@ -52,3 +52,20 @@ unimplemented = "warn"
 unreachable = "warn"
 unused_result_ok = "warn"
 unwrap_used = "warn"
+
+[profile.wasm-release]
+inherits = "release"
+
+# Optimize for absolute smallest size
+opt-level = "z"
+
+# Optimize across all crates at link time, removing unused code
+lto = "fat"
+
+# Compile each crate as one unit, so the optimizer sees all of it at once
+codegen-units = 1
+
+# Strip symbols and debug info from the binary
+strip = true
+
+# No `panic = "abort"`: wasm32-unknown-unknown already aborts on panic

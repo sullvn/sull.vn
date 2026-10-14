@@ -3,6 +3,7 @@ dist/
 
 # Rust build output
 target/
+crates/*/pkg/
 
 # Generated types
 .astro/

@@ -2,5 +2,11 @@
 name = "smoke"
 edition.workspace = true
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+
 [lints]
 workspace = true
