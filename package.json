@@ -2,6 +2,9 @@
   "name": "sull.vn",
   "type": "module",
   "version": "0.0.2",
+  "imports": {
+    "#rust/*": "./target/wasm-bindgen/*/index.js"
+  },
   "scripts": {
     "astro": "astro",
     "build": "astro build",
