@@ -7,6 +7,8 @@ description: Code quality standards to apply when writing or reviewing code.
 
 Write comments that explain unusual logic or provide high-level summaries. Avoid low-value comments that merely restate what the code does.
 
+Prefer comments that explain why over ones that explain what: the reason for a choice, the constraint it works around, or what would break otherwise. The code already shows what it does.
+
 When a comment has more than one paragraph, end it with an empty comment line too. This applies to every language and comment style:
 
 ```ts
@@ -29,9 +31,28 @@ When a comment has more than one paragraph, end it with an empty comment line to
 
 Single-paragraph comments, even multi-line ones, don't get the trailing empty line.
 
+Never write a block comment on a single line, like `/* Example */` or `/** Example */`. Use a line comment (`//`) instead, or spread a doc comment over several lines:
+
+```ts
+/**
+ * Example
+ */
+```
+
+CSS is the exception, including `<style>` blocks in components, as block comments are its only kind of comment.
+
 ## Organization
 
-Sort module-scope declarations with exports first, then non-exports. Within each group, sort topologically—a function should appear before the functions or constants that use it.
+Sort module-scope declarations with exports first, then non-exports. Within each group, sort topologically from the top down: a declaration appears after the declarations that use it, so a file reads from its entry points down to the details.
+
+## Async
+
+Don't wrap `await` expressions in parentheses to use their result. Assign the awaited value to a variable first:
+
+```ts
+const files = await readdir(dir)
+return files.map((file) => `${dir}/${file}`)
+```
 
 ## Length
 

@@ -6,6 +6,7 @@ import { escapePath } from 'tinyglobby'
 import { unified } from '@astrojs/markdown-remark'
 import svelte from '@astrojs/svelte'
 import mdx from '@astrojs/mdx'
+import { rust } from './src/integrations/rust.ts'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 
@@ -34,7 +35,7 @@ export default defineConfig({
       defaultColor: 'light-dark()',
     },
   },
-  integrations: [svelte(), mdx()],
+  integrations: [svelte(), mdx(), rust()],
   build: {
     format: 'file',
   },
