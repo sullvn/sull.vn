@@ -40,12 +40,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn from_constant() {
-        let c = Expression::from(1.0);
+    fn lit() {
+        let l = Expression::from(1.0);
 
-        assert_eq!(c.data(), 1.0, "constant data");
-        assert!(c.left().is_none(), "constant has no left operand");
-        assert!(c.right().is_none(), "constant has no right operand");
-        assert_eq!(c.symbol(), "", "constant has no operator");
+        assert_eq!(l.data(), 1.0, "literal data");
+        assert!(l.left().is_none(), "literal has no left operand");
+        assert!(l.right().is_none(), "literal has no right operand");
+        assert_eq!(l.symbol(), "", "literal has no operator");
     }
 }
