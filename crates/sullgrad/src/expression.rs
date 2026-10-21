@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use std::ops::{Deref, Div, Neg, Sub};
+use std::ops::{Deref, DerefMut, Div, Neg, Sub};
 
 mod add;
 mod lit;
@@ -8,10 +8,15 @@ mod pow;
 
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 trait Expr: Debug {
+    fn backward(&mut self);
+
     fn data(&self) -> f64;
-    fn symbol(&self) -> &'static str;
+    fn grad(&self) -> f64;
     fn left(&self) -> Option<&Expression>;
     fn right(&self) -> Option<&Expression>;
+    fn symbol(&self) -> &'static str;
+
+    fn add_grad(&mut self, grad: f64);
 }
 
 #[derive(Debug)]
@@ -23,6 +28,13 @@ impl Deref for Expression {
     fn deref(&self) -> &Self::Target {
         let Self(expr) = self;
         expr.as_ref()
+    }
+}
+
+impl DerefMut for Expression {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        let Self(expr) = self;
+        expr.as_mut()
     }
 }
 

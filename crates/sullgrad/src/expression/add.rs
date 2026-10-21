@@ -13,6 +13,7 @@ impl Add<Self> for Expression {
 #[derive(Debug)]
 struct AddExpr {
     data: f64,
+    grad: f64,
     left: Expression,
     right: Expression,
 }
@@ -20,18 +21,44 @@ struct AddExpr {
 impl AddExpr {
     fn new(left: Expression, right: Expression) -> Self {
         let data = left.data() + right.data();
+        let grad = 0.0;
 
-        Self { data, left, right }
+        Self {
+            data,
+            grad,
+            left,
+            right,
+        }
     }
 }
 
 impl Expr for AddExpr {
+    ///
+    /// Backward pass for addition
+    ///
+    /// Follows from:
+    ///
+    /// ```text
+    /// f(l, r) = l + r
+    /// ∂f/∂l   = 1
+    /// ∂f/∂r   = 1
+    /// ```
+    ///
+    /// By the chain rule, each operand's gradient is
+    /// `self.grad * 1`, so the gradient passes through
+    /// unchanged.
+    ///
+    fn backward(&mut self) {
+        self.left.add_grad(self.grad);
+        self.right.add_grad(self.grad);
+    }
+
     fn data(&self) -> f64 {
         self.data
     }
 
-    fn symbol(&self) -> &'static str {
-        "+"
+    fn grad(&self) -> f64 {
+        self.grad
     }
 
     fn left(&self) -> Option<&Expression> {
@@ -40,6 +67,14 @@ impl Expr for AddExpr {
 
     fn right(&self) -> Option<&Expression> {
         Some(&self.right)
+    }
+
+    fn symbol(&self) -> &'static str {
+        "+"
+    }
+
+    fn add_grad(&mut self, grad: f64) {
+        self.grad += grad;
     }
 }
 
@@ -65,5 +100,23 @@ mod tests {
             "add has right operand"
         );
         assert_eq!(a.symbol(), "+", "add has operator");
+    }
+
+    #[test]
+    fn backward() {
+        let mut a = Expression::from(1.0) + Expression::from(2.0);
+        a.add_grad(2.0);
+        a.backward();
+
+        assert_eq!(
+            a.left().map(|l| l.grad()),
+            Some(2.0),
+            "add passes gradient to left operand"
+        );
+        assert_eq!(
+            a.right().map(|r| r.grad()),
+            Some(2.0),
+            "add passes gradient to right operand"
+        );
     }
 }
