@@ -2,6 +2,7 @@ use std::fmt::Debug;
 use std::ops::{Deref, DerefMut, Div, Neg, Sub};
 
 mod add;
+mod exp;
 mod lit;
 mod mul;
 mod pow;
