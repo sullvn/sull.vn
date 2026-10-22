@@ -6,6 +6,7 @@ mod exp;
 mod lit;
 mod mul;
 mod pow;
+mod tanh;
 
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 trait Expr: Debug {
