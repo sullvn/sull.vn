@@ -15,20 +15,14 @@ impl Expression {
 #[derive(Debug)]
 struct ExpExpr {
     data: f64,
-    grad: f64,
     exponent: Expression,
 }
 
 impl ExpExpr {
     fn new(exponent: Expression) -> Self {
         let data = exponent.data().exp();
-        let grad = 0.0;
 
-        Self {
-            data,
-            grad,
-            exponent,
-        }
+        Self { data, exponent }
     }
 }
 
@@ -44,19 +38,15 @@ impl Expr for ExpExpr {
     /// ```
     ///
     /// By the chain rule, the exponent's gradient is
-    /// `self.grad * e^x`. That is `self.grad` times
-    /// this expression's own data.
+    /// `grad * e^x`. That is `grad` times this
+    /// expression's own data.
     ///
-    fn backward(&mut self) {
-        self.exponent.add_grad(self.data * self.grad);
+    fn backward(&self, grad: f64) {
+        self.exponent.add_grad(self.data * grad);
     }
 
     fn data(&self) -> f64 {
         self.data
-    }
-
-    fn grad(&self) -> f64 {
-        self.grad
     }
 
     fn left(&self) -> Option<&Expression> {
@@ -69,10 +59,6 @@ impl Expr for ExpExpr {
 
     fn symbol(&self) -> &'static str {
         "e^"
-    }
-
-    fn add_grad(&mut self, grad: f64) {
-        self.grad += grad;
     }
 }
 
@@ -97,12 +83,12 @@ mod tests {
 
     #[test]
     fn backward() {
-        let mut e = Expression::from(2.0).exp();
+        let e = Expression::from(2.0).exp();
         e.add_grad(2.0);
         e.backward();
 
         assert_eq!(
-            e.left().map(|l| l.grad()),
+            e.left().map(Expression::grad),
             Some(2.0_f64.exp() * 2.0),
             "exp passes e^x gradient to exponent"
         );

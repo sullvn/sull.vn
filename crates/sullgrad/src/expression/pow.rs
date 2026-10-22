@@ -14,7 +14,6 @@ impl Expression {
 #[derive(Debug)]
 struct PowExpr {
     data: f64,
-    grad: f64,
     base: Expression,
     exponent: Expression,
 }
@@ -22,11 +21,9 @@ struct PowExpr {
 impl PowExpr {
     fn new(base: Expression, exponent: Expression) -> Self {
         let data = base.data().powf(exponent.data());
-        let grad = 0.0;
 
         Self {
             data,
-            grad,
             base,
             exponent,
         }
@@ -46,8 +43,8 @@ impl Expr for PowExpr {
     /// ```
     ///
     /// By the chain rule, the base's gradient is
-    /// `self.grad * ∂f/∂b`, while the exponent's
-    /// gradient is `self.grad * ∂f/∂e`.
+    /// `grad * ∂f/∂b`, while the exponent's gradient
+    /// is `grad * ∂f/∂e`.
     ///
     ///
     /// # Warning
@@ -60,19 +57,15 @@ impl Expr for PowExpr {
     /// it's fine. Nothing reads the gradient of its
     /// `-1` exponent.
     ///
-    fn backward(&mut self) {
+    fn backward(&self, grad: f64) {
         let (b, e) = (self.base.data(), self.exponent.data());
 
-        self.base.add_grad(e * b.powf(e - 1.0) * self.grad);
-        self.exponent.add_grad(b.ln() * self.data * self.grad);
+        self.base.add_grad(e * b.powf(e - 1.0) * grad);
+        self.exponent.add_grad(b.ln() * self.data * grad);
     }
 
     fn data(&self) -> f64 {
         self.data
-    }
-
-    fn grad(&self) -> f64 {
-        self.grad
     }
 
     fn left(&self) -> Option<&Expression> {
@@ -85,10 +78,6 @@ impl Expr for PowExpr {
 
     fn symbol(&self) -> &'static str {
         "**"
-    }
-
-    fn add_grad(&mut self, grad: f64) {
-        self.grad += grad;
     }
 }
 
@@ -118,17 +107,17 @@ mod tests {
 
     #[test]
     fn backward() {
-        let mut p = Expression::from(2.0).pow(Expression::from(3.0));
+        let p = Expression::from(2.0).pow(Expression::from(3.0));
         p.add_grad(2.0);
         p.backward();
 
         assert_eq!(
-            p.left().map(|l| l.grad()),
+            p.left().map(Expression::grad),
             Some(24.0),
             "pow passes e * b^(e - 1) gradient to base"
         );
         assert_eq!(
-            p.right().map(|r| r.grad()),
+            p.right().map(Expression::grad),
             Some(2.0_f64.ln() * 8.0 * 2.0),
             "pow passes ln(b) * b^e gradient to exponent"
         );

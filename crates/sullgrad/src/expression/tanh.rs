@@ -48,20 +48,14 @@ impl Expression {
 #[derive(Debug)]
 struct TanhExpr {
     data: f64,
-    grad: f64,
     operand: Expression,
 }
 
 impl TanhExpr {
     fn new(operand: Expression) -> Self {
         let data = operand.data().tanh();
-        let grad = 0.0;
 
-        Self {
-            data,
-            grad,
-            operand,
-        }
+        Self { data, operand }
     }
 }
 
@@ -77,22 +71,18 @@ impl Expr for TanhExpr {
     /// ```
     ///
     /// By the chain rule, the operand's gradient is
-    /// `self.grad * (1 - tanh(x)^2)`. Since `tanh(x)`
-    /// is this expression's own data, nothing needs
+    /// `grad * (1 - tanh(x)^2)`. Since `tanh(x)` is
+    /// this expression's own data, nothing needs
     /// recomputing.
     ///
-    fn backward(&mut self) {
+    fn backward(&self, grad: f64) {
         let t = self.data;
 
-        self.operand.add_grad(t.mul_add(-t, 1.0) * self.grad);
+        self.operand.add_grad(t.mul_add(-t, 1.0) * grad);
     }
 
     fn data(&self) -> f64 {
         self.data
-    }
-
-    fn grad(&self) -> f64 {
-        self.grad
     }
 
     fn left(&self) -> Option<&Expression> {
@@ -105,10 +95,6 @@ impl Expr for TanhExpr {
 
     fn symbol(&self) -> &'static str {
         "tanh"
-    }
-
-    fn add_grad(&mut self, grad: f64) {
-        self.grad += grad;
     }
 }
 
@@ -133,13 +119,13 @@ mod tests {
 
     #[test]
     fn backward() {
-        let mut t = Expression::from(2.0).tanh();
+        let t = Expression::from(2.0).tanh();
         t.add_grad(2.0);
         t.backward();
 
         let tanh = 2.0_f64.tanh();
         assert_eq!(
-            t.left().map(|l| l.grad()),
+            t.left().map(Expression::grad),
             Some(tanh.mul_add(-tanh, 1.0) * 2.0),
             "tanh passes 1 - tanh(x)^2 gradient to operand"
         );

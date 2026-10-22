@@ -13,7 +13,6 @@ impl Mul<Self> for Expression {
 #[derive(Debug)]
 struct MulExpr {
     data: f64,
-    grad: f64,
     left: Expression,
     right: Expression,
 }
@@ -21,14 +20,8 @@ struct MulExpr {
 impl MulExpr {
     fn new(left: Expression, right: Expression) -> Self {
         let data = left.data() * right.data();
-        let grad = 0.0;
 
-        Self {
-            data,
-            grad,
-            left,
-            right,
-        }
+        Self { data, left, right }
     }
 }
 
@@ -45,21 +38,17 @@ impl Expr for MulExpr {
     /// ```
     ///
     /// By the chain rule, each operand's gradient is
-    /// `self.grad` times the other operand's data.
+    /// `grad` times the other operand's data.
     ///
-    fn backward(&mut self) {
+    fn backward(&self, grad: f64) {
         let (l, r) = (self.left.data(), self.right.data());
 
-        self.left.add_grad(r * self.grad);
-        self.right.add_grad(l * self.grad);
+        self.left.add_grad(r * grad);
+        self.right.add_grad(l * grad);
     }
 
     fn data(&self) -> f64 {
         self.data
-    }
-
-    fn grad(&self) -> f64 {
-        self.grad
     }
 
     fn left(&self) -> Option<&Expression> {
@@ -72,10 +61,6 @@ impl Expr for MulExpr {
 
     fn symbol(&self) -> &'static str {
         "*"
-    }
-
-    fn add_grad(&mut self, grad: f64) {
-        self.grad += grad;
     }
 }
 
@@ -105,17 +90,17 @@ mod tests {
 
     #[test]
     fn backward() {
-        let mut m = Expression::from(2.0) * Expression::from(3.0);
+        let m = Expression::from(2.0) * Expression::from(3.0);
         m.add_grad(2.0);
         m.backward();
 
         assert_eq!(
-            m.left().map(|l| l.grad()),
+            m.left().map(Expression::grad),
             Some(6.0),
             "mul scales left gradient by right operand"
         );
         assert_eq!(
-            m.right().map(|r| r.grad()),
+            m.right().map(Expression::grad),
             Some(4.0),
             "mul scales right gradient by left operand"
         );

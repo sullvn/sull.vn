@@ -1,5 +1,7 @@
+use std::cell::Cell;
 use std::fmt::Debug;
-use std::ops::{Deref, DerefMut, Div, Neg, Sub};
+use std::ops::{Deref, Div, Neg, Sub};
+use std::rc::Rc;
 
 mod add;
 mod exp;
@@ -10,39 +12,56 @@ mod tanh;
 
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 trait Expr: Debug {
-    fn backward(&mut self);
+    fn backward(&self, grad: f64);
 
     fn data(&self) -> f64;
-    fn grad(&self) -> f64;
     fn left(&self) -> Option<&Expression>;
     fn right(&self) -> Option<&Expression>;
     fn symbol(&self) -> &'static str;
-
-    fn add_grad(&mut self, grad: f64);
 }
 
 #[derive(Debug)]
-struct Expression(Box<dyn Expr>);
+struct Node<T: ?Sized> {
+    grad: Cell<f64>,
+    expr: T,
+}
+
+#[derive(Clone, Debug)]
+struct Expression(Rc<Node<dyn Expr>>);
+
+impl Expression {
+    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
+    fn backward(&self) {
+        let Self(node) = self;
+        node.expr.backward(node.grad.get());
+    }
+
+    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
+    fn grad(&self) -> f64 {
+        let Self(node) = self;
+        node.grad.get()
+    }
+
+    fn add_grad(&self, grad: f64) {
+        let Self(node) = self;
+        node.grad.set(node.grad.get() + grad);
+    }
+}
 
 impl Deref for Expression {
     type Target = dyn Expr;
 
     fn deref(&self) -> &Self::Target {
-        let Self(expr) = self;
-        expr.as_ref()
-    }
-}
-
-impl DerefMut for Expression {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        let Self(expr) = self;
-        expr.as_mut()
+        let Self(node) = self;
+        &node.expr
     }
 }
 
 impl<T: Expr + 'static> From<T> for Expression {
     fn from(expr: T) -> Self {
-        Self(Box::new(expr))
+        let grad = Cell::new(0.0);
+
+        Self(Rc::new(Node { grad, expr }))
     }
 }
 

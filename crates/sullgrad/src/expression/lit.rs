@@ -9,14 +9,11 @@ impl From<f64> for Expression {
 #[derive(Debug)]
 struct Lit {
     data: f64,
-    grad: f64,
 }
 
 impl Lit {
     const fn new(data: f64) -> Self {
-        let grad = 0.0;
-
-        Self { data, grad }
+        Self { data }
     }
 }
 
@@ -27,14 +24,10 @@ impl Expr for Lit {
     /// There is none. Literals have nothing they can
     /// propagate gradients backwards to.
     ///
-    fn backward(&mut self) {}
+    fn backward(&self, _grad: f64) {}
 
     fn data(&self) -> f64 {
         self.data
-    }
-
-    fn grad(&self) -> f64 {
-        self.grad
     }
 
     fn symbol(&self) -> &'static str {
@@ -47,10 +40,6 @@ impl Expr for Lit {
 
     fn right(&self) -> Option<&Expression> {
         None
-    }
-
-    fn add_grad(&mut self, grad: f64) {
-        self.grad += grad;
     }
 }
 
@@ -70,7 +59,7 @@ mod tests {
 
     #[test]
     fn backward() {
-        let mut l = Expression::from(1.0);
+        let l = Expression::from(1.0);
         l.add_grad(2.0);
         l.backward();
 
