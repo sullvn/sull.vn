@@ -27,7 +27,7 @@ impl MulExpr {
 
 impl Expr for MulExpr {
     ///
-    /// Backward pass for multiplication
+    /// Propagate gradient backward for multiplication
     ///
     /// Follows from:
     ///
@@ -40,7 +40,7 @@ impl Expr for MulExpr {
     /// By the chain rule, each operand's gradient is
     /// `grad` times the other operand's data.
     ///
-    fn backward(&self, grad: f64) {
+    fn propagate(&self, grad: f64) {
         let (l, r) = (self.left.data(), self.right.data());
 
         self.left.add_grad(r * grad);
@@ -89,10 +89,10 @@ mod tests {
     }
 
     #[test]
-    fn backward() {
+    fn propagate() {
         let m = Expression::from(2.0) * Expression::from(3.0);
         m.add_grad(2.0);
-        m.backward();
+        m.propagate();
 
         assert_eq!(
             m.left().map(Expression::grad),

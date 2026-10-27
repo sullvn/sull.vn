@@ -27,7 +27,7 @@ impl AddExpr {
 
 impl Expr for AddExpr {
     ///
-    /// Backward pass for addition
+    /// Propagate gradient backward for addition
     ///
     /// Follows from:
     ///
@@ -41,7 +41,7 @@ impl Expr for AddExpr {
     /// `grad * 1`, so the gradient passes through
     /// unchanged.
     ///
-    fn backward(&self, grad: f64) {
+    fn propagate(&self, grad: f64) {
         self.left.add_grad(grad);
         self.right.add_grad(grad);
     }
@@ -88,20 +88,20 @@ mod tests {
     }
 
     #[test]
-    fn backward() {
+    fn propagate() {
         let a = Expression::from(1.0) + Expression::from(2.0);
         a.add_grad(2.0);
-        a.backward();
+        a.propagate();
 
         assert_eq!(
             a.left().map(Expression::grad),
             Some(2.0),
-            "add passes gradient to left operand"
+            "add propagates gradient to left operand"
         );
         assert_eq!(
             a.right().map(Expression::grad),
             Some(2.0),
-            "add passes gradient to right operand"
+            "add propagates gradient to right operand"
         );
     }
 }

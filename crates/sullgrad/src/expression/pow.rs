@@ -32,7 +32,7 @@ impl PowExpr {
 
 impl Expr for PowExpr {
     ///
-    /// Backward pass for exponentiation
+    /// Propagate gradient backward for exponentiation
     ///
     /// Follows from:
     ///
@@ -57,7 +57,7 @@ impl Expr for PowExpr {
     /// it's fine. Nothing reads the gradient of its
     /// `-1` exponent.
     ///
-    fn backward(&self, grad: f64) {
+    fn propagate(&self, grad: f64) {
         let (b, e) = (self.base.data(), self.exponent.data());
 
         self.base.add_grad(e * b.powf(e - 1.0) * grad);
@@ -106,20 +106,20 @@ mod tests {
     }
 
     #[test]
-    fn backward() {
+    fn propagate() {
         let p = Expression::from(2.0).pow(Expression::from(3.0));
         p.add_grad(2.0);
-        p.backward();
+        p.propagate();
 
         assert_eq!(
             p.left().map(Expression::grad),
             Some(24.0),
-            "pow passes e * b^(e - 1) gradient to base"
+            "pow propagates e * b^(e - 1) gradient to base"
         );
         assert_eq!(
             p.right().map(Expression::grad),
             Some(2.0_f64.ln() * 8.0 * 2.0),
-            "pow passes ln(b) * b^e gradient to exponent"
+            "pow propagates ln(b) * b^e gradient to exponent"
         );
     }
 }

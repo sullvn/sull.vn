@@ -19,12 +19,12 @@ impl Lit {
 
 impl Expr for Lit {
     ///
-    /// Backward pass for literals
+    /// Propagate gradient backward for literals
     ///
-    /// There is none. Literals have nothing they can
-    /// propagate gradients backwards to.
+    /// There is nowhere to propagate to. Literals
+    /// have no operands.
     ///
-    fn backward(&self, _grad: f64) {}
+    fn propagate(&self, _grad: f64) {}
 
     fn data(&self) -> f64 {
         self.data
@@ -58,11 +58,15 @@ mod tests {
     }
 
     #[test]
-    fn backward() {
+    fn propagate() {
         let l = Expression::from(1.0);
         l.add_grad(2.0);
-        l.backward();
+        l.propagate();
 
-        assert_eq!(l.grad(), 2.0, "literal backward leaves gradient unchanged");
+        assert_eq!(
+            l.grad(),
+            2.0,
+            "literal propagates nothing, leaving its gradient unchanged"
+        );
     }
 }

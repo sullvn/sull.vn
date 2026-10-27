@@ -61,7 +61,7 @@ impl TanhExpr {
 
 impl Expr for TanhExpr {
     ///
-    /// Backward pass for hyperbolic tangent
+    /// Propagate gradient backward for hyperbolic tangent
     ///
     /// Follows from:
     ///
@@ -75,7 +75,7 @@ impl Expr for TanhExpr {
     /// this expression's own data, nothing needs
     /// recomputing.
     ///
-    fn backward(&self, grad: f64) {
+    fn propagate(&self, grad: f64) {
         let t = self.data;
 
         self.operand.add_grad(t.mul_add(-t, 1.0) * grad);
@@ -118,16 +118,16 @@ mod tests {
     }
 
     #[test]
-    fn backward() {
+    fn propagate() {
         let t = Expression::from(2.0).tanh();
         t.add_grad(2.0);
-        t.backward();
+        t.propagate();
 
         let tanh = 2.0_f64.tanh();
         assert_eq!(
             t.left().map(Expression::grad),
             Some(tanh.mul_add(-tanh, 1.0) * 2.0),
-            "tanh passes 1 - tanh(x)^2 gradient to operand"
+            "tanh propagates 1 - tanh(x)^2 gradient to operand"
         );
     }
 }

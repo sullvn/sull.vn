@@ -28,7 +28,7 @@ impl ExpExpr {
 
 impl Expr for ExpExpr {
     ///
-    /// Backward pass for natural exponentiation
+    /// Propagate gradient backward for natural exponentiation
     ///
     /// Follows from:
     ///
@@ -41,7 +41,7 @@ impl Expr for ExpExpr {
     /// `grad * e^x`. That is `grad` times this
     /// expression's own data.
     ///
-    fn backward(&self, grad: f64) {
+    fn propagate(&self, grad: f64) {
         self.exponent.add_grad(self.data * grad);
     }
 
@@ -82,15 +82,15 @@ mod tests {
     }
 
     #[test]
-    fn backward() {
+    fn propagate() {
         let e = Expression::from(2.0).exp();
         e.add_grad(2.0);
-        e.backward();
+        e.propagate();
 
         assert_eq!(
             e.left().map(Expression::grad),
             Some(2.0_f64.exp() * 2.0),
-            "exp passes e^x gradient to exponent"
+            "exp propagates e^x gradient to exponent"
         );
     }
 }

@@ -13,7 +13,7 @@ mod walk;
 
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 trait Expr: Debug {
-    fn backward(&self, grad: f64);
+    fn propagate(&self, grad: f64);
 
     fn data(&self) -> f64;
     fn left(&self) -> Option<&Expression>;
@@ -32,9 +32,9 @@ struct Expression(Rc<Node<dyn Expr>>);
 
 impl Expression {
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    fn backward(&self) {
+    fn propagate(&self) {
         let Self(node) = self;
-        node.expr.backward(node.grad.get());
+        node.expr.propagate(node.grad.get());
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
