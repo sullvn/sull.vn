@@ -4,6 +4,7 @@ use std::ops::{Deref, Div, Neg, Sub};
 use std::rc::Rc;
 
 mod add;
+mod backward;
 mod exp;
 mod lit;
 mod mul;
@@ -46,6 +47,17 @@ impl Expression {
     fn add_grad(&self, grad: f64) {
         let Self(node) = self;
         node.grad.set(node.grad.get() + grad);
+    }
+
+    ///
+    /// Seeds a backward pass.
+    ///
+    /// An expression's gradient with respect to itself
+    /// is `1`.
+    ///
+    fn seed_grad(&self) {
+        let Self(node) = self;
+        node.grad.set(1.0);
     }
 }
 
