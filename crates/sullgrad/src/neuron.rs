@@ -2,14 +2,14 @@ use super::error::InputLengthError;
 use super::expression::Expression;
 
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-struct Neuron {
+pub(crate) struct Neuron {
     weights: Box<[Expression]>,
     bias: Expression,
 }
 
 impl Neuron {
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    fn from_fn(nin: usize, mut parameter: impl FnMut(usize) -> f64) -> Self {
+    pub(crate) fn from_fn(nin: usize, mut parameter: impl FnMut(usize) -> f64) -> Self {
         let weights = (0..nin).map(&mut parameter).map(Expression::from).collect();
         let bias = parameter(nin).into();
 
@@ -17,7 +17,7 @@ impl Neuron {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    fn forward(&self, inputs: &[Expression]) -> Result<Expression, InputLengthError> {
+    pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Expression, InputLengthError> {
         if inputs.len() != self.weights.len() {
             return Err(InputLengthError {
                 expected: self.weights.len(),
@@ -35,7 +35,7 @@ impl Neuron {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    fn parameters(&self) -> impl Iterator<Item = &Expression> {
+    pub(crate) fn parameters(&self) -> impl Iterator<Item = &Expression> {
         self.weights.iter().chain([&self.bias])
     }
 }
@@ -43,12 +43,12 @@ impl Neuron {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::testing::index_as_value;
 
     #[test]
     fn forward() {
-        let index_as_value = |i: usize| u32::try_from(i).map_or(f64::NAN, f64::from);
         let neuron = Neuron::from_fn(2, index_as_value);
-        let inputs = [Expression::from(3.0), Expression::from(4.0)];
+        let inputs = [3.0, 4.0].map(Expression::from);
         let output = neuron.forward(&inputs).map(|o| o.data());
 
         assert_eq!(
@@ -60,7 +60,6 @@ mod tests {
 
     #[test]
     fn parameters() {
-        let index_as_value = |i: usize| u32::try_from(i).map_or(f64::NAN, f64::from);
         let neuron = Neuron::from_fn(2, index_as_value);
         let data: Vec<_> = neuron.parameters().map(Expression::data).collect();
 
@@ -74,7 +73,7 @@ mod tests {
     #[test]
     fn input_length_mismatch() {
         let neuron = Neuron::from_fn(2, |_| 0.0);
-        let inputs = [Expression::from(3.0)];
+        let inputs = [3.0].map(Expression::from);
         let error = neuron.forward(&inputs).err();
 
         assert_eq!(
