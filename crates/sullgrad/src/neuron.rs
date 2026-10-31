@@ -62,7 +62,7 @@ mod tests {
     fn parameters() {
         let index_as_value = |i: usize| u32::try_from(i).map_or(f64::NAN, f64::from);
         let neuron = Neuron::from_fn(2, index_as_value);
-        let data: Vec<_> = neuron.parameters().map(|p| p.data()).collect();
+        let data: Vec<_> = neuron.parameters().map(Expression::data).collect();
 
         assert_eq!(
             data,

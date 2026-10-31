@@ -38,6 +38,11 @@ impl Expression {
         node.expr.propagate(node.grad.get());
     }
 
+    pub(crate) fn data(&self) -> f64 {
+        let Self(node) = self;
+        node.expr.data()
+    }
+
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     fn grad(&self) -> f64 {
         let Self(node) = self;
@@ -126,12 +131,12 @@ mod tests {
 
         assert_eq!(n.data(), -2.0, "neg result data");
         assert_eq!(
-            n.left().map(|l| l.data()),
+            n.left().map(Expression::data),
             Some(2.0),
             "neg has left operand"
         );
         assert_eq!(
-            n.right().map(|r| r.data()),
+            n.right().map(Expression::data),
             Some(-1.0),
             "neg has right operand"
         );
@@ -146,12 +151,12 @@ mod tests {
 
         assert_eq!(s.data(), 2.0, "sub result data");
         assert_eq!(
-            s.left().map(|l| l.data()),
+            s.left().map(Expression::data),
             Some(5.0),
             "sub has left operand"
         );
         assert_eq!(
-            s.right().map(|r| r.data()),
+            s.right().map(Expression::data),
             Some(-3.0),
             "sub has right operand"
         );
@@ -166,12 +171,12 @@ mod tests {
 
         assert_eq!(d.data(), 3.0, "div result data");
         assert_eq!(
-            d.left().map(|l| l.data()),
+            d.left().map(Expression::data),
             Some(6.0),
             "div has left operand"
         );
         assert_eq!(
-            d.right().map(|r| r.data()),
+            d.right().map(Expression::data),
             Some(0.5),
             "div has right operand"
         );

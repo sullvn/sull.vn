@@ -75,12 +75,12 @@ mod tests {
 
         assert_eq!(a.data(), 3.0, "add result data");
         assert_eq!(
-            a.left().map(|l| l.data()),
+            a.left().map(Expression::data),
             Some(1.0),
             "add has left operand"
         );
         assert_eq!(
-            a.right().map(|r| r.data()),
+            a.right().map(Expression::data),
             Some(2.0),
             "add has right operand"
         );

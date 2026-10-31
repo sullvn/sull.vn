@@ -73,7 +73,7 @@ mod tests {
 
         assert_eq!(e.data(), 2.0_f64.exp(), "exp result data");
         assert_eq!(
-            e.left().map(|l| l.data()),
+            e.left().map(Expression::data),
             Some(2.0),
             "exp has left operand"
         );

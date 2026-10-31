@@ -109,7 +109,7 @@ mod tests {
 
         assert_eq!(t.data(), 2.0_f64.tanh(), "tanh result data");
         assert_eq!(
-            t.left().map(|l| l.data()),
+            t.left().map(Expression::data),
             Some(2.0),
             "tanh has left operand"
         );
