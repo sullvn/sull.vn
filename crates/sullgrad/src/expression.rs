@@ -13,7 +13,7 @@ mod tanh;
 mod walk;
 
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-trait Expr: Debug {
+pub(crate) trait Expr: Debug {
     fn propagate(&self, grad: f64);
 
     fn data(&self) -> f64;
@@ -29,7 +29,7 @@ struct Node<T: ?Sized> {
 }
 
 #[derive(Clone, Debug)]
-struct Expression(Rc<Node<dyn Expr>>);
+pub(crate) struct Expression(Rc<Node<dyn Expr>>);
 
 impl Expression {
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]

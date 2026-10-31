@@ -40,7 +40,7 @@ impl Expression {
     ///   `0` and no longer learning.
     ///
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(super) fn tanh(self) -> Self {
+    pub(crate) fn tanh(self) -> Self {
         TanhExpr::new(self).into()
     }
 }
