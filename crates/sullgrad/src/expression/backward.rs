@@ -46,4 +46,18 @@ mod tests {
         assert_eq!(a.grad(), 4.0, "backward sums gradients from shared uses");
         assert_eq!(x.grad(), 8.0, "backward chains gradients through layers");
     }
+
+    #[test]
+    fn accumulates() {
+        let x = Expression::from(5.0);
+        let c = x.clone() * Expression::from(2.0);
+
+        c.backward();
+        c.backward();
+        assert_eq!(x.grad(), 4.0, "backward accumulates across passes");
+
+        x.zero_grad();
+        c.backward();
+        assert_eq!(x.grad(), 2.0, "zero_grad clears accumulated gradient");
+    }
 }
