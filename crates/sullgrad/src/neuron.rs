@@ -1,6 +1,7 @@
-use super::error::InputLengthError;
+use super::error::{InputLengthError, ParametersLengthError};
 use super::expression::Expression;
 
+#[derive(Debug)]
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 pub(crate) struct Neuron {
     weights: Box<[Expression]>,
@@ -14,6 +15,15 @@ impl Neuron {
         let bias = parameter(nin).into();
 
         Self { weights, bias }
+    }
+
+    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
+    pub(crate) fn from_parameters(parameters: &[f64]) -> Result<Self, ParametersLengthError> {
+        let (&bias, weights) = parameters.split_last().ok_or(ParametersLengthError)?;
+        let weights = weights.iter().copied().map(Expression::from).collect();
+        let bias = bias.into();
+
+        Ok(Self { weights, bias })
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
@@ -46,14 +56,29 @@ mod tests {
     use crate::testing::index_as_value;
 
     #[test]
-    fn forward() {
-        let neuron = Neuron::from_fn(2, index_as_value);
-        let inputs = [3.0, 4.0].map(Expression::from);
-        let output = neuron.forward(&inputs).map(|o| o.data());
+    fn from_parameters() {
+        let parameters = [0.0, 1.0, 2.0];
+        let rebuilt: Vec<_> = Neuron::from_parameters(&parameters)
+            .unwrap()
+            .parameters()
+            .map(Expression::data)
+            .collect();
 
         assert_eq!(
-            output,
-            Ok(6.0_f64.tanh()),
+            rebuilt, parameters,
+            "from_parameters round-trips through parameters"
+        );
+    }
+
+    #[test]
+    fn forward() {
+        let neuron = Neuron::from_parameters(&[1.0, 2.0, 3.0]).unwrap();
+        let inputs = [1.0, -1.0].map(Expression::from);
+        let output = neuron.forward(&inputs).unwrap();
+
+        assert_eq!(
+            output.data(),
+            2.0_f64.tanh(),
             "forward computes tanh(w · x + b)"
         );
     }
@@ -74,15 +99,25 @@ mod tests {
     fn input_length_mismatch() {
         let neuron = Neuron::from_fn(2, |_| 0.0);
         let inputs = [3.0].map(Expression::from);
-        let error = neuron.forward(&inputs).err();
+        let error = neuron.forward(&inputs).unwrap_err();
 
         assert_eq!(
             error,
-            Some(InputLengthError {
+            InputLengthError {
                 expected: 2,
                 actual: 1
-            }),
+            },
             "forward rejects inputs of the wrong length"
+        );
+    }
+
+    #[test]
+    fn parameters_length_mismatch() {
+        let error = Neuron::from_parameters(&[]).unwrap_err();
+
+        assert_eq!(
+            error, ParametersLengthError,
+            "from_parameters rejects empty parameters"
         );
     }
 }

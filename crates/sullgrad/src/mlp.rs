@@ -1,7 +1,8 @@
-use super::error::InputLengthError;
+use super::error::{InputLengthError, ParametersLengthError};
 use super::expression::Expression;
 use super::layer::Layer;
 
+#[derive(Debug)]
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 pub(crate) struct Mlp {
     layers: Box<[Layer]>,
@@ -29,6 +30,22 @@ impl Mlp {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
+    pub(crate) fn from_parameters(
+        nin: usize,
+        nouts: &[usize],
+        parameters: &[f64],
+    ) -> Result<Self, ParametersLengthError> {
+        let mlp = Self::from_fn(nin, nouts, |i| {
+            parameters.get(i).copied().unwrap_or(f64::NAN)
+        });
+        if mlp.parameters().count() != parameters.len() {
+            return Err(ParametersLengthError);
+        }
+
+        Ok(mlp)
+    }
+
+    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn forward(
         &self,
         inputs: &[Expression],
@@ -53,23 +70,38 @@ mod tests {
     use crate::testing::index_as_value;
 
     #[test]
+    fn from_parameters() {
+        let parameters = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0];
+        let rebuilt: Vec<_> = Mlp::from_parameters(2, &[2, 1], &parameters)
+            .unwrap()
+            .parameters()
+            .map(Expression::data)
+            .collect();
+
+        assert_eq!(
+            rebuilt, parameters,
+            "from_parameters round-trips through parameters"
+        );
+    }
+
+    #[test]
     #[expect(
         clippy::suboptimal_flops,
         reason = "mul_add would round differently than the separate multiply and add in forward"
     )]
     fn forward() {
-        let mlp = Mlp::from_fn(2, &[2, 1], index_as_value);
+        let parameters = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        let mlp = Mlp::from_parameters(2, &[2, 1], &parameters).unwrap();
         let inputs = [1.0, -1.0].map(Expression::from);
-        let data: Result<Vec<_>, _> = mlp
-            .forward(&inputs)
-            .map(|outputs| outputs.iter().map(Expression::data).collect());
+        let outputs = mlp.forward(&inputs).unwrap();
+        let data: Vec<_> = outputs.iter().map(Expression::data).collect();
 
-        let [h0, h1] = [1.0_f64.tanh(), 4.0_f64.tanh()];
-        let output = (8.0 + 6.0 * h0 + 7.0 * h1).tanh();
+        let [h0, h1] = [2.0_f64.tanh(), 5.0_f64.tanh()];
+        let output = (9.0 + 7.0 * h0 + 8.0 * h1).tanh();
 
         assert_eq!(
             data,
-            Ok(vec![output]),
+            [output],
             "forward feeds each layer's outputs into the next"
         );
     }
@@ -90,15 +122,25 @@ mod tests {
     fn input_length_mismatch() {
         let mlp = Mlp::from_fn(2, &[2, 1], |_| 0.0);
         let inputs = [3.0].map(Expression::from);
-        let error = mlp.forward(&inputs).err();
+        let error = mlp.forward(&inputs).unwrap_err();
 
         assert_eq!(
             error,
-            Some(InputLengthError {
+            InputLengthError {
                 expected: 2,
                 actual: 1
-            }),
+            },
             "forward rejects inputs of the wrong length"
+        );
+    }
+
+    #[test]
+    fn parameters_length_mismatch() {
+        let error = Mlp::from_parameters(2, &[2, 1], &[0.0; 8]).unwrap_err();
+
+        assert_eq!(
+            error, ParametersLengthError,
+            "from_parameters rejects the wrong number of parameters"
         );
     }
 }
