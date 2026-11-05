@@ -1,6 +1,7 @@
 use std::cell::Cell;
 use std::fmt::Debug;
-use std::ops::{Deref, Div, Neg, Sub};
+use std::iter::Sum;
+use std::ops::{Add, Deref, Div, Neg, Sub};
 use std::rc::Rc;
 
 mod add;
@@ -120,6 +121,12 @@ impl Div<Self> for Expression {
     }
 }
 
+impl Sum for Expression {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(0.0.into(), Add::add)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -181,5 +188,20 @@ mod tests {
             "div has right operand"
         );
         assert_eq!(d.symbol(), "*", "div has operator");
+    }
+
+    #[test]
+    fn sum() {
+        let s: Expression = [1.0, 2.0, 3.0].map(Expression::from).into_iter().sum();
+
+        assert_eq!(s.data(), 6.0, "sum result data");
+        assert_eq!(s.symbol(), "+", "sum has operator");
+    }
+
+    #[test]
+    fn empty_sum() {
+        let s: Expression = std::iter::empty().sum();
+
+        assert_eq!(s.data(), 0.0, "empty sum is zero");
     }
 }
