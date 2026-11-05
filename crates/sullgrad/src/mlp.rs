@@ -1,4 +1,4 @@
-use super::error::{InputLengthError, ParametersLengthError};
+use super::error::LengthError;
 use super::expression::Expression;
 use super::layer::Layer;
 
@@ -34,22 +34,19 @@ impl Mlp {
         nin: usize,
         nouts: &[usize],
         parameters: &[f64],
-    ) -> Result<Self, ParametersLengthError> {
+    ) -> Result<Self, LengthError> {
         let mlp = Self::from_fn(nin, nouts, |i| {
             parameters.get(i).copied().unwrap_or(f64::NAN)
         });
         if mlp.parameters().count() != parameters.len() {
-            return Err(ParametersLengthError);
+            return Err(LengthError::Parameters);
         }
 
         Ok(mlp)
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn forward(
-        &self,
-        inputs: &[Expression],
-    ) -> Result<Box<[Expression]>, InputLengthError> {
+    pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Box<[Expression]>, LengthError> {
         let mut outputs: Box<[_]> = inputs.into();
         for layer in &self.layers {
             outputs = layer.forward(&outputs)?;
@@ -126,10 +123,7 @@ mod tests {
 
         assert_eq!(
             error,
-            InputLengthError {
-                expected: 2,
-                actual: 1
-            },
+            LengthError::Inputs,
             "forward rejects inputs of the wrong length"
         );
     }
@@ -139,7 +133,8 @@ mod tests {
         let error = Mlp::from_parameters(2, &[2, 1], &[0.0; 8]).unwrap_err();
 
         assert_eq!(
-            error, ParametersLengthError,
+            error,
+            LengthError::Parameters,
             "from_parameters rejects the wrong number of parameters"
         );
     }

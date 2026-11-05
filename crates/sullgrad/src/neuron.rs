@@ -1,4 +1,4 @@
-use super::error::{InputLengthError, ParametersLengthError};
+use super::error::LengthError;
 use super::expression::Expression;
 
 #[derive(Debug)]
@@ -18,8 +18,8 @@ impl Neuron {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn from_parameters(parameters: &[f64]) -> Result<Self, ParametersLengthError> {
-        let (&bias, weights) = parameters.split_last().ok_or(ParametersLengthError)?;
+    pub(crate) fn from_parameters(parameters: &[f64]) -> Result<Self, LengthError> {
+        let (&bias, weights) = parameters.split_last().ok_or(LengthError::Parameters)?;
         let weights = weights.iter().copied().map(Expression::from).collect();
         let bias = bias.into();
 
@@ -27,12 +27,9 @@ impl Neuron {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Expression, InputLengthError> {
+    pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Expression, LengthError> {
         if inputs.len() != self.weights.len() {
-            return Err(InputLengthError {
-                expected: self.weights.len(),
-                actual: inputs.len(),
-            });
+            return Err(LengthError::Inputs);
         }
 
         let activation = self
@@ -103,10 +100,7 @@ mod tests {
 
         assert_eq!(
             error,
-            InputLengthError {
-                expected: 2,
-                actual: 1
-            },
+            LengthError::Inputs,
             "forward rejects inputs of the wrong length"
         );
     }
@@ -116,7 +110,8 @@ mod tests {
         let error = Neuron::from_parameters(&[]).unwrap_err();
 
         assert_eq!(
-            error, ParametersLengthError,
+            error,
+            LengthError::Parameters,
             "from_parameters rejects empty parameters"
         );
     }

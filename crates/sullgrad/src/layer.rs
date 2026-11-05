@@ -1,4 +1,4 @@
-use super::error::{InputLengthError, ParametersLengthError};
+use super::error::LengthError;
 use super::expression::Expression;
 use super::neuron::Neuron;
 
@@ -28,13 +28,10 @@ impl Layer {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn from_parameters(
-        nin: usize,
-        parameters: &[f64],
-    ) -> Result<Self, ParametersLengthError> {
+    pub(crate) fn from_parameters(nin: usize, parameters: &[f64]) -> Result<Self, LengthError> {
         let chunks = parameters.chunks_exact(nin + 1);
         if !chunks.remainder().is_empty() {
-            return Err(ParametersLengthError);
+            return Err(LengthError::Parameters);
         }
 
         let neurons = chunks
@@ -45,10 +42,7 @@ impl Layer {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn forward(
-        &self,
-        inputs: &[Expression],
-    ) -> Result<Box<[Expression]>, InputLengthError> {
+    pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Box<[Expression]>, LengthError> {
         self.neurons
             .iter()
             .map(|neuron| neuron.forward(inputs))
@@ -115,10 +109,7 @@ mod tests {
 
         assert_eq!(
             error,
-            InputLengthError {
-                expected: 2,
-                actual: 1
-            },
+            LengthError::Inputs,
             "forward rejects inputs of the wrong length"
         );
     }
@@ -128,7 +119,8 @@ mod tests {
         let error = Layer::from_parameters(2, &[0.0; 5]).unwrap_err();
 
         assert_eq!(
-            error, ParametersLengthError,
+            error,
+            LengthError::Parameters,
             "from_parameters rejects a partial neuron"
         );
     }
