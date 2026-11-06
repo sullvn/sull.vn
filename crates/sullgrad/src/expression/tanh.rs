@@ -1,4 +1,5 @@
 use super::{Expr, Expression};
+use crate::math;
 
 impl Expression {
     ///
@@ -78,7 +79,7 @@ impl Expr for TanhExpr {
     fn propagate(&self, grad: f64) {
         let t = self.data;
 
-        self.operand.add_grad(t.mul_add(-t, 1.0) * grad);
+        self.operand.add_grad(math::mul_add(t, -t, 1.0) * grad);
     }
 
     fn data(&self) -> f64 {
@@ -127,7 +128,7 @@ mod tests {
         let tanh = 2.0_f64.tanh();
         assert_eq!(
             t.left().map(Expression::grad),
-            Some(tanh.mul_add(-tanh, 1.0) * 2.0),
+            Some(math::mul_add(tanh, -tanh, 1.0) * 2.0),
             "tanh propagates 1 - tanh(x)^2 gradient to operand"
         );
     }
