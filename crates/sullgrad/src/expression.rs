@@ -65,19 +65,6 @@ impl Expression {
         let Self(node) = self;
         node.grad.set(1.0);
     }
-
-    ///
-    /// Zeroes gradient.
-    ///
-    /// Gradients accumulate across backward passes, so
-    /// a parameter reused between them must be zeroed
-    /// first.
-    ///
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    fn zero_grad(&self) {
-        let Self(node) = self;
-        node.grad.set(0.0);
-    }
 }
 
 impl Deref for Expression {

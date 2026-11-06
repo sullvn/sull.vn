@@ -54,10 +54,7 @@ mod tests {
 
         c.backward();
         c.backward();
-        assert_eq!(x.grad(), 4.0, "backward accumulates across passes");
 
-        x.zero_grad();
-        c.backward();
-        assert_eq!(x.grad(), 2.0, "zero_grad clears accumulated gradient");
+        assert_eq!(x.grad(), 4.0, "backward accumulates across passes");
     }
 }
