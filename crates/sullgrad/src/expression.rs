@@ -1,15 +1,18 @@
 use std::cell::Cell;
 use std::fmt::Debug;
-use std::iter::Sum;
-use std::ops::{Add, Deref, Div, Neg, Sub};
+use std::ops::Deref;
 use std::rc::Rc;
 
 mod add;
 mod backward;
+mod div;
 mod exp;
 mod lit;
 mod mul;
+mod neg;
 mod pow;
+mod sub;
+mod sum;
 mod tanh;
 mod walk;
 
@@ -81,159 +84,5 @@ impl<T: Expr + 'static> From<T> for Expression {
         let grad = Cell::new(0.0);
 
         Self(Rc::new(Node { grad, expr }))
-    }
-}
-
-impl Neg for Expression {
-    type Output = Self;
-
-    fn neg(self) -> Self {
-        self * (-1.0).into()
-    }
-}
-
-impl Sub<Self> for Expression {
-    type Output = Self;
-
-    fn sub(self, rhs: Self) -> Self {
-        self + (-rhs)
-    }
-}
-
-impl Div<Self> for Expression {
-    type Output = Self;
-
-    fn div(self, rhs: Self) -> Self {
-        self * rhs.pow((-1.0).into())
-    }
-}
-
-impl Sum for Expression {
-    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
-        iter.fold(0.0.into(), Add::add)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::testing::{assert_approx_eq, backward_gradients, numerical_gradients};
-
-    #[test]
-    fn neg() {
-        let x = Expression::from(2.0);
-        let n = -x;
-
-        assert_eq!(n.data(), -2.0, "neg result data");
-        assert_eq!(
-            n.left().map(Expression::data),
-            Some(2.0),
-            "neg has left operand"
-        );
-        assert_eq!(
-            n.right().map(Expression::data),
-            Some(-1.0),
-            "neg has right operand"
-        );
-        assert_eq!(n.symbol(), "*", "neg has operator");
-    }
-
-    #[test]
-    fn sub() {
-        let x = Expression::from(5.0);
-        let y = Expression::from(3.0);
-        let s = x - y;
-
-        assert_eq!(s.data(), 2.0, "sub result data");
-        assert_eq!(
-            s.left().map(Expression::data),
-            Some(5.0),
-            "sub has left operand"
-        );
-        assert_eq!(
-            s.right().map(Expression::data),
-            Some(-3.0),
-            "sub has right operand"
-        );
-        assert_eq!(s.symbol(), "+", "sub has operator");
-    }
-
-    #[test]
-    fn div() {
-        let x = Expression::from(6.0);
-        let y = Expression::from(2.0);
-        let d = x / y;
-
-        assert_eq!(d.data(), 3.0, "div result data");
-        assert_eq!(
-            d.left().map(Expression::data),
-            Some(6.0),
-            "div has left operand"
-        );
-        assert_eq!(
-            d.right().map(Expression::data),
-            Some(0.5),
-            "div has right operand"
-        );
-        assert_eq!(d.symbol(), "*", "div has operator");
-    }
-
-    #[test]
-    fn sum() {
-        let s: Expression = [1.0, 2.0, 3.0].map(Expression::from).into_iter().sum();
-
-        assert_eq!(s.data(), 6.0, "sum result data");
-        assert_eq!(s.symbol(), "+", "sum has operator");
-    }
-
-    #[test]
-    fn empty_sum() {
-        let s: Expression = std::iter::empty().sum();
-
-        assert_eq!(s.data(), 0.0, "empty sum is zero");
-    }
-
-    #[test]
-    fn neg_gradient() {
-        let f = |[x]: [Expression; 1]| -x;
-
-        assert_approx_eq(
-            backward_gradients(f, [1.5]),
-            numerical_gradients(f, [1.5]),
-            "neg gradient matches its numerical slope",
-        );
-    }
-
-    #[test]
-    fn sub_gradient() {
-        let f = |[x, y]: [Expression; 2]| x - y;
-
-        assert_approx_eq(
-            backward_gradients(f, [1.5, -2.0]),
-            numerical_gradients(f, [1.5, -2.0]),
-            "sub gradient matches its numerical slope",
-        );
-    }
-
-    #[test]
-    fn div_gradient() {
-        let f = |[x, y]: [Expression; 2]| x / y;
-
-        assert_approx_eq(
-            backward_gradients(f, [1.5, -2.0]),
-            numerical_gradients(f, [1.5, -2.0]),
-            "div gradient matches its numerical slope",
-        );
-    }
-
-    #[test]
-    fn sum_gradient() {
-        let f = |xs: [Expression; 3]| xs.into_iter().sum();
-
-        assert_approx_eq(
-            backward_gradients(f, [1.5, -2.0, 0.5]),
-            numerical_gradients(f, [1.5, -2.0, 0.5]),
-            "sum gradient matches its numerical slope",
-        );
     }
 }
