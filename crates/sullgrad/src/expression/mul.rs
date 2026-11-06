@@ -2,11 +2,11 @@ use std::ops::Mul;
 
 use super::{Expr, Expression};
 
-impl Mul<Self> for Expression {
+impl<R: Into<Self>> Mul<R> for Expression {
     type Output = Self;
 
-    fn mul(self, rhs: Self) -> Self {
-        MulExpr::new(self, rhs).into()
+    fn mul(self, rhs: R) -> Self {
+        MulExpr::new(self, rhs.into()).into()
     }
 }
 
@@ -91,7 +91,7 @@ mod tests {
 
     #[test]
     fn propagate() {
-        let m = Expression::from(2.0) * Expression::from(3.0);
+        let m = Expression::from(2.0) * 3.0;
         m.add_grad(2.0);
         m.propagate();
 

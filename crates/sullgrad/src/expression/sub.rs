@@ -2,11 +2,11 @@ use std::ops::Sub;
 
 use super::Expression;
 
-impl Sub<Self> for Expression {
+impl<R: Into<Self>> Sub<R> for Expression {
     type Output = Self;
 
-    fn sub(self, rhs: Self) -> Self {
-        self + (-rhs)
+    fn sub(self, rhs: R) -> Self {
+        self + -rhs.into()
     }
 }
 

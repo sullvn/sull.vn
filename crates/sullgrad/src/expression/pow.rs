@@ -6,8 +6,8 @@ impl Expression {
     ///
     /// Mirrors the function signature of [`f64::powf`].
     ///
-    pub(super) fn pow(self, n: Self) -> Self {
-        PowExpr::new(self, n).into()
+    pub(super) fn pow(self, n: impl Into<Self>) -> Self {
+        PowExpr::new(self, n.into()).into()
     }
 }
 
@@ -108,7 +108,7 @@ mod tests {
 
     #[test]
     fn propagate() {
-        let p = Expression::from(2.0).pow(Expression::from(3.0));
+        let p = Expression::from(2.0).pow(3.0);
         p.add_grad(2.0);
         p.propagate();
 

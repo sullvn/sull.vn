@@ -2,11 +2,11 @@ use std::ops::Div;
 
 use super::Expression;
 
-impl Div<Self> for Expression {
+impl<R: Into<Self>> Div<R> for Expression {
     type Output = Self;
 
-    fn div(self, rhs: Self) -> Self {
-        self * rhs.pow((-1.0).into())
+    fn div(self, rhs: R) -> Self {
+        self * rhs.into().pow(-1.0)
     }
 }
 

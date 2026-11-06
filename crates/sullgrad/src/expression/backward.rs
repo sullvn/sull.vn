@@ -37,8 +37,8 @@ mod tests {
         //       = 8x
         //
         let x = Expression::from(5.0);
-        let a = x.clone() * Expression::from(2.0);
-        let b = a.clone() * Expression::from(3.0);
+        let a = x.clone() * 2.0;
+        let b = a.clone() * 3.0;
         let c = a.clone() + b;
         c.backward();
 
@@ -50,7 +50,7 @@ mod tests {
     #[test]
     fn accumulates() {
         let x = Expression::from(5.0);
-        let c = x.clone() * Expression::from(2.0);
+        let c = x.clone() * 2.0;
 
         c.backward();
         c.backward();

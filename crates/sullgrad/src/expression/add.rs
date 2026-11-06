@@ -2,11 +2,11 @@ use std::ops::Add;
 
 use super::{Expr, Expression};
 
-impl Add<Self> for Expression {
+impl<R: Into<Self>> Add<R> for Expression {
     type Output = Self;
 
-    fn add(self, rhs: Self) -> Self {
-        AddExpr::new(self, rhs).into()
+    fn add(self, rhs: R) -> Self {
+        AddExpr::new(self, rhs.into()).into()
     }
 }
 
@@ -90,7 +90,7 @@ mod tests {
 
     #[test]
     fn propagate() {
-        let a = Expression::from(1.0) + Expression::from(2.0);
+        let a = Expression::from(1.0) + 2.0;
         a.add_grad(2.0);
         a.propagate();
 

@@ -51,8 +51,8 @@ mod tests {
     #[test]
     fn walk() {
         let x = Expression::from(5.0);
-        let a = x * Expression::from(2.0);
-        let b = a.clone() * Expression::from(3.0);
+        let a = x * 2.0;
+        let b = a.clone() * 3.0;
         let c = a + b;
         let order: Vec<f64> = c.walk().map(|e| e.data()).collect();
 

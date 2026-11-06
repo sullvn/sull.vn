@@ -31,13 +31,13 @@ pub(crate) fn mean_squared_error(
     }
 
     let count_integer = u32::try_from(targets.len()).map_err(|_| LengthError::Targets)?;
-    let count: Expression = f64::from(count_integer).into();
+    let count = f64::from(count_integer);
 
     let sum: Expression = predictions
         .iter()
         .zip(targets)
         .map(|(prediction, &target)| {
-            let error = prediction.clone() - target.into();
+            let error = prediction.clone() - target;
 
             // Use multiplication instead of `pow(2)`, as
             // that would give `NaN` gradients for negative

@@ -134,7 +134,7 @@ fn batch_loss(mlp: &Mlp, batch: &[Sample<'_>]) -> Result<Expression, LengthError
     }
 
     let count_integer = u32::try_from(batch.len()).map_err(|_| LengthError::Batch)?;
-    let count: Expression = f64::from(count_integer).into();
+    let count = f64::from(count_integer);
 
     let sum = batch
         .iter()

@@ -6,7 +6,7 @@ impl Neg for Expression {
     type Output = Self;
 
     fn neg(self) -> Self {
-        self * (-1.0).into()
+        self * -1.0
     }
 }
 
