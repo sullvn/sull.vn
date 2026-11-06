@@ -3,6 +3,7 @@ mod error;
 mod expression;
 mod layer;
 mod loss;
+mod math;
 mod mlp;
 mod model;
 mod neuron;

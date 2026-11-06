@@ -11,6 +11,16 @@ use super::expression::Expression;
 ///
 /// Named after Keras's `mean_squared_error`.
 ///
+/// # Gradient
+///
+/// ```text
+/// L       = ((p_1 - t_1)^2 + ... + (p_n - t_n)^2) / n
+/// ∂L/∂p_i = 2 * (p_i - t_i) / n
+/// ```
+///
+/// Each prediction's gradient points away from its
+/// target, scaled by how far it misses.
+///
 #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 pub(crate) fn mean_squared_error(
     predictions: &[Expression],
@@ -20,7 +30,8 @@ pub(crate) fn mean_squared_error(
         return Err(LengthError::Targets);
     }
 
-    let count = u32::try_from(targets.len()).map_err(|_| LengthError::Targets)?;
+    let count_integer = u32::try_from(targets.len()).map_err(|_| LengthError::Targets)?;
+    let count: Expression = f64::from(count_integer).into();
 
     let sum: Expression = predictions
         .iter()
@@ -35,7 +46,8 @@ pub(crate) fn mean_squared_error(
         })
         .sum();
 
-    Ok(sum / f64::from(count).into())
+    let mse = sum / count;
+    Ok(mse)
 }
 
 #[cfg(test)]
@@ -48,6 +60,23 @@ mod tests {
         let loss = super::mean_squared_error(&predictions, &[0.0, 4.0]).unwrap();
 
         assert_eq!(loss.data(), 2.5, "mean of squared errors 1² and (-2)²");
+    }
+
+    #[test]
+    fn gradient() {
+        let predictions = [1.0, 2.0].map(Expression::from);
+        let targets = [0.0, 4.0];
+
+        super::mean_squared_error(&predictions, &targets)
+            .unwrap()
+            .backward();
+        let grads: Vec<_> = predictions.iter().map(Expression::grad).collect();
+
+        assert_eq!(
+            grads,
+            [1.0, -2.0],
+            "each prediction's gradient is 2 * error / count"
+        );
     }
 
     #[test]

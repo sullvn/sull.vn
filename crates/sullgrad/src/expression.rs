@@ -45,7 +45,7 @@ impl Expression {
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    fn grad(&self) -> f64 {
+    pub(crate) fn grad(&self) -> f64 {
         let Self(node) = self;
         node.grad.get()
     }
