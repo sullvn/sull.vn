@@ -10,8 +10,11 @@ pub(crate) struct Neuron {
 
 impl Neuron {
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn from_fn(nin: usize, mut parameter: impl FnMut(usize) -> f64) -> Self {
-        let weights = (0..nin).map(&mut parameter).map(Expression::from).collect();
+    pub(crate) fn from_fn<P: Into<Expression>>(
+        nin: usize,
+        mut parameter: impl FnMut(usize) -> P,
+    ) -> Self {
+        let weights = (0..nin).map(&mut parameter).map(Into::into).collect();
         let bias = parameter(nin).into();
 
         Self { weights, bias }

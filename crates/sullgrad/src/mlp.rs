@@ -10,10 +10,10 @@ pub(crate) struct Mlp {
 
 impl Mlp {
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn from_fn(
+    pub(crate) fn from_fn<P: Into<Expression>>(
         nin: usize,
         nouts: &[usize],
-        mut parameter: impl FnMut(usize) -> f64,
+        mut parameter: impl FnMut(usize) -> P,
     ) -> Self {
         let sizes = [&[nin], nouts].concat();
         let mut offset = 0;

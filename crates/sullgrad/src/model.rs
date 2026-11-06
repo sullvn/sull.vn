@@ -157,7 +157,29 @@ fn batch_loss(mlp: &Mlp, batch: &[Sample<'_>]) -> Result<Expression, LengthError
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing::index_as_value;
+    use crate::testing::{
+        assert_approx_eq, backward_gradients, index_as_value, numerical_gradients,
+    };
+
+    // micrograd's toy dataset
+    const TOY_BATCH: [Sample<'static>; 4] = [
+        Sample {
+            inputs: &[2.0, 3.0, -1.0],
+            targets: &[1.0],
+        },
+        Sample {
+            inputs: &[3.0, -1.0, 0.5],
+            targets: &[-1.0],
+        },
+        Sample {
+            inputs: &[0.5, 1.0, 1.0],
+            targets: &[-1.0],
+        },
+        Sample {
+            inputs: &[1.0, 1.0, -1.0],
+            targets: &[1.0],
+        },
+    ];
 
     #[test]
     fn from_fn() {
@@ -215,32 +237,29 @@ mod tests {
     #[test]
     fn learns() {
         let mut model = Model::from_fn(3, &[4, 4, 1], |i| index_as_value(i).sin());
-        let batch = [
-            Sample {
-                inputs: &[2.0, 3.0, -1.0],
-                targets: &[1.0],
-            },
-            Sample {
-                inputs: &[3.0, -1.0, 0.5],
-                targets: &[-1.0],
-            },
-            Sample {
-                inputs: &[0.5, 1.0, 1.0],
-                targets: &[-1.0],
-            },
-            Sample {
-                inputs: &[1.0, 1.0, -1.0],
-                targets: &[1.0],
-            },
-        ];
-        let first = model.train_step(&batch, 0.1).unwrap();
+        let first = model.train_step(&TOY_BATCH, 0.1).unwrap();
         let last = (0..19)
-            .map(|_| model.train_step(&batch, 0.1).unwrap())
+            .map(|_| model.train_step(&TOY_BATCH, 0.1).unwrap())
             .last()
             .unwrap();
 
         assert!(first > 1.0, "the untrained loss starts high");
         assert!(last < 0.05, "20 train steps bring the loss close to zero");
+    }
+
+    #[test]
+    fn gradient() {
+        let loss = |parameters: [Expression; 41]| {
+            let mlp = Mlp::from_fn(3, &[4, 4, 1], |i| parameters[i].clone());
+            batch_loss(&mlp, &TOY_BATCH).unwrap()
+        };
+        let at = std::array::from_fn(|i| index_as_value(i).sin());
+
+        assert_approx_eq(
+            backward_gradients(loss, at),
+            numerical_gradients(loss, at),
+            "every parameter's gradient matches its numerical slope",
+        );
     }
 
     #[test]

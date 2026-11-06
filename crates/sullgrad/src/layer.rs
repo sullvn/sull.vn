@@ -10,10 +10,10 @@ pub(crate) struct Layer {
 
 impl Layer {
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn from_fn(
+    pub(crate) fn from_fn<P: Into<Expression>>(
         nin: usize,
         nout: usize,
-        mut parameter: impl FnMut(usize) -> f64,
+        mut parameter: impl FnMut(usize) -> P,
     ) -> Self {
         let mut offset = 0;
         let neurons = (0..nout)
