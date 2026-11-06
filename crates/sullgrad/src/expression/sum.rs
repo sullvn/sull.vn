@@ -1,11 +1,41 @@
 use std::iter::Sum;
-use std::ops::Add;
 
 use super::Expression;
 
+///
+/// Sums expressions.
+///
+/// Uses a balanced tree of summations to avoid
+/// creating long chains of reference-counted
+/// expression nodes. Chains can cause stack
+/// overflows when there's a cascade of [`Drop`]
+/// calls.
+///
+/// It's also more accurate, since each term
+/// passes through about `log2(n)` additions instead
+/// of up to `n`, so rounding errors pile up less.
+///
+/// TODO: Revisit if we move to a
+/// struct-of-arrays architecture, where freeing
+/// doesn't nest.
+///
 impl Sum for Expression {
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
-        iter.fold(0.0.into(), Add::add)
+        let terms: Box<[_]> = iter.collect();
+
+        balanced_sum(&terms)
+    }
+}
+
+fn balanced_sum(terms: &[Expression]) -> Expression {
+    match terms {
+        [] => 0.0.into(),
+        [term] => term.clone(),
+        _ => {
+            let (left, right) = terms.split_at(terms.len() / 2);
+
+            balanced_sum(left) + balanced_sum(right)
+        }
     }
 }
 
@@ -27,6 +57,13 @@ mod tests {
         let s: Expression = std::iter::empty().sum();
 
         assert_eq!(s.data(), 0.0, "empty sum is zero");
+    }
+
+    #[test]
+    fn long_sum() {
+        let s: Expression = (0..100_000).map(|_| Expression::from(1.0)).sum();
+
+        assert_eq!(s.data(), 100_000.0, "long sums stay shallow enough to drop");
     }
 
     #[test]

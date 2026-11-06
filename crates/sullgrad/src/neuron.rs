@@ -35,13 +35,17 @@ impl Neuron {
             return Err(LengthError::Inputs);
         }
 
-        let activation = self
+        let weighted_sum: Expression = self
             .weights
             .iter()
             .zip(inputs)
-            .fold(self.bias.clone(), |sum, (w, x)| sum + w.clone() * x.clone());
+            .map(|(w, x)| w.clone() * x.clone())
+            .sum();
 
-        Ok(activation.tanh())
+        let pre_activation = weighted_sum + self.bias.clone();
+        let activation = pre_activation.tanh();
+
+        Ok(activation)
     }
 
     #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]

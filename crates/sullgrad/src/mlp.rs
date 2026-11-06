@@ -94,7 +94,7 @@ mod tests {
         let data: Vec<_> = outputs.iter().map(Expression::data).collect();
 
         let [h0, h1] = [2.0_f64.tanh(), 5.0_f64.tanh()];
-        let output = (9.0 + 7.0 * h0 + 8.0 * h1).tanh();
+        let output = (9.0 + (7.0 * h0 + 8.0 * h1)).tanh();
 
         assert_eq!(
             data,
