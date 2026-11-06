@@ -4,6 +4,7 @@ mod expression;
 mod layer;
 mod loss;
 mod mlp;
+mod model;
 mod neuron;
 
 #[cfg(test)]
