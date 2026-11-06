@@ -65,6 +65,7 @@ impl Expr for ExpExpr {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::testing::{assert_approx_eq, backward_gradients, numerical_gradients};
 
     #[test]
     fn exp() {
@@ -91,6 +92,17 @@ mod tests {
             e.left().map(Expression::grad),
             Some(2.0_f64.exp() * 2.0),
             "exp propagates e^x gradient to exponent"
+        );
+    }
+
+    #[test]
+    fn gradient() {
+        let f = |[x]: [Expression; 1]| x.exp();
+
+        assert_approx_eq(
+            backward_gradients(f, [0.7]),
+            numerical_gradients(f, [0.7]),
+            "natural exponentiation gradient matches its numerical slope",
         );
     }
 }

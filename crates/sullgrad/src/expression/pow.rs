@@ -84,6 +84,7 @@ impl Expr for PowExpr {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::testing::{assert_approx_eq, backward_gradients, numerical_gradients};
 
     #[test]
     fn pow() {
@@ -120,6 +121,17 @@ mod tests {
             p.right().map(Expression::grad),
             Some(2.0_f64.ln() * 8.0 * 2.0),
             "pow propagates ln(b) * b^e gradient to exponent"
+        );
+    }
+
+    #[test]
+    fn gradient() {
+        let f = |[b, e]: [Expression; 2]| b.pow(e);
+
+        assert_approx_eq(
+            backward_gradients(f, [1.5, 2.5]),
+            numerical_gradients(f, [1.5, 2.5]),
+            "exponentiation gradient matches its numerical slope",
         );
     }
 }

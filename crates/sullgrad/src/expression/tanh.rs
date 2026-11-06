@@ -101,6 +101,7 @@ impl Expr for TanhExpr {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::testing::{assert_approx_eq, backward_gradients, numerical_gradients};
 
     #[test]
     fn tanh() {
@@ -128,6 +129,17 @@ mod tests {
             t.left().map(Expression::grad),
             Some(tanh.mul_add(-tanh, 1.0) * 2.0),
             "tanh propagates 1 - tanh(x)^2 gradient to operand"
+        );
+    }
+
+    #[test]
+    fn gradient() {
+        let f = |[x]: [Expression; 1]| x.tanh();
+
+        assert_approx_eq(
+            backward_gradients(f, [0.7]),
+            numerical_gradients(f, [0.7]),
+            "hyperbolic tangent gradient matches its numerical slope",
         );
     }
 }

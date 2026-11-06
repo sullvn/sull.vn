@@ -117,6 +117,7 @@ impl Sum for Expression {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::testing::{assert_approx_eq, backward_gradients, numerical_gradients};
 
     #[test]
     fn neg() {
@@ -190,5 +191,49 @@ mod tests {
         let s: Expression = std::iter::empty().sum();
 
         assert_eq!(s.data(), 0.0, "empty sum is zero");
+    }
+
+    #[test]
+    fn neg_gradient() {
+        let f = |[x]: [Expression; 1]| -x;
+
+        assert_approx_eq(
+            backward_gradients(f, [1.5]),
+            numerical_gradients(f, [1.5]),
+            "neg gradient matches its numerical slope",
+        );
+    }
+
+    #[test]
+    fn sub_gradient() {
+        let f = |[x, y]: [Expression; 2]| x - y;
+
+        assert_approx_eq(
+            backward_gradients(f, [1.5, -2.0]),
+            numerical_gradients(f, [1.5, -2.0]),
+            "sub gradient matches its numerical slope",
+        );
+    }
+
+    #[test]
+    fn div_gradient() {
+        let f = |[x, y]: [Expression; 2]| x / y;
+
+        assert_approx_eq(
+            backward_gradients(f, [1.5, -2.0]),
+            numerical_gradients(f, [1.5, -2.0]),
+            "div gradient matches its numerical slope",
+        );
+    }
+
+    #[test]
+    fn sum_gradient() {
+        let f = |xs: [Expression; 3]| xs.into_iter().sum();
+
+        assert_approx_eq(
+            backward_gradients(f, [1.5, -2.0, 0.5]),
+            numerical_gradients(f, [1.5, -2.0, 0.5]),
+            "sum gradient matches its numerical slope",
+        );
     }
 }

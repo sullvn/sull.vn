@@ -66,6 +66,7 @@ impl Expr for AddExpr {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::testing::{assert_approx_eq, backward_gradients, numerical_gradients};
 
     #[test]
     fn add() {
@@ -102,6 +103,17 @@ mod tests {
             a.right().map(Expression::grad),
             Some(2.0),
             "add propagates gradient to right operand"
+        );
+    }
+
+    #[test]
+    fn gradient() {
+        let f = |[x, y]: [Expression; 2]| x + y;
+
+        assert_approx_eq(
+            backward_gradients(f, [1.5, -2.0]),
+            numerical_gradients(f, [1.5, -2.0]),
+            "addition gradient matches its numerical slope",
         );
     }
 }
