@@ -250,7 +250,7 @@ mod tests {
     #[test]
     fn gradient() {
         let loss = |parameters: [Expression; 41]| {
-            let mlp = Mlp::from_fn(3, &[4, 4, 1], |i| parameters[i].clone());
+            let mlp = Mlp::from_fn(3, &[4, 4, 1], |i| &parameters[i]);
             batch_loss(&mlp, &TOY_BATCH).unwrap()
         };
         let at = std::array::from_fn(|i| index_as_value(i).sin());

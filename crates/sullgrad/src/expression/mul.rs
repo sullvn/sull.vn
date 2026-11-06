@@ -10,6 +10,14 @@ impl<R: Into<Self>> Mul<R> for Expression {
     }
 }
 
+impl<R: Into<Expression>> Mul<R> for &Expression {
+    type Output = Expression;
+
+    fn mul(self, rhs: R) -> Expression {
+        self.clone() * rhs
+    }
+}
+
 #[derive(Debug)]
 struct MulExpr {
     data: f64,

@@ -37,12 +37,12 @@ pub(crate) fn mean_squared_error(
         .iter()
         .zip(targets)
         .map(|(prediction, &target)| {
-            let error = prediction.clone() - target;
+            let error = prediction - target;
 
             // Use multiplication instead of `pow(2)`, as
             // that would give `NaN` gradients for negative
             // errors
-            error.clone() * error
+            &error * &error
         })
         .sum();
 

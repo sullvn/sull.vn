@@ -86,3 +86,9 @@ impl<T: Expr + 'static> From<T> for Expression {
         Self(Rc::new(Node { grad, expr }))
     }
 }
+
+impl From<&Self> for Expression {
+    fn from(expression: &Self) -> Self {
+        expression.clone()
+    }
+}

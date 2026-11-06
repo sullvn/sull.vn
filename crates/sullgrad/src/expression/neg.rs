@@ -10,6 +10,14 @@ impl Neg for Expression {
     }
 }
 
+impl Neg for &Expression {
+    type Output = Expression;
+
+    fn neg(self) -> Expression {
+        -self.clone()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -18,7 +26,7 @@ mod tests {
     #[test]
     fn neg() {
         let x = Expression::from(2.0);
-        let n = -x;
+        let n = -&x;
 
         assert_eq!(n.data(), -2.0, "neg result data");
         assert_eq!(

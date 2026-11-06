@@ -52,7 +52,7 @@ mod tests {
     fn walk() {
         let x = Expression::from(5.0);
         let a = x * 2.0;
-        let b = a.clone() * 3.0;
+        let b = &a * 3.0;
         let c = a + b;
         let order: Vec<f64> = c.walk().map(|e| e.data()).collect();
 
@@ -66,7 +66,7 @@ mod tests {
     #[test]
     fn unique_visits() {
         let x = Expression::from(3.0);
-        let y = x.clone() * x;
+        let y = &x * &x;
 
         assert_eq!(y.walk().count(), 2, "walk visits a shared expression once");
     }

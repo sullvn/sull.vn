@@ -10,6 +10,14 @@ impl<R: Into<Self>> Div<R> for Expression {
     }
 }
 
+impl<R: Into<Expression>> Div<R> for &Expression {
+    type Output = Expression;
+
+    fn div(self, rhs: R) -> Expression {
+        self.clone() / rhs
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -19,7 +27,7 @@ mod tests {
     fn div() {
         let x = Expression::from(6.0);
         let y = Expression::from(2.0);
-        let d = x / y;
+        let d = &x / &y;
 
         assert_eq!(d.data(), 3.0, "div result data");
         assert_eq!(

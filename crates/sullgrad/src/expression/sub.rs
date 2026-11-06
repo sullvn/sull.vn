@@ -10,6 +10,14 @@ impl<R: Into<Self>> Sub<R> for Expression {
     }
 }
 
+impl<R: Into<Expression>> Sub<R> for &Expression {
+    type Output = Expression;
+
+    fn sub(self, rhs: R) -> Expression {
+        self.clone() - rhs
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

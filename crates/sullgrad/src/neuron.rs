@@ -35,14 +35,9 @@ impl Neuron {
             return Err(LengthError::Inputs);
         }
 
-        let weighted_sum: Expression = self
-            .weights
-            .iter()
-            .zip(inputs)
-            .map(|(w, x)| w.clone() * x.clone())
-            .sum();
+        let weighted_sum: Expression = self.weights.iter().zip(inputs).map(|(w, x)| w * x).sum();
 
-        let pre_activation = weighted_sum + self.bias.clone();
+        let pre_activation = weighted_sum + &self.bias;
         let activation = pre_activation.tanh();
 
         Ok(activation)

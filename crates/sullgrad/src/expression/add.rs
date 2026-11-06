@@ -10,6 +10,14 @@ impl<R: Into<Self>> Add<R> for Expression {
     }
 }
 
+impl<R: Into<Expression>> Add<R> for &Expression {
+    type Output = Expression;
+
+    fn add(self, rhs: R) -> Expression {
+        self.clone() + rhs
+    }
+}
+
 #[derive(Debug)]
 struct AddExpr {
     data: f64,
