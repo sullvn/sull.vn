@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# Fail if entering the dev shell would compile packages instead of fetching
+# them from the binary cache. Run this before anything calls `nix develop`.
+#
+# Otherwise, GitHub CI would time out. Some package builds can require
+# *tons* of resources, like over 32GB of memory for a Rust build with LTO.
+#
+# Nix's `max-jobs = 0` would be simpler, but it also blocks the trivial local
+# builds the shell needs (wrappers, rust-overlay components, `writeText`).
+#
+# Extra arguments go to every nix command. To check an updated flake.lock
+# against an empty store:
+#
+#     check-nix-cache --store "$(mktemp -d)"
+#
+set -euo pipefail
+
+system=$(nix eval --raw --impure --expr builtins.currentSystem)
+installable=".#devShells.${system}.default.inputDerivation"
+
+# The dry run lists the .drv files it would build on stderr
+mapfile -t drvs < <(
+  nix build --dry-run --no-update-lock-file "$@" "$installable" 2>&1 >/dev/null |
+    sed -n 's|^ *\(/nix/store/[^ ]*\.drv\)$|\1|p'
+)
+
+if ((${#drvs[@]} == 0)); then
+  echo "Nothing to build for $system."
+  exit 0
+fi
+
+# Allow fetches (fixed-output derivations) and preferLocalBuild derivations
+compiled=$(
+  nix derivation show "$@" "${drvs[@]}" | jq -r '
+    (.derivations // .)[]
+    | select(.env.preferLocalBuild != "1")
+    | select(.outputs | all(has("hash") or has("hashAlgo") or has("method")) | not)
+    | .name
+  ' | sort -u
+)
+
+if [[ -n $compiled ]]; then
+  echo "::error::These Nix packages are not in the binary cache for $system and would be compiled:"
+  echo "$compiled"
+  echo "Pin flake.lock to a nixpkgs revision that Hydra has finished building."
+  exit 1
+fi
+
+echo "All ${#drvs[@]} local derivations for $system are trivial."
