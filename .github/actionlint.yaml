@@ -1,0 +1,9 @@
+# actionlint doesn't know about GitHub's Ubuntu 26.04 runners yet
+#
+# Remove once it does:
+#
+# https://github.com/rhysd/actionlint/blob/main/rule_runner_label.go
+#
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04-arm

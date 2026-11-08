@@ -3,3 +3,16 @@ allowBuilds:
   protobufjs: true
   re2: true
   workerd: false
+
+packageExtensions:
+  #
+  # Without this, the Astro language server and `astro check`
+  # crash on startup.
+  #
+  # Remove once fixed upstream:
+  #
+  # https://github.com/withastro/astro/issues/18653
+  #
+  "@astrojs/astro2tsx":
+    dependencies:
+      "@emnapi/runtime": 1.11.3
