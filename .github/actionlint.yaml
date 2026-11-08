@@ -2,7 +2,7 @@
 #
 # Remove once it does:
 #
-#     https://github.com/rhysd/actionlint/blob/main/rule_runner_label.go
+# https://github.com/rhysd/actionlint/blob/main/rule_runner_label.go
 #
 self-hosted-runner:
   labels:
