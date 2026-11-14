@@ -11,13 +11,15 @@
     "dev": "astro dev",
     "format": "biome format --write . && cargo fmt",
     "preview": "astro preview",
-    "test": "pnpm test:actionlint && pnpm test:cargo && pnpm test:astro && pnpm test:biome && pnpm test:playwright && pnpm test:unit",
+    "test": "pnpm test:actionlint && pnpm test:actions-lock && pnpm test:zizmor && pnpm test:cargo && pnpm test:astro && pnpm test:biome && pnpm test:playwright && pnpm test:unit",
     "test:actionlint": "actionlint",
+    "test:actions-lock": "gh-actions-lock --verify",
     "test:astro": "astro check",
     "test:cargo": "export CARGO_BUILD_WARNINGS=deny && cargo fmt --check && cargo clippy --all-targets && cargo test",
     "test:biome": "biome check .",
     "test:playwright": "playwright test",
-    "test:unit": "node --test"
+    "test:unit": "node --test",
+    "test:zizmor": "zizmor --persona=auditor --strict-collection ."
   },
   "dependencies": {
     "@astrojs/check": "^0.9.12",

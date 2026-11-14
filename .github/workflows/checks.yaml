@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   test:
+    name: Test and deploy
     runs-on: ubuntu-26.04-arm
     timeout-minutes: 30
     environment:
@@ -21,19 +22,19 @@ jobs:
       url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
         with:
           lfs: true
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        uses: cachix/install-nix-action@v31.11.1
 
       - name: Check Nix cache
         run: .github/scripts/check-nix-cache
 
       - name: Cache Rust
-        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        uses: Swatinem/rust-cache@v2.9.2
         with:
           cmd-format: nix develop --no-update-lock-file -c {0}
 
@@ -41,7 +42,7 @@ jobs:
         run: nix develop --no-update-lock-file -c pnpm install --frozen-lockfile
 
       - name: Cache images
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache@v6.1.0
         with:
           path: node_modules/.astro/assets
           key: >-
@@ -53,6 +54,8 @@ jobs:
             }}
 
       - name: Tests
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: nix develop --no-update-lock-file -c pnpm test
 
       - name: Deploy

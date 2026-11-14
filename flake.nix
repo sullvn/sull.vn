@@ -36,6 +36,8 @@
               pkgs.pnpm
               pkgs.biome
               pkgs.actionlint
+              pkgs.gh-actions-lock
+              pkgs.zizmor
               pkgs.chromium
               rust-toolchain
               wasm-bindgen-cli
