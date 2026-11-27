@@ -2,14 +2,12 @@ use super::error::LengthError;
 use super::expression::Expression;
 
 #[derive(Debug)]
-#[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 pub(crate) struct Neuron {
     weights: Box<[Expression]>,
     bias: Expression,
 }
 
 impl Neuron {
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn from_fn<P: Into<Expression>>(
         nin: usize,
         mut parameter: impl FnMut(usize) -> P,
@@ -29,7 +27,6 @@ impl Neuron {
         Ok(Self { weights, bias })
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Expression, LengthError> {
         if inputs.len() != self.weights.len() {
             return Err(LengthError::Inputs);
@@ -43,7 +40,6 @@ impl Neuron {
         Ok(activation)
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn parameters(&self) -> impl Iterator<Item = &Expression> {
         self.weights.iter().chain([&self.bias])
     }

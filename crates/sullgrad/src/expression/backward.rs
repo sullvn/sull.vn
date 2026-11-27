@@ -9,7 +9,6 @@ impl Expression {
     ///
     /// Named after `PyTorch`'s `Tensor.backward`.
     ///
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn backward(&self) {
         self.seed_grad();
         for expression in self.walk() {

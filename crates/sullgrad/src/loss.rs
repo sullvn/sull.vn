@@ -21,7 +21,6 @@ use super::expression::Expression;
 /// Each prediction's gradient points away from its
 /// target, scaled by how far it misses.
 ///
-#[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 pub(crate) fn mean_squared_error(
     predictions: &[Expression],
     targets: &[f64],

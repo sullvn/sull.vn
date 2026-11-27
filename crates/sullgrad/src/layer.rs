@@ -3,13 +3,11 @@ use super::expression::Expression;
 use super::neuron::Neuron;
 
 #[derive(Debug)]
-#[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 pub(crate) struct Layer {
     neurons: Box<[Neuron]>,
 }
 
 impl Layer {
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn from_fn<P: Into<Expression>>(
         nin: usize,
         nout: usize,
@@ -41,7 +39,6 @@ impl Layer {
         Ok(Self { neurons })
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Box<[Expression]>, LengthError> {
         self.neurons
             .iter()
@@ -49,7 +46,6 @@ impl Layer {
             .collect()
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn parameters(&self) -> impl Iterator<Item = &Expression> {
         self.neurons.iter().flat_map(Neuron::parameters)
     }
