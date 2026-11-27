@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# Serve Playwright's browsers from the official Linux container, so
+# screenshots render the same on every machine.
+#
+# Usage: playwright-server <playwright version> <port>
+#
+set -euo pipefail
+
+version=$1
+port=$2
+
+#
+# Use system Docker if present, such as on CI.
+#
+# This avoids downloading and setting up a VM via Colima.
+#
+if ! docker info >/dev/null 2>&1; then
+  # A dedicated profile, so stopping it never stops a developer's own VM
+  profile=sull-vn
+  trap 'colima stop --profile "$profile"' EXIT
+
+  # Leave the user's Docker context, ~/.ssh/config and home directory alone
+  colima start --profile "$profile" --activate=false --ssh-config=false --mount none
+
+  DOCKER_HOST=$(colima status --profile "$profile" --json | sed -n 's/.*"docker_socket":"\([^"]*\)".*/\1/p')
+  export DOCKER_HOST
+fi
+
+docker run --rm --init --user pwuser --workdir /home/pwuser \
+  --publish "127.0.0.1:$port:$port" \
+  "mcr.microsoft.com/playwright:v$version-resolute" \
+  npx -y "playwright@$version" run-server --port "$port" --host 0.0.0.0

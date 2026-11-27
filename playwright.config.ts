@@ -1,8 +1,13 @@
+import { createRequire } from 'node:module'
 import { defineConfig } from '@playwright/test'
 import type { VisualOptions } from './tests/visual.spec'
 
 const previewPort = 4322
 const previewURL = `http://127.0.0.1:${previewPort}`
+
+// The browser server and test runner must run the same Playwright version
+const { version } = createRequire(import.meta.url)('@playwright/test/package.json')
+const browserPort = 4323
 
 interface VisualCase {
   name: string
@@ -73,8 +78,18 @@ export default defineConfig<VisualOptions>({
   testDir: './tests',
   fullyParallel: true,
   reporter: [['html', { host: '0.0.0.0' }]],
+
+  // Leaves out host platform, as we're only using Linux browsers
+  snapshotPathTemplate: '{testDir}/snapshots/{projectName}{ext}',
+
   use: {
     baseURL: previewURL,
+    connectOptions: {
+      wsEndpoint: `ws://127.0.0.1:${browserPort}/`,
+
+      // Access to preview server on host OS
+      exposeNetwork: '<loopback>',
+    },
   },
   projects: visualCases.map(
     ({ name, route, browserName, width, height = 800, colorScheme, media = 'screen' }) => ({
@@ -88,15 +103,28 @@ export default defineConfig<VisualOptions>({
       },
     }),
   ),
-  webServer: {
-    command: `pnpm exec astro build && pnpm exec astro preview --port ${previewPort} --ignore-lock`,
-    url: previewURL,
+  webServer: [
+    {
+      command: `scripts/playwright-server ${version} ${browserPort}`,
+      url: `http://127.0.0.1:${browserPort}`,
 
-    // A fresh build must encode the site's images before preview can start.
-    timeout: 5 * 60 * 1000,
-    reuseExistingServer: false,
+      // Time for a first run of Colima, which downloads large VM and container images
+      timeout: 10 * 60 * 1000,
+      reuseExistingServer: false,
 
-    // Keep Astro in the foreground so Playwright controls the preview's lifetime.
-    env: { ASTRO_PREVIEW_BACKGROUND: '1' },
-  },
+      // Lets the script stop Colima when tests finish
+      gracefulShutdown: { signal: 'SIGTERM', timeout: 30_000 },
+    },
+    {
+      command: `pnpm exec astro build && pnpm exec astro preview --port ${previewPort} --ignore-lock`,
+      url: previewURL,
+
+      // A fresh build must encode the site's images before preview can start
+      timeout: 5 * 60 * 1000,
+      reuseExistingServer: false,
+
+      // Keep Astro in the foreground so Playwright controls the preview's lifetime
+      env: { ASTRO_PREVIEW_BACKGROUND: '1' },
+    },
+  ],
 })

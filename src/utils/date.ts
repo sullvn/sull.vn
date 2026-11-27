@@ -1,6 +1,7 @@
 export function formatDate(isoDate: string): string {
   const dateObj = new Date(isoDate)
   return dateObj.toLocaleDateString('en-US', {
+    timeZone: 'UTC',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -16,7 +17,7 @@ export function toIsoDay(value: unknown): string {
   // Use Intl.DateTimeFormat to avoid manual string slicing/splitting.
   const date = coerceDate(value)
 
-  const parts = new Intl.DateTimeFormat('en-CA', {
+  const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'UTC',
     year: 'numeric',
     month: '2-digit',
