@@ -9,6 +9,8 @@ Write comments that explain unusual logic or provide high-level summaries. Avoid
 
 Prefer comments that explain why over ones that explain what: the reason for a choice, the constraint it works around, or what would break otherwise. The code already shows what it does.
 
+Keep the why evergreen. A comment must make sense to someone reading the code long after it was written, so never describe the change that introduced it or the discussion behind it. That belongs in the commit message or pull request.
+
 When a comment has more than one paragraph, end it with an empty comment line too. This applies to every language and comment style:
 
 ```ts

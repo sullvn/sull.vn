@@ -47,6 +47,9 @@ export function rust(): AstroIntegration {
                       },
               },
             ],
+            // Crates load their WASM with a top-level await, which only works in
+            // ES modules
+            worker: { format: 'es' },
           },
         })
 
