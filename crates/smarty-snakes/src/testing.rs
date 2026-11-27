@@ -1,6 +1,44 @@
 use rand::{RngExt, SeedableRng, rngs::StdRng};
 
-use crate::world::{Direction, Point, Snake};
+use crate::controls::Input;
+use crate::random::pick;
+use crate::turn::Turn;
+use crate::world::{Direction, Point, Snake, World, YOU};
+
+///
+/// The input from a player who heads for the nearest
+/// food and avoids crashing, but 1 time in 10 makes a
+/// random safe move instead.
+///
+pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> Input {
+    let Some(you) = world.snake(YOU) else {
+        return Input::Up;
+    };
+    let safe: Vec<_> = [Turn::Straight, Turn::Left, Turn::Right]
+        .map(|turn| you.heading.turned(turn))
+        .into_iter()
+        .filter(|&direction| !world.blocked(you.head.step(direction, 1)))
+        .collect();
+    let food = world
+        .food
+        .iter()
+        .min_by_key(|&&food| you.head.distance(food));
+    let closest = safe.iter().min_by_key(|&&direction| {
+        food.map_or(0, |&food| you.head.step(direction, 1).distance(food))
+    });
+    let direction = if random() < 0.1 {
+        pick(random, &safe)
+    } else {
+        closest
+    };
+
+    match direction.copied().unwrap_or(you.heading) {
+        Direction::Up => Input::Up,
+        Direction::Right => Input::Right,
+        Direction::Down => Input::Down,
+        Direction::Left => Input::Left,
+    }
+}
 
 /// Random numbers that repeat `values` in order.
 pub(crate) fn scripted(values: &[f64]) -> impl FnMut() -> f64 {
