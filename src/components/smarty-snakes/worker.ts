@@ -2,9 +2,9 @@ import { Game, Input } from '#rust/smarty-snakes'
 import type { FromWorker, ToWorker } from './messages.ts'
 
 /**
- * Time between moves, for four moves a second
+ * Time between moves, for eight moves a second
  */
-const moveInterval = 250
+const moveInterval = 125
 
 let game: Game | undefined
 let pending = Input.None
