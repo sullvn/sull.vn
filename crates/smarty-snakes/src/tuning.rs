@@ -25,7 +25,7 @@ pub(crate) const RESPAWN_MOVES: u32 = 4;
 ///
 /// Most recent lessons kept.
 ///
-/// Two minutes of play at four moves per second.
+/// A minute of play at eight moves per second.
 ///
 pub(crate) const MEMORY_LESSONS: usize = 480;
 
