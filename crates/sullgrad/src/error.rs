@@ -1,3 +1,5 @@
+//! Errors from building, running and training models.
+
 ///
 /// A slice had the wrong length for the model.
 ///
