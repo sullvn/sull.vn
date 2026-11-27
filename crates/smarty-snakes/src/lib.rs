@@ -1,4 +1,5 @@
 //! A snake game where every other snake learns from you
+mod brain;
 mod cell;
 mod controls;
 mod random;
