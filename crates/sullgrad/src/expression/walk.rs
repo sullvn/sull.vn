@@ -13,7 +13,6 @@ impl Expression {
     /// `self` and its sub-expressions, in topological
     /// order. Visits results before operands.
     ///
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(super) fn walk(&self) -> impl Iterator<Item = Self> {
         let mut seen = HashSet::new();
         let mut order = Vec::new();

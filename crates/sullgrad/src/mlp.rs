@@ -3,13 +3,11 @@ use super::expression::Expression;
 use super::layer::Layer;
 
 #[derive(Debug)]
-#[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 pub(crate) struct Mlp {
     layers: Box<[Layer]>,
 }
 
 impl Mlp {
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn from_fn<P: Into<Expression>>(
         nin: usize,
         nouts: &[usize],
@@ -29,7 +27,6 @@ impl Mlp {
         Self { layers }
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn from_parameters(
         nin: usize,
         nouts: &[usize],
@@ -45,7 +42,6 @@ impl Mlp {
         Ok(mlp)
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn forward(&self, inputs: &[Expression]) -> Result<Box<[Expression]>, LengthError> {
         let mut outputs: Box<[_]> = inputs.into();
         for layer in &self.layers {
@@ -55,7 +51,6 @@ impl Mlp {
         Ok(outputs)
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn parameters(&self) -> impl Iterator<Item = &Expression> {
         self.layers.iter().flat_map(Layer::parameters)
     }

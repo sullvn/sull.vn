@@ -36,7 +36,6 @@ struct Node<T: ?Sized> {
 pub(crate) struct Expression(Rc<Node<dyn Expr>>);
 
 impl Expression {
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     fn propagate(&self) {
         let Self(node) = self;
         node.expr.propagate(node.grad.get());
@@ -47,7 +46,6 @@ impl Expression {
         node.expr.data()
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn grad(&self) -> f64 {
         let Self(node) = self;
         node.grad.get()

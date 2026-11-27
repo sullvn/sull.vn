@@ -40,7 +40,6 @@ impl Expression {
     ///   costs less than `ReLU` units getting stuck at
     ///   `0` and no longer learning.
     ///
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
     pub(crate) fn tanh(self) -> Self {
         TanhExpr::new(self).into()
     }

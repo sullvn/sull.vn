@@ -13,23 +13,28 @@ use super::mlp::Mlp;
 /// demand, initializing itself from the stored
 /// weights and biases.
 ///
-/// Currently only supports an [`Mlp`] structure.
+/// Currently only supports an `Mlp` structure.
 ///
 #[derive(Debug)]
-#[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-pub(crate) struct Model {
+pub struct Model {
     nin: usize,
     nouts: Box<[usize]>,
     parameters: Box<[f64]>,
 }
 
 impl Model {
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn from_fn(
-        nin: usize,
-        nouts: &[usize],
-        parameter: impl FnMut(usize) -> f64,
-    ) -> Self {
+    ///
+    /// Creates a model with each parameter from
+    /// `parameter`.
+    ///
+    /// `nin` is the number of inputs, and `nouts` the
+    /// number of neurons in each layer, in order. The
+    /// last layer's size is the number of outputs.
+    ///
+    /// `parameter` is called with each parameter's
+    /// index, in the order of [`Model::parameters`].
+    ///
+    pub fn from_fn(nin: usize, nouts: &[usize], parameter: impl FnMut(usize) -> f64) -> Self {
         let parameters = Mlp::from_fn(nin, nouts, parameter)
             .parameters()
             .map(Expression::data)
@@ -42,8 +47,18 @@ impl Model {
         }
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn from_parameters(
+    ///
+    /// Creates a model from saved parameters.
+    ///
+    /// Takes the same shape as [`Model::from_fn`], with
+    /// parameters in the order of [`Model::parameters`].
+    ///
+    /// # Errors
+    ///
+    /// [`LengthError::Parameters`] if there are too many
+    /// or too few parameters for the shape.
+    ///
+    pub fn from_parameters(
         nin: usize,
         nouts: &[usize],
         parameters: &[f64],
@@ -63,8 +78,18 @@ impl Model {
         })
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn forward(&self, inputs: &[f64]) -> Result<Box<[f64]>, LengthError> {
+    ///
+    /// Runs the model on `inputs`.
+    ///
+    /// Returns one output per neuron in the last
+    /// layer, each from -1 to 1.
+    ///
+    /// # Errors
+    ///
+    /// [`LengthError::Inputs`] if `inputs` doesn't
+    /// match the model's number of inputs.
+    ///
+    pub fn forward(&self, inputs: &[f64]) -> Result<Box<[f64]>, LengthError> {
         let inputs: Box<[_]> = inputs.iter().copied().map(Expression::from).collect();
         let outputs = self.mlp()?.forward(&inputs)?;
 
@@ -80,8 +105,14 @@ impl Model {
     ///
     /// Named after Keras's `Model.train_step`.
     ///
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn train_step(
+    /// # Errors
+    ///
+    /// [`LengthError::Batch`] if `batch` is empty, and
+    /// [`LengthError::Inputs`] or
+    /// [`LengthError::Targets`] if a sample doesn't
+    /// match the model. Parameters are left unchanged.
+    ///
+    pub fn train_step(
         &mut self,
         batch: &[Sample<'_>],
         learning_rate: f64,
@@ -101,17 +132,28 @@ impl Model {
         Mlp::from_parameters(self.nin, &self.nouts, &self.parameters)
     }
 
-    #[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-    pub(crate) fn parameters(&self) -> &[f64] {
+    ///
+    /// The weights and biases, in a flat list.
+    ///
+    /// Each neuron's weights are followed by its bias,
+    /// neuron by neuron and layer by layer.
+    ///
+    #[must_use]
+    pub fn parameters(&self) -> &[f64] {
         &self.parameters
     }
 }
 
+///
+/// One example to learn from.
+///
 #[derive(Debug, Clone, Copy)]
-#[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
-pub(crate) struct Sample<'a> {
-    pub(crate) inputs: &'a [f64],
-    pub(crate) targets: &'a [f64],
+pub struct Sample<'a> {
+    /// What the model is given.
+    pub inputs: &'a [f64],
+
+    /// What the model should output, each from -1 to 1.
+    pub targets: &'a [f64],
 }
 
 ///
@@ -120,7 +162,6 @@ pub(crate) struct Sample<'a> {
 /// Averaged rather than summed, so the learning rate
 /// means the same thing for any batch size.
 ///
-#[cfg_attr(not(test), expect(dead_code, reason = "wip"))]
 fn batch_loss(mlp: &Mlp, batch: &[Sample<'_>]) -> Result<Expression, LengthError> {
     //
     // Error for empty batches.
