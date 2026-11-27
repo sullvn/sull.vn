@@ -17,7 +17,7 @@
 set -euo pipefail
 
 system=$(nix eval --raw --impure --expr builtins.currentSystem)
-installable=".#devShells.${system}.default.inputDerivation"
+installable=".#devShells.${system}.ci.inputDerivation"
 
 # The dry run lists the .drv files it would build on stderr
 mapfile -t drvs < <(

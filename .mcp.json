@@ -3,12 +3,6 @@
     "astro-docs": {
       "type": "http",
       "url": "https://mcp.docs.astro.build/mcp"
-    },
-    "playwright": {
-      "type": "stdio",
-      "command": "pnpm",
-      "args": ["exec", "playwright", "mcp", "--browser", "chromium"],
-      "env": {}
     }
   }
 }

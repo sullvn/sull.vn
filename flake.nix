@@ -27,46 +27,31 @@
         # wasm-bindgen requires the CLI and library to be the same version
         wasm-bindgen-cli = pkgs."wasm-bindgen-cli_${pkgs.lib.replaceString "." "_" crateVersions.wasm-bindgen}";
 
-        fontconfigRules = "${pkgs.fontconfig.out}/share/fontconfig/conf.avail";
+        ci-shell = pkgs.mkShell {
+          packages = [
+            pkgs.nodejs_latest
+            pkgs.pnpm
+            pkgs.biome
+            pkgs.actionlint
+            pkgs.gh-actions-lock
+            pkgs.zizmor
+            rust-toolchain
+            wasm-bindgen-cli
+            pkgs.binaryen
+          ];
+        };
       in
         {
-          devShells.default = pkgs.mkShell {
-            packages = [
-              pkgs.nodejs_latest
-              pkgs.pnpm
-              pkgs.biome
-              pkgs.actionlint
-              pkgs.gh-actions-lock
-              pkgs.zizmor
-              rust-toolchain
-              wasm-bindgen-cli
-              pkgs.binaryen
-            ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-              # WebKit needs a graphics driver even when running headless.
-              pkgs.mesa.llvmpipeHook
-            ];
-            env = {
-              PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
-              PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
-              PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
+          # CI runners already have Docker, so this shell skips Colima's large download.
+          devShells.ci = ci-shell;
 
-              # Match the existing screenshots without inheriting host or user fonts.
-              FONTCONFIG_FILE = pkgs.writeText "sull-vn-fonts.conf" ''
-                <?xml version="1.0"?>
-                <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-                <fontconfig>
-                  <dir>${pkgs.dejavu_fonts.minimal}</dir>
-                  <cachedir prefix="xdg">fontconfig</cachedir>
-                  <include>${fontconfigRules}/10-hinting-slight.conf</include>
-                  <include>${fontconfigRules}/10-yes-antialias.conf</include>
-                  <include>${fontconfigRules}/10-sub-pixel-none.conf</include>
-                  <include>${fontconfigRules}/11-lcdfilter-default.conf</include>
-                  <!-- WebKit needs the generic font aliases defined by 60-latin.conf. -->
-                  <include>${fontconfigRules}/60-latin.conf</include>
-                  <include>${fontconfigRules}/90-synthetic.conf</include>
-                </fontconfig>
-              '';
-            };
+          # Playwright's browsers run in a container, on Colima when no Docker daemon answers.
+          devShells.default = pkgs.mkShell {
+            inputsFrom = [ ci-shell ];
+            packages = [
+              pkgs.colima
+              pkgs.docker-client
+            ];
           };
         }
 

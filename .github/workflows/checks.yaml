@@ -36,10 +36,10 @@ jobs:
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2.9.2
         with:
-          cmd-format: nix develop --no-update-lock-file -c {0}
+          cmd-format: nix develop .#ci --no-update-lock-file -c {0}
 
       - name: Install packages
-        run: nix develop --no-update-lock-file -c pnpm install --frozen-lockfile
+        run: nix develop .#ci --no-update-lock-file -c pnpm install --frozen-lockfile
 
       - name: Cache images
         uses: actions/cache@v6.1.0
@@ -56,7 +56,7 @@ jobs:
       - name: Tests
         env:
           GH_TOKEN: ${{ github.token }}
-        run: nix develop --no-update-lock-file -c pnpm test
+        run: nix develop .#ci --no-update-lock-file -c pnpm test
 
       - name: Deploy
         id: deploy
@@ -73,5 +73,5 @@ jobs:
           CLOUDFLARE_PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
           WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler.ndjson
         run: |
-          nix develop --no-update-lock-file -c pnpm exec wrangler pages deploy dist --project-name="$CLOUDFLARE_PROJECT_NAME" --branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          nix develop .#ci --no-update-lock-file -c pnpm exec wrangler pages deploy dist --project-name="$CLOUDFLARE_PROJECT_NAME" --branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
           jq -r 'select(.type == "pages-deploy-detailed") | "url=\(.alias // .url)"' "$WRANGLER_OUTPUT_FILE_PATH" >> "$GITHUB_OUTPUT"
