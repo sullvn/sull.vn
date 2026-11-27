@@ -2,6 +2,7 @@
 mod cell;
 mod controls;
 mod random;
+mod senses;
 mod tuning;
 mod turn;
 mod world;
