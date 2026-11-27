@@ -58,7 +58,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: nix develop .#ci --no-update-lock-file -c pnpm test
 
-      # Playwright's expected, actual and diff images for failed visual tests
       - name: Upload test results
         if: ${{ failure() }}
         uses: actions/upload-artifact@v7.0.2

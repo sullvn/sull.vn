@@ -10,8 +10,11 @@ set -euo pipefail
 version=$1
 port=$2
 
-# Use a Docker daemon if one already answers (CI, or a developer's own).
-# Otherwise, borrow Colima from the dev shell for the length of this run.
+#
+# Use system Docker if present, such as on CI.
+#
+# This avoids downloading and setting up a VM via Colima.
+#
 if ! docker info >/dev/null 2>&1; then
   # A dedicated profile, so stopping it never stops a developer's own VM
   profile=sull-vn
@@ -24,8 +27,6 @@ if ! docker info >/dev/null 2>&1; then
   export DOCKER_HOST
 fi
 
-# The server gives full control of its browsers, so publish it on loopback only.
-# The image has browsers but not the Playwright package, hence `npx`.
 docker run --rm --init --user pwuser --workdir /home/pwuser \
   --publish "127.0.0.1:$port:$port" \
   "mcr.microsoft.com/playwright:v$version-resolute" \

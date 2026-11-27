@@ -42,10 +42,8 @@
         };
       in
         {
-          # CI runners already have Docker, so this shell skips Colima's large download.
           devShells.ci = ci-shell;
 
-          # Playwright's browsers run in a container, on Colima when no Docker daemon answers.
           devShells.default = pkgs.mkShell {
             inputsFrom = [ ci-shell ];
             packages = [
