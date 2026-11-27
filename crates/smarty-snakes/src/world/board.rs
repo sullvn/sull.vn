@@ -1,0 +1,144 @@
+use super::point::Point;
+use crate::tuning::{CELLS_PER_SNAKE, MIN_SNAKES, SPAWN_MARGIN};
+
+/// The board's size in cells. Its edges are walls.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct Board {
+    width: i32,
+    height: i32,
+}
+
+impl Board {
+    ///
+    /// A board `width` by `height` cells.
+    ///
+    /// Returns `None` if it's too small for a snake to
+    /// spawn on.
+    ///
+    pub(crate) fn new(width: u16, height: u16) -> Option<Self> {
+        let smallest = 2 * SPAWN_MARGIN + 1;
+        let board = Self {
+            width: width.into(),
+            height: height.into(),
+        };
+
+        (board.width >= smallest && board.height >= smallest).then_some(board)
+    }
+
+    /// Whether `point` is on the board rather than in a wall.
+    pub(crate) const fn contains(self, point: Point) -> bool {
+        0 <= point.x && point.x < self.width && 0 <= point.y && point.y < self.height
+    }
+
+    /// Every cell, row by row.
+    pub(crate) fn points(self) -> impl Iterator<Item = Point> {
+        (0..self.height).flat_map(move |y| (0..self.width).map(move |x| Point { x, y }))
+    }
+
+    /// Where `point` falls in a row-by-row list of cells.
+    pub(crate) fn index(self, point: Point) -> Option<usize> {
+        if !self.contains(point) {
+            return None;
+        }
+
+        usize::try_from(point.y * self.width + point.x).ok()
+    }
+
+    /// Cells along the longer edge, the farthest any straight line can run.
+    pub(crate) const fn longest_side(self) -> i32 {
+        if self.width > self.height {
+            self.width
+        } else {
+            self.height
+        }
+    }
+
+    /// The number of cells.
+    pub(crate) fn area(self) -> usize {
+        usize::try_from(self.width * self.height).unwrap_or(0)
+    }
+
+    ///
+    /// How many snakes play on this board, counting yours.
+    ///
+    /// Rounded to the nearest snake.
+    ///
+    pub(crate) fn snake_count(self) -> usize {
+        let area = self.width * self.height;
+        let count = (area + CELLS_PER_SNAKE / 2) / CELLS_PER_SNAKE;
+
+        usize::try_from(count).unwrap_or(0).max(MIN_SNAKES)
+    }
+
+    /// Cells where a snake's head may spawn, away from the walls.
+    pub(crate) fn spawn_points(self) -> impl Iterator<Item = Point> {
+        self.points().filter(move |point| {
+            let x = SPAWN_MARGIN..self.width - SPAWN_MARGIN;
+            let y = SPAWN_MARGIN..self.height - SPAWN_MARGIN;
+
+            x.contains(&point.x) && y.contains(&point.y)
+        })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn too_small() {
+        assert_eq!(
+            [Board::new(8, 20), Board::new(20, 8)],
+            [None, None],
+            "new rejects boards without room to spawn"
+        );
+    }
+
+    #[test]
+    fn contains() {
+        let board = Board::new(10, 9).unwrap();
+        let points = [(0, 0), (9, 8), (-1, 0), (0, -1), (10, 0), (0, 9)]
+            .map(|(x, y)| board.contains(Point { x, y }));
+
+        assert_eq!(
+            points,
+            [true, true, false, false, false, false],
+            "contains is true only for points on the board"
+        );
+    }
+
+    #[test]
+    fn index() {
+        let board = Board::new(10, 9).unwrap();
+
+        assert_eq!(
+            [Point { x: 3, y: 2 }, Point { x: 10, y: 0 }].map(|point| board.index(point)),
+            [Some(23), None],
+            "index counts row by row, and skips points off the board"
+        );
+    }
+
+    #[test]
+    fn snake_count() {
+        let counts = [(20, 28), (48, 30), (9, 9)]
+            .map(|(width, height)| Board::new(width, height).unwrap().snake_count());
+
+        assert_eq!(
+            counts,
+            [3, 7, 2],
+            "snake_count gives one snake per 200 cells, and at least two"
+        );
+    }
+
+    #[test]
+    fn spawn_points() {
+        let board = Board::new(10, 9).unwrap();
+        let points: Vec<_> = board.spawn_points().collect();
+
+        assert_eq!(
+            points,
+            [Point { x: 4, y: 4 }, Point { x: 5, y: 4 }],
+            "spawn_points keeps heads 4 cells from every edge"
+        );
+    }
+}

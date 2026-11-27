@@ -1,0 +1,17 @@
+[package]
+name = "smarty-snakes"
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+js-sys = "0.3"
+sullgrad = { path = "../sullgrad" }
+wasm-bindgen = "0.2"
+
+[dev-dependencies]
+rand = "0.10"
+
+[lints]
+workspace = true
