@@ -102,7 +102,7 @@ impl<R: FnMut() -> f64> Game<R> {
                     return Ok(Some(yours));
                 }
 
-                self.brain.choose(&sense(&self.world, snake)).map(Some)
+                self.brain.predict(&sense(&self.world, snake)).map(Some)
             })
             .collect()
     }

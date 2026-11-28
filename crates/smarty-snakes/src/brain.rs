@@ -47,16 +47,18 @@ impl Brain {
     }
 
     ///
-    /// The move the brain rates highest.
+    /// The turn the brain predicts the player would make,
+    /// given `inputs`.
     ///
-    /// Always taking the top pick plays far better than
-    /// picking in proportion to the ratings.
+    /// That's the turn with the highest output. Always
+    /// taking the top one plays far better than picking in
+    /// proportion to the outputs.
     ///
-    pub(crate) fn choose(&self, senses: &Senses) -> Result<Turn, LengthError> {
-        let ratings = self.model.forward(senses)?;
+    pub(crate) fn predict(&self, inputs: &Senses) -> Result<Turn, LengthError> {
+        let outputs = self.model.forward(inputs)?;
         let top = Turn::ALL
             .into_iter()
-            .zip(ratings)
+            .zip(outputs)
             .max_by(|(_, a), (_, b)| a.total_cmp(b));
 
         Ok(top.map_or(Turn::Straight, |(turn, _)| turn))
@@ -159,7 +161,7 @@ mod tests {
     }
 
     #[test]
-    fn choose() {
+    fn predict() {
         let mut parameters = [0.0; 211];
         parameters[210] = 1.0;
         let brain = Brain {
@@ -168,9 +170,9 @@ mod tests {
         };
 
         assert_eq!(
-            brain.choose(&[0.0; 9]),
+            brain.predict(&[0.0; 9]),
             Ok(Turn::Right),
-            "choose takes the highest rated move"
+            "predict takes the turn with the highest output"
         );
     }
 
@@ -236,7 +238,7 @@ mod tests {
         }
 
         assert_eq!(
-            brain.choose(&[0.5; 9]),
+            brain.predict(&[0.5; 9]),
             Ok(Turn::Left),
             "train teaches the brain the moves in its samples"
         );
