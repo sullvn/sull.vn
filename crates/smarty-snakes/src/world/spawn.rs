@@ -1,4 +1,4 @@
-use super::{Direction, Point, Snake, SnakeState, Tail, World};
+use super::{Direction, Point, Snake, SnakeState, SnakeTail, World};
 use crate::random::pick;
 use crate::tuning::SPAWN_LENGTH;
 
@@ -50,7 +50,7 @@ impl World {
     ///
     fn spawn(&mut self, index: usize, head: Point, heading: Direction) {
         let behind = heading.opposite();
-        let tail = Tail {
+        let tail = SnakeTail {
             snake: index,
             toward_head: heading,
         };

@@ -8,7 +8,7 @@ use crate::turn::Turn;
 /// A living snake.
 ///
 /// Only its head is kept here. The cells of its tail
-/// are on the board, each one a [`Tail`].
+/// are on the board, each one a [`SnakeTail`].
 ///
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Snake {
@@ -24,7 +24,7 @@ pub(crate) struct Snake {
 
 /// One cell of a snake's tail.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct Tail {
+pub(crate) struct SnakeTail {
     /// The index of the snake it belongs to.
     pub(crate) snake: usize,
 
@@ -53,14 +53,14 @@ impl Snake {
 
 impl World {
     /// The piece of tail on `point`, if any.
-    pub(crate) fn tail(&self, point: Point) -> Option<Tail> {
+    pub(crate) fn tail(&self, point: Point) -> Option<SnakeTail> {
         let index = self.size.index(point)?;
 
         *self.tails.get(index)?
     }
 
     /// Puts `tail` on `point`, or clears the cell with `None`.
-    pub(crate) fn set_tail(&mut self, point: Point, tail: Option<Tail>) {
+    pub(crate) fn set_tail(&mut self, point: Point, tail: Option<SnakeTail>) {
         let cell = self
             .size
             .index(point)
@@ -80,7 +80,7 @@ impl World {
         let Some(mut snake) = self.snake(index).copied() else {
             return;
         };
-        let neck = Tail {
+        let neck = SnakeTail {
             snake: index,
             toward_head: step.heading,
         };
@@ -156,7 +156,7 @@ mod tests {
     #[test]
     fn set_tail() {
         let mut world = world(10, 10, vec![]);
-        let tail = Tail {
+        let tail = SnakeTail {
             snake: 0,
             toward_head: Direction::North,
         };

@@ -12,7 +12,7 @@ mod spawn;
 pub(crate) use direction::Direction;
 pub(crate) use point::Point;
 pub(crate) use size::Size;
-pub(crate) use snake::{Snake, Tail};
+pub(crate) use snake::{Snake, SnakeTail};
 
 use snake::Move;
 
@@ -34,7 +34,7 @@ pub(crate) struct World {
     pub(crate) snakes: Vec<SnakeState>,
 
     /// The piece of tail on each cell, if any, row by row.
-    tails: Box<[Option<Tail>]>,
+    tails: Box<[Option<SnakeTail>]>,
 
     /// Where the food is.
     pub(crate) food: Vec<Point>,

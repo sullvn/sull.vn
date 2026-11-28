@@ -1,4 +1,4 @@
-use super::{Tail, World, YOU};
+use super::{SnakeTail, World, YOU};
 use crate::cell::Cell;
 
 impl World {
@@ -31,10 +31,10 @@ impl World {
 }
 
 /// The cell for a piece of tail, or for no tail.
-const fn tail_cell(tail: Option<Tail>) -> Cell {
+const fn tail_cell(tail: Option<SnakeTail>) -> Cell {
     match tail {
         None => Cell::Empty,
-        Some(Tail { snake: YOU, .. }) => Cell::You,
+        Some(SnakeTail { snake: YOU, .. }) => Cell::You,
         Some(_) => Cell::Clone,
     }
 }

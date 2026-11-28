@@ -3,7 +3,7 @@ use rand::{RngExt, SeedableRng, rngs::StdRng};
 use crate::controls::Input;
 use crate::random::pick;
 use crate::turn::Turn;
-use crate::world::{Direction, Point, Size, Snake, SnakeState, Tail, World, YOU};
+use crate::world::{Direction, Point, Size, Snake, SnakeState, SnakeTail, World, YOU};
 
 /// A snake to put in a test world.
 #[derive(Debug)]
@@ -82,7 +82,7 @@ pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
 
     for (index, SnakeCells { cells, heading }) in snakes.into_iter().enumerate() {
         for pair in cells.windows(2) {
-            let tail = Tail {
+            let tail = SnakeTail {
                 snake: index,
                 toward_head: toward(pair[1], pair[0]),
             };
