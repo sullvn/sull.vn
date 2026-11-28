@@ -59,7 +59,14 @@ pub(crate) const LEARNING_RATE: f64 = 0.1;
 ///
 pub(crate) const INITIAL_WEIGHT: f64 = 0.3;
 
+///
 /// Neurons in the brain's one hidden layer.
+///
+/// More than a simple player needs. In simulations of a
+/// scripted player, 4 learned as well as 16, and 32 no
+/// better. The extra is room for a person's less regular
+/// play. Training time grows in step with this number.
+///
 pub(crate) const HIDDEN_NEURONS: usize = 16;
 
 ///
