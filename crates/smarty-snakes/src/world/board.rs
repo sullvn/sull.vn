@@ -10,19 +10,28 @@ pub(crate) struct Board {
 
 impl Board {
     ///
+    /// The shortest side a board can have.
+    ///
+    /// A snake's head needs [`SPAWN_MARGIN`] cells between
+    /// it and each edge. So a side must fit that many
+    /// cells, then the head, then that many cells again.
+    ///
+    const MIN_SIDE: i32 = 2 * SPAWN_MARGIN + 1;
+
+    ///
     /// A board `width` by `height` cells.
     ///
     /// Returns `None` if it's too small for a snake to
     /// spawn on.
     ///
     pub(crate) fn new(width: u16, height: u16) -> Option<Self> {
-        let smallest = 2 * SPAWN_MARGIN + 1;
-        let board = Self {
-            width: width.into(),
-            height: height.into(),
-        };
+        let width = i32::from(width);
+        let height = i32::from(height);
+        if width < Self::MIN_SIDE || height < Self::MIN_SIDE {
+            return None;
+        }
 
-        (board.width >= smallest && board.height >= smallest).then_some(board)
+        Some(Self { width, height })
     }
 
     /// Whether `point` is on the board rather than in a wall.
