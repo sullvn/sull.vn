@@ -27,8 +27,8 @@ pub(crate) struct Brain {
 /// One of the player's moves: what they sensed, and which way they turned.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct PlayerSample {
-    pub(crate) senses: Senses,
-    pub(crate) turn: Turn,
+    pub(crate) inputs: Senses,
+    pub(crate) target: Turn,
 }
 
 impl Brain {
@@ -93,7 +93,7 @@ fn group(samples: &VecDeque<PlayerSample>) -> Vec<Vec<&PlayerSample>> {
         .map(|turn| {
             samples
                 .iter()
-                .filter(|sample| sample.turn == turn)
+                .filter(|sample| sample.target == turn)
                 .collect::<Vec<_>>()
         })
         .filter(|group| !group.is_empty())
@@ -116,8 +116,8 @@ fn batch<'a>(
             let sample = pick(random, samples.iter())?;
 
             Some(Sample {
-                inputs: &sample.senses,
-                targets: sample.turn.targets(),
+                inputs: &sample.inputs,
+                targets: sample.target.targets(),
             })
         })
         .collect()
@@ -130,8 +130,8 @@ mod tests {
 
     fn sample(turn: Turn) -> PlayerSample {
         PlayerSample {
-            senses: [0.5; 9],
-            turn,
+            inputs: [0.5; 9],
+            target: turn,
         }
     }
 

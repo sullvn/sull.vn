@@ -71,8 +71,11 @@ impl<R: FnMut() -> f64> Game<R> {
 
         self.world.count_down(&mut self.random);
         if let Some(you) = self.world.snake(YOU) {
-            let senses = sense(&self.world, you);
-            self.brain.record(PlayerSample { senses, turn });
+            let inputs = sense(&self.world, you);
+            self.brain.record(PlayerSample {
+                inputs,
+                target: turn,
+            });
         }
 
         let turns = self.turns(turn)?;
@@ -197,7 +200,7 @@ mod tests {
             .brain
             .samples
             .iter()
-            .map(|sample| sample.turn)
+            .map(|sample| sample.target)
             .collect();
 
         assert_eq!(
