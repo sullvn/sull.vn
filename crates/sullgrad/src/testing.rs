@@ -8,7 +8,7 @@ pub(crate) fn index_as_value(i: usize) -> f64 {
 
 ///
 /// Gradients of `f` at `at`, computed by
-/// backpropagation.
+/// backpropagation
 ///
 pub(crate) fn backward_gradients<const N: usize>(
     f: impl Fn([Expression; N]) -> Expression,

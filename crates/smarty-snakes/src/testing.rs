@@ -6,10 +6,10 @@ use crate::controls::Input;
 use crate::turn::Turn;
 use crate::world::{Direction, PLAYER, Point, Size, Snake, SnakeState, SnakeTail, World};
 
-/// A snake to put in a test world.
+/// A snake to put in a test world
 #[derive(Debug)]
 pub(crate) struct SnakeCells {
-    /// The cells it covers, from head to tail.
+    /// The cells it covers, from head to tail
     cells: Vec<Point>,
     heading: Direction,
 }
@@ -17,7 +17,7 @@ pub(crate) struct SnakeCells {
 ///
 /// The input from a player who heads for the nearest
 /// food and avoids crashing, but 1 time in 10 makes a
-/// random safe move instead.
+/// random safe move instead
 ///
 pub(crate) fn food_seeker(world: &World, rng: &mut impl Rng) -> Input {
     let Some(player) = world.snake(PLAYER) else {
@@ -49,17 +49,17 @@ pub(crate) fn food_seeker(world: &World, rng: &mut impl Rng) -> Input {
     }
 }
 
-/// A source of chance that repeats for each `seed`.
+/// A source of chance that repeats for each `seed`
 pub(crate) fn seeded(seed: u64) -> SmallRng {
     SmallRng::seed_from_u64(seed)
 }
 
-/// Points from `(x, y)` pairs.
+/// Points from `(x, y)` pairs
 pub(crate) fn points(pairs: &[(i32, i32)]) -> Vec<Point> {
     pairs.iter().map(|&(x, y)| Point { x, y }).collect()
 }
 
-/// A snake covering `cells`, from head to tail.
+/// A snake covering `cells`, from head to tail
 pub(crate) fn snake(cells: &[(i32, i32)], heading: Direction) -> SnakeCells {
     SnakeCells {
         cells: points(cells),
@@ -69,7 +69,7 @@ pub(crate) fn snake(cells: &[(i32, i32)], heading: Direction) -> SnakeCells {
 
 ///
 /// A world `width` by `height` cells with no food,
-/// holding `snakes` in order.
+/// holding `snakes` in order
 ///
 pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
     let mut world = World::empty(Size::new(width, height).unwrap());
@@ -92,7 +92,7 @@ pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
     world
 }
 
-/// The cells of snake `index`, from head to tail.
+/// The cells of snake `index`, from head to tail
 pub(crate) fn snake_cells(world: &World, index: usize) -> Vec<Point> {
     let snake = world.snake(index).unwrap();
     let mut cells = Vec::new();
@@ -108,7 +108,7 @@ pub(crate) fn snake_cells(world: &World, index: usize) -> Vec<Point> {
     cells
 }
 
-/// The direction from `from` to the cell next to it, `to`.
+/// The direction from `from` to the cell next to it, `to`
 fn toward(from: Point, to: Point) -> Direction {
     Direction::ALL
         .into_iter()

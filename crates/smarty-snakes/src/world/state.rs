@@ -21,21 +21,21 @@ use super::{Direction, Point, Size, Snake, SnakeState, SnakeTail};
 ///
 #[derive(Clone, Debug)]
 pub(crate) struct World {
-    /// The board's width and height in cells.
+    /// The board's width and height in cells
     pub(crate) size: Size,
 
-    /// Each snake's head and heading, or its wait to respawn.
+    /// Each snake's head and heading, or its wait to respawn
     pub(crate) snakes: Vec<SnakeState>,
 
-    /// The piece of tail on each cell, if any, row by row.
+    /// The piece of tail on each cell, if any, row by row
     pub(super) tails: Box<[Option<SnakeTail>]>,
 
-    /// Where the food is.
+    /// Where the food is
     pub(crate) food: Vec<Point>,
 }
 
 impl World {
-    /// A board full of new snakes and their food.
+    /// A board full of new snakes and their food
     pub(crate) fn new(size: Size, rng: &mut impl Rng) -> Self {
         let mut world = Self::empty(size);
         world.snakes = vec![SnakeState::Respawning(0); size.snake_count()];
@@ -47,7 +47,7 @@ impl World {
         world
     }
 
-    /// A board with no snakes or food.
+    /// A board with no snakes or food
     pub(crate) fn empty(size: Size) -> Self {
         Self {
             size,
@@ -57,17 +57,17 @@ impl World {
         }
     }
 
-    /// Snake `index`, if it's alive.
+    /// Snake `index`, if it's alive
     pub(crate) fn snake(&self, index: usize) -> Option<&Snake> {
         self.snakes.get(index).and_then(SnakeState::alive)
     }
 
-    /// Every living snake.
+    /// Every living snake
     pub(crate) fn living(&self) -> impl Iterator<Item = &Snake> {
         self.living_indexed().map(|(_, snake)| snake)
     }
 
-    /// Every living snake, with its index.
+    /// Every living snake, with its index
     pub(crate) fn living_indexed(&self) -> impl Iterator<Item = (usize, &Snake)> {
         self.snakes
             .iter()
@@ -75,14 +75,14 @@ impl World {
             .filter_map(|(index, state)| Some((index, state.alive()?)))
     }
 
-    /// Whether `point` is a wall or part of a living snake.
+    /// Whether `point` is a wall or part of a living snake
     pub(crate) fn is_blocked(&self, point: Point) -> bool {
         !self.size.contains(point)
             || self.tail(point).is_some()
             || self.living().any(|snake| snake.head == point)
     }
 
-    /// Steps from the cell `from` in `direction` to the first wall or snake.
+    /// Steps from the cell `from` in `direction` to the first wall or snake
     pub(crate) fn steps_to_blocked(&self, from: Point, direction: Direction) -> i32 {
         let farthest = self.size.longest_side();
 
@@ -91,12 +91,12 @@ impl World {
             .unwrap_or(farthest)
     }
 
-    /// Whether `point` is on the board with no snake or food on it.
+    /// Whether `point` is on the board with no snake or food on it
     pub(super) fn is_free(&self, point: Point) -> bool {
         !self.is_blocked(point) && !self.food.contains(&point)
     }
 
-    /// Replaces the state of snake `index`.
+    /// Replaces the state of snake `index`
     pub(super) fn set_snake(&mut self, index: usize, state: SnakeState) {
         if let Some(old) = self.snakes.get_mut(index) {
             *old = state;

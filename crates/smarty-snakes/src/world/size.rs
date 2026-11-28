@@ -36,17 +36,17 @@ impl Size {
         Some(Self { width, height })
     }
 
-    /// Whether `point` is on the board rather than in a wall.
+    /// Whether `point` is on the board rather than in a wall
     pub(crate) const fn contains(self, point: Point) -> bool {
         0 <= point.x && point.x < self.width && 0 <= point.y && point.y < self.height
     }
 
-    /// Every cell, row by row.
+    /// Every cell, row by row
     pub(crate) fn points(self) -> impl Iterator<Item = Point> {
         grid(0..self.width, 0..self.height)
     }
 
-    /// Where `point` falls in a row-by-row list of cells.
+    /// Where `point` falls in a row-by-row list of cells
     pub(crate) fn index(self, point: Point) -> Option<usize> {
         if !self.contains(point) {
             return None;
@@ -55,7 +55,7 @@ impl Size {
         usize::try_from(point.y * self.width + point.x).ok()
     }
 
-    /// Cells along the longer edge, the farthest any straight line can run.
+    /// Cells along the longer edge, the farthest any straight line can run
     pub(crate) const fn longest_side(self) -> i32 {
         if self.width > self.height {
             self.width
@@ -64,7 +64,7 @@ impl Size {
         }
     }
 
-    /// The number of cells.
+    /// The number of cells
     pub(crate) fn area(self) -> usize {
         usize::try_from(self.width * self.height).unwrap_or(0)
     }
@@ -81,7 +81,7 @@ impl Size {
         usize::try_from(count).unwrap_or(0).max(MIN_SNAKES)
     }
 
-    /// Cells where a snake's head may spawn, away from the walls.
+    /// Cells where a snake's head may spawn, away from the walls
     pub(crate) fn spawn_points(self) -> impl Iterator<Item = Point> {
         grid(
             SPAWN_MARGIN..self.width - SPAWN_MARGIN,
@@ -90,7 +90,7 @@ impl Size {
     }
 }
 
-/// Every point with `x` in `xs` and `y` in `ys`, row by row.
+/// Every point with `x` in `xs` and `y` in `ys`, row by row
 fn grid(xs: Range<i32>, ys: Range<i32>) -> impl Iterator<Item = Point> {
     ys.flat_map(move |y| xs.clone().map(move |x| Point { x, y }))
 }

@@ -17,7 +17,7 @@ impl World {
     ///
     pub(crate) fn step(&mut self, moves: &[Move], rng: &mut impl Rng) {
         // Every move is judged against the board as it
-        // stands, before any snake moves.
+        // stands, before any snake moves
         let (crashed, survivors): (Vec<_>, Vec<_>) = moves
             .iter()
             .copied()
@@ -35,7 +35,7 @@ impl World {
 
     ///
     /// Whether making `step` kills a snake, when every
-    /// snake makes its move in `moves` at once.
+    /// snake makes its move in `moves` at once
     ///
     fn crashes(&self, step: Move, moves: &[Move]) -> bool {
         let same_head = moves.iter().filter(|other| other.head == step.head).count();

@@ -18,7 +18,7 @@ pub(crate) enum Direction {
 impl Direction {
     pub(crate) const ALL: [Self; 4] = [Self::North, Self::East, Self::South, Self::West];
 
-    /// The direction after making `turn`.
+    /// The direction after making `turn`
     pub(crate) const fn turned(self, turn: Turn) -> Self {
         match turn {
             Turn::Left => self.left(),
@@ -27,24 +27,24 @@ impl Direction {
         }
     }
 
-    /// The turn from this direction to `other`, unless `other` is straight behind.
+    /// The turn from this direction to `other`, unless `other` is straight behind
     pub(crate) fn turn_to(self, other: Self) -> Option<Turn> {
         Turn::ALL
             .into_iter()
             .find(|&turn| self.turned(turn) == other)
     }
 
-    /// The direction a quarter turn anticlockwise.
+    /// The direction a quarter turn anticlockwise
     pub(crate) const fn left(self) -> Self {
         self.opposite().right()
     }
 
-    /// The direction straight behind.
+    /// The direction straight behind
     pub(crate) const fn opposite(self) -> Self {
         self.right().right()
     }
 
-    /// The direction a quarter turn clockwise.
+    /// The direction a quarter turn clockwise
     pub(crate) const fn right(self) -> Self {
         match self {
             Self::North => Self::East,
@@ -54,7 +54,7 @@ impl Direction {
         }
     }
 
-    /// One step in this direction.
+    /// One step in this direction
     pub(crate) const fn offset(self) -> Point {
         match self {
             Self::North => Point { x: 0, y: -1 },

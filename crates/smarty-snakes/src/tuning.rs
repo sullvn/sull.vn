@@ -1,12 +1,12 @@
 //! Numbers that shape how the game plays and learns
 
-/// Board cells for each snake, counting the player's.
+/// Board cells for each snake, counting the player's
 pub(crate) const CELLS_PER_SNAKE: i32 = 200;
 
-/// Fewest snakes on a board: the player's and one bot.
+/// Fewest snakes on a board: the player's and one bot
 pub(crate) const MIN_SNAKES: usize = 2;
 
-/// Length of a newly spawned snake.
+/// Length of a newly spawned snake
 pub(crate) const SPAWN_LENGTH: i32 = 3;
 
 ///
@@ -16,7 +16,7 @@ pub(crate) const SPAWN_LENGTH: i32 = 3;
 ///
 pub(crate) const SPAWN_MARGIN: i32 = 4;
 
-/// Moves a dead bot waits before it reappears.
+/// Moves a dead bot waits before it reappears
 pub(crate) const RESPAWN_MOVES: u32 = 4;
 
 ///
@@ -26,7 +26,7 @@ pub(crate) const RESPAWN_MOVES: u32 = 4;
 ///
 pub(crate) const MAX_SAMPLES: usize = 480;
 
-/// Samples needed before training starts.
+/// Samples needed before training starts
 pub(crate) const MIN_SAMPLES: usize = 16;
 
 ///
@@ -37,10 +37,10 @@ pub(crate) const MIN_SAMPLES: usize = 16;
 ///
 pub(crate) const TRAIN_STEPS: usize = 4;
 
-/// Samples in each training step's batch.
+/// Samples in each training step's batch
 pub(crate) const BATCH_SAMPLES: usize = 16;
 
-/// How far each training step moves the weights.
+/// How far each training step moves the weights
 pub(crate) const LEARNING_RATE: f64 = 0.1;
 
 ///

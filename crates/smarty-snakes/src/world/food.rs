@@ -6,7 +6,7 @@ use super::World;
 impl World {
     ///
     /// Puts food on random free cells until there's one
-    /// piece per snake.
+    /// piece per snake
     ///
     pub(crate) fn add_food(&mut self, rng: &mut impl Rng) {
         while self.food.len() < self.snakes.len() {

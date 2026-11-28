@@ -25,7 +25,7 @@ pub(crate) struct Brain {
     pub(crate) samples: VecDeque<PlayerSample>,
 }
 
-/// One of the player's moves: what they sensed, and which way they turned.
+/// One of the player's moves: what they sensed, and which way they turned
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct PlayerSample {
     pub(crate) inputs: Senses,
@@ -33,7 +33,7 @@ pub(crate) struct PlayerSample {
 }
 
 impl Brain {
-    /// A brain with random weights and nothing learned.
+    /// A brain with random weights and nothing learned
     pub(crate) fn new(rng: &mut impl Rng) -> Self {
         let inputs = Senses::default().len();
         let outputs = Turn::ALL.len();
@@ -65,7 +65,7 @@ impl Brain {
         Ok(top.map_or(Turn::Straight, |(turn, _)| turn))
     }
 
-    /// Records `sample`, dropping the oldest past the limit.
+    /// Records `sample`, dropping the oldest past the limit
     pub(crate) fn record(&mut self, sample: PlayerSample) {
         if self.samples.len() == MAX_SAMPLES {
             self.samples.pop_front();
@@ -73,7 +73,7 @@ impl Brain {
         self.samples.push_back(sample);
     }
 
-    /// Learns from the recorded samples, once there are enough.
+    /// Learns from the recorded samples, once there are enough
     pub(crate) fn train(&mut self, rng: &mut impl Rng) -> Result<(), LengthError> {
         if self.samples.len() < MIN_SAMPLES {
             return Ok(());
@@ -88,7 +88,7 @@ impl Brain {
     }
 }
 
-/// Random samples for one training step.
+/// Random samples for one training step
 fn batch<'a>(samples: &'a VecDeque<PlayerSample>, rng: &mut impl Rng) -> Vec<Sample<'a>> {
     (0..BATCH_SAMPLES)
         .filter_map(|_| balanced_sample(samples, rng))

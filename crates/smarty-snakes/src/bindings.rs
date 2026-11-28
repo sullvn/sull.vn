@@ -52,7 +52,7 @@ impl Game {
             .map_err(|error| JsError::new(&format!("Brain error: {error:?}")))
     }
 
-    /// Whether the player is parked, so nothing moves until they do.
+    /// Whether the player is parked, so nothing moves until they do
     #[wasm_bindgen(getter)]
     #[must_use]
     #[expect(clippy::missing_const_for_fn, reason = "wasm-bindgen rejects const fn")]
@@ -61,7 +61,7 @@ impl Game {
         game.parked()
     }
 
-    /// The board as one [`Cell`](crate::Cell) code per cell, row by row.
+    /// The board as one [`Cell`](crate::Cell) code per cell, row by row
     #[must_use]
     pub fn cells(&self) -> Box<[u8]> {
         let Self(game) = self;

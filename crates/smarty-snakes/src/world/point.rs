@@ -13,7 +13,7 @@ pub(crate) struct Point {
 }
 
 impl Point {
-    /// The point `steps` cells away in `direction`.
+    /// The point `steps` cells away in `direction`
     pub(crate) const fn step(self, direction: Direction, steps: i32) -> Self {
         let Self { x, y } = direction.offset();
 

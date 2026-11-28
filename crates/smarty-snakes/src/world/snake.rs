@@ -7,12 +7,12 @@ use crate::turn::Turn;
 /// The index of the player's snake. The rest are bots.
 pub(crate) const PLAYER: usize = 0;
 
-/// One of the game's snakes: on the board, or waiting to return to it.
+/// One of the game's snakes: on the board, or waiting to return to it
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum SnakeState {
     Alive(Snake),
 
-    /// Dead, with this many moves until it reappears.
+    /// Dead, with this many moves until it reappears
     Respawning(u32),
 }
 
@@ -27,23 +27,23 @@ pub(crate) struct Snake {
     pub(crate) head: Point,
     pub(crate) heading: Direction,
 
-    /// The last cell of its tail, or its head if it has none.
+    /// The last cell of its tail, or its head if it has none
     pub(crate) tail_end: Point,
 }
 
-/// One cell of a snake's tail.
+/// One cell of a snake's tail
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct SnakeTail {
-    /// The index of the snake it belongs to.
+    /// The index of the snake it belongs to
     pub(crate) snake: usize,
 
-    /// The way to the snake's next cell, going toward its head.
+    /// The way to the snake's next cell, going toward its head
     pub(crate) toward_head: Direction,
 }
 
 ///
 /// A snake's next move: which snake, where its head
-/// goes, and the way it then faces.
+/// goes, and the way it then faces
 ///
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct Move {
@@ -53,7 +53,7 @@ pub(crate) struct Move {
 }
 
 impl SnakeState {
-    /// The snake, if it's alive.
+    /// The snake, if it's alive
     pub(crate) const fn alive(&self) -> Option<&Snake> {
         match self {
             Self::Alive(snake) => Some(snake),
@@ -63,7 +63,7 @@ impl SnakeState {
 }
 
 impl Snake {
-    /// The move this snake, snake `index`, makes by taking `turn`.
+    /// The move this snake, snake `index`, makes by taking `turn`
     pub(crate) const fn next(&self, index: usize, turn: Turn) -> Move {
         let heading = self.heading.turned(turn);
 
@@ -76,14 +76,14 @@ impl Snake {
 }
 
 impl World {
-    /// The piece of tail on `point`, if any.
+    /// The piece of tail on `point`, if any
     pub(crate) fn tail(&self, point: Point) -> Option<SnakeTail> {
         let index = self.size.index(point)?;
 
         *self.tails.get(index)?
     }
 
-    /// Puts `tail` on `point`, or clears the cell with `None`.
+    /// Puts `tail` on `point`, or clears the cell with `None`
     pub(crate) fn set_tail(&mut self, point: Point, tail: Option<SnakeTail>) {
         let cell = self
             .size
@@ -123,7 +123,7 @@ impl World {
 
     ///
     /// Takes snake `index` off the board, and
-    /// starts its wait to respawn.
+    /// starts its wait to respawn
     ///
     pub(super) fn kill(&mut self, index: usize) {
         let Some(&Snake { tail_end, .. }) = self.snake(index) else {
@@ -139,7 +139,7 @@ impl World {
 
     ///
     /// Clears the last cell of the tail ending at
-    /// `tail_end`, and returns where the tail ends now.
+    /// `tail_end`, and returns where the tail ends now
     ///
     fn retract(&mut self, tail_end: Point) -> Point {
         let Some(tail) = self.tail(tail_end) else {

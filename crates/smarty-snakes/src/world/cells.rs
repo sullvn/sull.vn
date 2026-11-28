@@ -2,7 +2,7 @@ use super::{PLAYER, SnakeTail, World};
 use crate::cell::Cell;
 
 impl World {
-    /// The board as one cell code per cell, row by row.
+    /// The board as one cell code per cell, row by row
     pub(crate) fn cells(&self) -> Box<[u8]> {
         let mut cells: Box<[u8]> = self
             .tails
@@ -28,7 +28,7 @@ impl World {
     }
 }
 
-/// The cell for a piece of tail, or for no tail.
+/// The cell for a piece of tail, or for no tail
 const fn tail_cell(tail: Option<SnakeTail>) -> Cell {
     match tail {
         None => Cell::Empty,
@@ -37,7 +37,7 @@ const fn tail_cell(tail: Option<SnakeTail>) -> Cell {
     }
 }
 
-/// The cell for the head of snake `index`.
+/// The cell for the head of snake `index`
 const fn head_cell(index: usize) -> Cell {
     if index == PLAYER {
         Cell::PlayerHead

@@ -25,7 +25,7 @@ pub(crate) struct Game<R> {
 }
 
 impl<R: Rng> Game<R> {
-    /// A new game, with the player parked.
+    /// A new game, with the player parked
     pub(crate) fn new(size: Size, mut rng: R) -> Self {
         let world = World::new(size, &mut rng);
         let brain = Brain::new(&mut rng);
@@ -38,12 +38,12 @@ impl<R: Rng> Game<R> {
         }
     }
 
-    /// Whether the player is parked, so nothing moves.
+    /// Whether the player is parked, so nothing moves
     pub(crate) const fn parked(&self) -> bool {
         self.parked
     }
 
-    /// The board as one cell code per cell, row by row.
+    /// The board as one cell code per cell, row by row
     pub(crate) fn cells(&self) -> Box<[u8]> {
         self.world.cells()
     }
@@ -94,13 +94,13 @@ impl<R: Rng> Game<R> {
         Some(turn)
     }
 
-    /// Respawns the player, parked until they next steer.
+    /// Respawns the player, parked until they next steer
     fn revive_player(&mut self) {
         self.world.respawn(PLAYER, &mut self.rng);
         self.parked = true;
     }
 
-    /// Every living snake's next move.
+    /// Every living snake's next move
     fn moves(&self, player_turn: Turn) -> Result<Vec<Move>, LengthError> {
         self.world
             .living_indexed()
@@ -286,7 +286,7 @@ mod tests {
     /// against.
     ///
     fn simulate_bot_meals(training: bool) -> usize {
-        /// Moves played in each game, enough for bots to learn.
+        /// Moves played in each game, enough for bots to learn
         const MOVES: usize = 300;
 
         let mut game = Game::new(Size::new(40, 30).unwrap(), seeded(1));
@@ -306,7 +306,7 @@ mod tests {
         meals
     }
 
-    /// Bots whose head is on a cell that held `food` before the move.
+    /// Bots whose head is on a cell that held `food` before the move
     fn fed_bots(world: &World, food: &[Point]) -> usize {
         world
             .snakes

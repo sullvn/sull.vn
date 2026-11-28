@@ -22,7 +22,7 @@ use crate::world::{Point, Size, Snake, World};
 ///
 pub(crate) type Senses = [f64; 9];
 
-/// What `snake` notices in `world`.
+/// What `snake` notices in `world`
 pub(crate) fn sense(world: &World, snake: &Snake) -> Senses {
     let [left, ahead, right] = Turn::ALL
         .map(|turn| world.steps_to_blocked(snake.head, snake.heading.turned(turn)))
@@ -59,7 +59,7 @@ fn closeness(steps: i32) -> f64 {
 
 ///
 /// Cells ahead and to the right of the nearest of
-/// `points`, or zeros if there are none.
+/// `points`, or zeros if there are none
 ///
 fn nearest(snake: &Snake, points: impl Iterator<Item = Point>) -> (i32, i32) {
     points
@@ -67,7 +67,7 @@ fn nearest(snake: &Snake, points: impl Iterator<Item = Point>) -> (i32, i32) {
         .map_or((0, 0), |point| snake.head.relative(snake.heading, point))
 }
 
-/// `cells` as a share of the board's longest side, from -1 to 1.
+/// `cells` as a share of the board's longest side, from -1 to 1
 fn scale(cells: i32, size: Size) -> f64 {
     f64::from(cells) / f64::from(size.longest_side())
 }
@@ -85,7 +85,7 @@ mod tests {
         world
     }
 
-    /// What the player's snake notices in `world`.
+    /// What the player's snake notices in `world`
     fn senses(world: &World) -> Senses {
         sense(world, world.snake(PLAYER).unwrap())
     }

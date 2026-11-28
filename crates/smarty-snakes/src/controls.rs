@@ -12,25 +12,25 @@ use crate::world::Direction;
 #[wasm_bindgen]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Input {
-    /// Nothing, so the player's snake goes straight.
+    /// Nothing, so the player's snake goes straight
     None = 0,
 
-    /// The up arrow.
+    /// The up arrow
     Up = 1,
 
-    /// The right arrow.
+    /// The right arrow
     Right = 2,
 
-    /// The down arrow.
+    /// The down arrow
     Down = 3,
 
-    /// The left arrow.
+    /// The left arrow
     Left = 4,
 
-    /// A tap on the left half of the board.
+    /// A tap on the left half of the board
     TapLeft = 5,
 
-    /// A tap on the right half of the board.
+    /// A tap on the right half of the board
     TapRight = 6,
 }
 
@@ -62,7 +62,7 @@ pub(crate) fn wake(input: Input, heading: Direction) -> Option<Turn> {
     }
 }
 
-/// The turn toward an arrow, unless it's behind the snake.
+/// The turn toward an arrow, unless it's behind the snake
 fn arrow_turn(input: Input, heading: Direction) -> Option<Turn> {
     let direction = match input {
         Input::Up => Direction::North,

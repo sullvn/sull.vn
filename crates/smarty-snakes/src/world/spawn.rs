@@ -7,7 +7,7 @@ use crate::tuning::SPAWN_LENGTH;
 impl World {
     ///
     /// Counts down each dead snake's wait, respawning
-    /// those whose wait is over.
+    /// those whose wait is over
     ///
     pub(crate) fn count_down(&mut self, rng: &mut impl Rng) {
         for index in 0..self.snakes.len() {
@@ -57,7 +57,7 @@ impl World {
 
     ///
     /// Makes snake `index` a new snake, with its head on
-    /// `head` and its tail straight behind.
+    /// `head` and its tail straight behind
     ///
     fn spawn(&mut self, index: usize, head: Point, heading: Direction) {
         let behind = heading.opposite();
@@ -78,7 +78,7 @@ impl World {
     }
 }
 
-/// `head` paired with each direction a snake there could face.
+/// `head` paired with each direction a snake there could face
 fn each_heading(head: Point) -> [(Point, Direction); 4] {
     Direction::ALL.map(|heading| (head, heading))
 }

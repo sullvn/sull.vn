@@ -1,25 +1,25 @@
 use wasm_bindgen::prelude::*;
 
-/// What a cell on the board holds.
+/// What a cell on the board holds
 #[wasm_bindgen]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Cell {
-    /// Nothing.
+    /// Nothing
     Empty = 0,
 
-    /// Food for any snake.
+    /// Food for any snake
     Food = 1,
 
-    /// Part of the player's tail.
+    /// Part of the player's tail
     PlayerTail = 2,
 
-    /// The player's head.
+    /// The player's head
     PlayerHead = 3,
 
-    /// Part of a bot's tail.
+    /// Part of a bot's tail
     BotTail = 4,
 
-    /// A bot's head.
+    /// A bot's head
     BotHead = 5,
 }
 
