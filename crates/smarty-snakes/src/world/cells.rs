@@ -59,8 +59,8 @@ mod tests {
             9,
             9,
             vec![
-                snake(&[(1, 0), (0, 0)], Direction::Right),
-                snake(&[(3, 0), (4, 0)], Direction::Left),
+                snake(&[(1, 0), (0, 0)], Direction::East),
+                snake(&[(3, 0), (4, 0)], Direction::West),
             ],
         );
         world.food = points(&[(6, 0)]);

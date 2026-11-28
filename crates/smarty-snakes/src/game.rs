@@ -134,8 +134,8 @@ mod tests {
     #[test]
     fn parked() {
         let mut game = game(vec![
-            snake(&[(5, 5), (5, 6)], Direction::Up),
-            snake(&[(2, 2), (2, 3)], Direction::Up),
+            snake(&[(5, 5), (5, 6)], Direction::North),
+            snake(&[(2, 2), (2, 3)], Direction::North),
         ]);
         let before = game.cells();
         game.tick(Input::None).unwrap();
@@ -150,7 +150,7 @@ mod tests {
 
     #[test]
     fn wakes() {
-        let mut game = game(vec![snake(&[(5, 5), (5, 6)], Direction::Up)]);
+        let mut game = game(vec![snake(&[(5, 5), (5, 6)], Direction::North)]);
         game.tick(Input::Left).unwrap();
 
         assert_eq!(
@@ -162,7 +162,7 @@ mod tests {
 
     #[test]
     fn tap_wakes() {
-        let mut game = game(vec![snake(&[(5, 5), (5, 6)], Direction::Up)]);
+        let mut game = game(vec![snake(&[(5, 5), (5, 6)], Direction::North)]);
         game.tick(Input::TapLeft).unwrap();
 
         assert_eq!(
@@ -175,8 +175,8 @@ mod tests {
     #[test]
     fn clones_move() {
         let mut game = game(vec![
-            snake(&[(5, 5), (5, 6)], Direction::Up),
-            snake(&[(2, 2), (2, 3)], Direction::Up),
+            snake(&[(5, 5), (5, 6)], Direction::North),
+            snake(&[(2, 2), (2, 3)], Direction::North),
         ]);
         game.tick(Input::Up).unwrap();
 
@@ -189,7 +189,7 @@ mod tests {
 
     #[test]
     fn lessons() {
-        let mut game = game(vec![snake(&[(5, 5), (5, 6)], Direction::Up)]);
+        let mut game = game(vec![snake(&[(5, 5), (5, 6)], Direction::North)]);
         game.tick(Input::Up).unwrap();
         game.tick(Input::None).unwrap();
         game.tick(Input::Right).unwrap();
@@ -204,7 +204,7 @@ mod tests {
 
     #[test]
     fn dies() {
-        let mut game = game(vec![snake(&[(5, 0), (5, 1)], Direction::Up)]);
+        let mut game = game(vec![snake(&[(5, 0), (5, 1)], Direction::North)]);
         game.tick(Input::Up).unwrap();
 
         assert_eq!(
@@ -221,7 +221,7 @@ mod tests {
 
     #[test]
     fn clone_respawns() {
-        let mut game = game(vec![snake(&[(8, 8), (8, 9)], Direction::Up)]);
+        let mut game = game(vec![snake(&[(8, 8), (8, 9)], Direction::North)]);
         game.world.slots.push(Slot::Respawning(1));
         game.tick(Input::Up).unwrap();
 

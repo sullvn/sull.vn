@@ -206,7 +206,7 @@ mod tests {
 
     #[test]
     fn moves() {
-        let mut world = world(vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::Right)]);
+        let mut world = world(vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::East)]);
         step(&mut world, &[Turn::Left]);
 
         assert_eq!(
@@ -214,14 +214,14 @@ mod tests {
                 world.snake(0).map(|snake| snake.heading),
                 snake_cells(&world, 0)
             ),
-            (Some(Direction::Up), points(&[(5, 4), (5, 5), (4, 5)])),
+            (Some(Direction::North), points(&[(5, 4), (5, 5), (4, 5)])),
             "step turns the head, and the tail follows"
         );
     }
 
     #[test]
     fn wall() {
-        let mut world = world(vec![snake(&[(9, 5), (8, 5)], Direction::Right)]);
+        let mut world = world(vec![snake(&[(9, 5), (8, 5)], Direction::East)]);
         step(&mut world, &[Turn::Straight]);
 
         assert_eq!(
@@ -234,8 +234,8 @@ mod tests {
     #[test]
     fn body() {
         let mut world = world(vec![
-            snake(&[(5, 5), (4, 5)], Direction::Right),
-            snake(&[(6, 4), (6, 5), (6, 6)], Direction::Up),
+            snake(&[(5, 5), (4, 5)], Direction::East),
+            snake(&[(6, 4), (6, 5), (6, 6)], Direction::North),
         ]);
         step(&mut world, &[Turn::Straight, Turn::Straight]);
 
@@ -249,8 +249,8 @@ mod tests {
     #[test]
     fn tail() {
         let mut world = world(vec![
-            snake(&[(5, 5), (4, 5)], Direction::Right),
-            snake(&[(6, 3), (6, 4), (6, 5)], Direction::Up),
+            snake(&[(5, 5), (4, 5)], Direction::East),
+            snake(&[(6, 3), (6, 4), (6, 5)], Direction::North),
         ]);
         step(&mut world, &[Turn::Straight, Turn::Straight]);
 
@@ -264,8 +264,8 @@ mod tests {
     #[test]
     fn dead_snakes_cells() {
         let mut world = world(vec![
-            snake(&[(9, 5), (8, 5), (7, 5)], Direction::Right),
-            snake(&[(6, 5), (6, 6)], Direction::Up),
+            snake(&[(9, 5), (8, 5), (7, 5)], Direction::East),
+            snake(&[(6, 5), (6, 6)], Direction::North),
         ]);
         step(&mut world, &[Turn::Straight, Turn::Right]);
 
@@ -284,8 +284,8 @@ mod tests {
     #[test]
     fn head_on() {
         let mut world = world(vec![
-            snake(&[(4, 5), (3, 5)], Direction::Right),
-            snake(&[(6, 5), (7, 5)], Direction::Left),
+            snake(&[(4, 5), (3, 5)], Direction::East),
+            snake(&[(6, 5), (7, 5)], Direction::West),
         ]);
         step(&mut world, &[Turn::Straight, Turn::Straight]);
 
@@ -299,8 +299,8 @@ mod tests {
     #[test]
     fn swap() {
         let mut world = world(vec![
-            snake(&[(4, 5), (3, 5)], Direction::Right),
-            snake(&[(5, 5), (6, 5)], Direction::Left),
+            snake(&[(4, 5), (3, 5)], Direction::East),
+            snake(&[(5, 5), (6, 5)], Direction::West),
         ]);
         step(&mut world, &[Turn::Straight, Turn::Straight]);
 
@@ -313,7 +313,7 @@ mod tests {
 
     #[test]
     fn eats() {
-        let mut world = world(vec![snake(&[(5, 5), (4, 5)], Direction::Right)]);
+        let mut world = world(vec![snake(&[(5, 5), (4, 5)], Direction::East)]);
         world.food = points(&[(6, 5)]);
         step(&mut world, &[Turn::Straight]);
 
@@ -331,7 +331,7 @@ mod tests {
 
     #[test]
     fn starves() {
-        let mut world = world(vec![snake(&[(1, 5), (0, 5)], Direction::Right)]);
+        let mut world = world(vec![snake(&[(1, 5), (0, 5)], Direction::East)]);
         if let Some(Slot::Alive(hungry)) = world.slots.first_mut() {
             hungry.hunger = 148;
         }

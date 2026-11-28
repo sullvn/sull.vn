@@ -65,16 +65,14 @@ pub(crate) fn wake(input: Input, heading: Direction) -> Option<Turn> {
 /// The turn toward an arrow, unless it's behind the snake.
 fn arrow_turn(input: Input, heading: Direction) -> Option<Turn> {
     let direction = match input {
-        Input::Up => Direction::Up,
-        Input::Right => Direction::Right,
-        Input::Down => Direction::Down,
-        Input::Left => Direction::Left,
+        Input::Up => Direction::North,
+        Input::Right => Direction::East,
+        Input::Down => Direction::South,
+        Input::Left => Direction::West,
         Input::None | Input::TapLeft | Input::TapRight => return None,
     };
 
-    Turn::ALL
-        .into_iter()
-        .find(|&turn| heading.turned(turn) == direction)
+    heading.turn_to(direction)
 }
 
 #[cfg(test)]
@@ -94,7 +92,7 @@ mod tests {
     #[test]
     fn steer() {
         assert_eq!(
-            INPUTS.map(|input| super::steer(input, Direction::Up)),
+            INPUTS.map(|input| super::steer(input, Direction::North)),
             [
                 Turn::Straight,
                 Turn::Straight,
@@ -112,7 +110,7 @@ mod tests {
     fn steer_relative() {
         assert_eq!(
             [Input::Up, Input::Down, Input::TapLeft]
-                .map(|input| super::steer(input, Direction::Right)),
+                .map(|input| super::steer(input, Direction::East)),
             [Turn::Left, Turn::Right, Turn::Left],
             "steer turns arrows by the heading, and taps by the snake's own left and right"
         );
@@ -121,7 +119,7 @@ mod tests {
     #[test]
     fn wake() {
         assert_eq!(
-            INPUTS.map(|input| super::wake(input, Direction::Up)),
+            INPUTS.map(|input| super::wake(input, Direction::North)),
             [
                 None,
                 Some(Turn::Straight),

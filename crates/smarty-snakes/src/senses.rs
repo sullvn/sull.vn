@@ -97,9 +97,9 @@ mod tests {
     fn obstacles() {
         let world = world(
             vec![
-                snake(&[(5, 5), (5, 6)], Direction::Up),
-                snake(&[(4, 5)], Direction::Up),
-                snake(&[(5, 3)], Direction::Up),
+                snake(&[(5, 5), (5, 6)], Direction::North),
+                snake(&[(4, 5)], Direction::North),
+                snake(&[(5, 3)], Direction::North),
             ],
             &[],
         );
@@ -114,7 +114,7 @@ mod tests {
     #[test]
     fn food() {
         let world = world(
-            vec![snake(&[(5, 5)], Direction::Right)],
+            vec![snake(&[(5, 5)], Direction::East)],
             &[(1, 4), (8, 4), (7, 19)],
         );
 
@@ -127,7 +127,7 @@ mod tests {
 
     #[test]
     fn food_far() {
-        let world = world(vec![snake(&[(5, 0)], Direction::Down)], &[(5, 15)]);
+        let world = world(vec![snake(&[(5, 0)], Direction::South)], &[(5, 15)]);
 
         assert_eq!(
             senses(&world).get(3..7),
@@ -140,9 +140,9 @@ mod tests {
     fn other_heads() {
         let world = world(
             vec![
-                snake(&[(5, 5)], Direction::Left),
-                snake(&[(5, 7), (5, 8)], Direction::Up),
-                snake(&[(9, 19)], Direction::Up),
+                snake(&[(5, 5)], Direction::West),
+                snake(&[(5, 7), (5, 8)], Direction::North),
+                snake(&[(9, 19)], Direction::North),
             ],
             &[],
         );
@@ -156,7 +156,7 @@ mod tests {
 
     #[test]
     fn alone() {
-        let world = world(vec![snake(&[(5, 5)], Direction::Up)], &[]);
+        let world = world(vec![snake(&[(5, 5)], Direction::North)], &[]);
 
         assert_eq!(
             senses(&world).get(3..),

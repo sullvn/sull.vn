@@ -1,17 +1,22 @@
 use super::point::Point;
 use crate::turn::Turn;
 
-/// A direction on the board, as seen on screen.
+///
+/// A fixed direction on the board, named like a map.
+///
+/// North is the top of the screen. Unlike a [`Turn`], it
+/// doesn't depend on which way a snake faces.
+///
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Direction {
-    Up,
-    Right,
-    Down,
-    Left,
+    North,
+    East,
+    South,
+    West,
 }
 
 impl Direction {
-    pub(crate) const ALL: [Self; 4] = [Self::Up, Self::Right, Self::Down, Self::Left];
+    pub(crate) const ALL: [Self; 4] = [Self::North, Self::East, Self::South, Self::West];
 
     /// The direction after making `turn`.
     pub(crate) const fn turned(self, turn: Turn) -> Self {
@@ -22,23 +27,35 @@ impl Direction {
         }
     }
 
+    /// The turn from this direction to `other`, unless `other` is straight behind.
+    pub(crate) fn turn_to(self, other: Self) -> Option<Turn> {
+        Turn::ALL
+            .into_iter()
+            .find(|&turn| self.turned(turn) == other)
+    }
+
+    /// The direction straight behind.
+    pub(crate) const fn opposite(self) -> Self {
+        self.right().right()
+    }
+
     /// The direction a quarter turn clockwise.
     pub(crate) const fn right(self) -> Self {
         match self {
-            Self::Up => Self::Right,
-            Self::Right => Self::Down,
-            Self::Down => Self::Left,
-            Self::Left => Self::Up,
+            Self::North => Self::East,
+            Self::East => Self::South,
+            Self::South => Self::West,
+            Self::West => Self::North,
         }
     }
 
     /// One step in this direction.
     pub(crate) const fn offset(self) -> Point {
         match self {
-            Self::Up => Point { x: 0, y: -1 },
-            Self::Right => Point { x: 1, y: 0 },
-            Self::Down => Point { x: 0, y: 1 },
-            Self::Left => Point { x: -1, y: 0 },
+            Self::North => Point { x: 0, y: -1 },
+            Self::East => Point { x: 1, y: 0 },
+            Self::South => Point { x: 0, y: 1 },
+            Self::West => Point { x: -1, y: 0 },
         }
     }
 }
@@ -50,9 +67,37 @@ mod tests {
     #[test]
     fn turned() {
         assert_eq!(
-            Turn::ALL.map(|turn| Direction::Up.turned(turn)),
-            [Direction::Left, Direction::Up, Direction::Right],
+            Turn::ALL.map(|turn| Direction::North.turned(turn)),
+            [Direction::West, Direction::North, Direction::East],
             "turned turns left, keeps straight, or turns right"
+        );
+    }
+
+    #[test]
+    fn turn_to() {
+        assert_eq!(
+            Direction::ALL.map(|other| Direction::North.turn_to(other)),
+            [
+                Some(Turn::Straight),
+                Some(Turn::Right),
+                None,
+                Some(Turn::Left),
+            ],
+            "turn_to finds the turn to each direction, except straight behind"
+        );
+    }
+
+    #[test]
+    fn opposite() {
+        assert_eq!(
+            Direction::ALL.map(Direction::opposite),
+            [
+                Direction::South,
+                Direction::West,
+                Direction::North,
+                Direction::East,
+            ],
+            "opposite faces straight behind"
         );
     }
 }

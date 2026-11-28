@@ -41,10 +41,10 @@ pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> In
     };
 
     match direction.copied().unwrap_or(you.heading) {
-        Direction::Up => Input::Up,
-        Direction::Right => Input::Right,
-        Direction::Down => Input::Down,
-        Direction::Left => Input::Left,
+        Direction::North => Input::Up,
+        Direction::East => Input::Right,
+        Direction::South => Input::Down,
+        Direction::West => Input::Left,
     }
 }
 

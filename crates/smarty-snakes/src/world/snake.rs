@@ -143,12 +143,12 @@ mod tests {
 
     #[test]
     fn next() {
-        let world = world(10, 10, vec![snake(&[(5, 5), (4, 5)], Direction::Right)]);
+        let world = world(10, 10, vec![snake(&[(5, 5), (4, 5)], Direction::East)]);
         let step = world.snake(0).unwrap().next(Turn::Left);
 
         assert_eq!(
             (step.head, step.heading),
-            (Point { x: 5, y: 4 }, Direction::Up),
+            (Point { x: 5, y: 4 }, Direction::North),
             "next turns, then moves the head one cell that way"
         );
     }
@@ -158,7 +158,7 @@ mod tests {
         let mut world = world(10, 10, vec![]);
         let tail = Tail {
             snake: 0,
-            toward_head: Direction::Up,
+            toward_head: Direction::North,
         };
         world.set_tail(Point { x: 3, y: 4 }, Some(tail));
         world.set_tail(Point { x: 10, y: 4 }, Some(tail));
@@ -175,9 +175,9 @@ mod tests {
         let mut world = world(
             10,
             10,
-            vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::Right)],
+            vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::East)],
         );
-        world.advance(0, step(5, 4, Direction::Up));
+        world.advance(0, step(5, 4, Direction::North));
 
         assert_eq!(
             snake_cells(&world, 0),
@@ -199,13 +199,13 @@ mod tests {
         let mut world = world(
             10,
             10,
-            vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::Right)],
+            vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::East)],
         );
         world.food = points(&[(6, 5)]);
         if let Some(Slot::Alive(hungry)) = world.slots.first_mut() {
             hungry.hunger = 10;
         }
-        world.advance(0, step(6, 5, Direction::Right));
+        world.advance(0, step(6, 5, Direction::East));
 
         assert_eq!(
             snake_cells(&world, 0),
@@ -221,8 +221,8 @@ mod tests {
 
     #[test]
     fn advance_no_tail() {
-        let mut world = world(10, 10, vec![snake(&[(5, 5)], Direction::Right)]);
-        world.advance(0, step(6, 5, Direction::Right));
+        let mut world = world(10, 10, vec![snake(&[(5, 5)], Direction::East)]);
+        world.advance(0, step(6, 5, Direction::East));
 
         assert_eq!(
             snake_cells(&world, 0),
@@ -237,8 +237,8 @@ mod tests {
             10,
             10,
             vec![
-                snake(&[(5, 5), (4, 5), (4, 6)], Direction::Right),
-                snake(&[(2, 2), (2, 3)], Direction::Up),
+                snake(&[(5, 5), (4, 5), (4, 6)], Direction::East),
+                snake(&[(2, 2), (2, 3)], Direction::North),
             ],
         );
         world.kill(0);

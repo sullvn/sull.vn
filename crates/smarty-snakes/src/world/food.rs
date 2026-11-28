@@ -29,7 +29,7 @@ mod tests {
 
     #[test]
     fn add_food() {
-        let mut world = world(10, 10, vec![snake(&[(1, 0), (2, 0)], Direction::Left)]);
+        let mut world = world(10, 10, vec![snake(&[(1, 0), (2, 0)], Direction::West)]);
         world.slots.push(Slot::Respawning(1));
         world.food = points(&[(0, 0)]);
         world.add_food(&mut scripted(&[0.0]));

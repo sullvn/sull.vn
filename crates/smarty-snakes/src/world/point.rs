@@ -65,7 +65,7 @@ mod tests {
                 Point { x: 5, y: 7 },
                 Point { x: 3, y: 5 },
             ],
-            "step moves along the direction, with up toward row zero"
+            "step moves along the direction, with north toward row zero"
         );
     }
 

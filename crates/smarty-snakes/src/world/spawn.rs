@@ -49,7 +49,7 @@ impl World {
     /// `head` and its tail straight behind.
     ///
     fn spawn(&mut self, index: usize, head: Point, heading: Direction) {
-        let behind = heading.right().right();
+        let behind = heading.opposite();
         let tail = Tail {
             snake: index,
             toward_head: heading,
@@ -92,21 +92,21 @@ mod tests {
                 world.snake(0).map(|snake| snake.heading),
                 snake_cells(&world, 0)
             ),
-            (Some(Direction::Up), points(&[(4, 4), (4, 5), (4, 6)])),
+            (Some(Direction::North), points(&[(4, 4), (4, 5), (4, 6)])),
             "respawn spawns a snake 3 cells long, away from the walls"
         );
     }
 
     #[test]
     fn respawn_clear() {
-        let blocker = snake(&[(4, 1), (4, 2), (4, 3)], Direction::Down);
+        let blocker = snake(&[(4, 1), (4, 2), (4, 3)], Direction::South);
         let mut world = world(vec![blocker], &[0]);
         world.food = points(&[(6, 4)]);
         world.respawn(1, &mut scripted(&[0.0]));
 
         assert_eq!(
             world.snake(1).map(|snake| (snake.head, snake.heading)),
-            Some((Point { x: 5, y: 4 }, Direction::Up)),
+            Some((Point { x: 5, y: 4 }, Direction::North)),
             "respawn skips spots where snakes or food cover its cells or path ahead"
         );
     }
@@ -124,7 +124,7 @@ mod tests {
                 (5, 3),
                 (5, 2),
             ],
-            Direction::Up,
+            Direction::North,
         );
         let mut world = world(vec![blocker], &[1]);
         world.respawn(1, &mut scripted(&[0.0]));
