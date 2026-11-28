@@ -4,7 +4,7 @@ use crate::brain::{Brain, PlayerSample};
 use crate::controls::{Input, steer, wake};
 use crate::senses::sense;
 use crate::turn::Turn;
-use crate::world::{PLAYER, Size, World};
+use crate::world::{Direction, PLAYER, Size, World};
 
 ///
 /// Snakes on a shared board, where every bot learns
@@ -55,37 +55,49 @@ impl<R: FnMut() -> f64> Game<R> {
     /// doesn't wake them.
     ///
     pub(crate) fn tick(&mut self, input: Input) -> Result<(), LengthError> {
-        let Some(heading) = self.world.snake(PLAYER).map(|player| player.heading) else {
-            self.world.respawn(PLAYER, &mut self.random);
+        let Some(&player) = self.world.snake(PLAYER) else {
+            self.revive_player();
             return Ok(());
         };
-        let turn = if self.parked {
-            wake(input, heading)
-        } else {
-            Some(steer(input, heading))
-        };
-        let Some(turn) = turn else {
+        let Some(player_turn) = self.player_turn(input, player.heading) else {
             return Ok(());
         };
-        self.parked = false;
 
         self.world.count_down(&mut self.random);
-        if let Some(player) = self.world.snake(PLAYER) {
-            let inputs = sense(&self.world, player);
-            self.brain.record(PlayerSample {
-                inputs,
-                target: turn,
-            });
-        }
+        self.brain.record(PlayerSample {
+            inputs: sense(&self.world, &player),
+            target: player_turn,
+        });
 
-        let turns = self.turns(turn)?;
+        let turns = self.turns(player_turn)?;
         self.world.step(&turns, &mut self.random);
         if self.world.snake(PLAYER).is_none() {
-            self.world.respawn(PLAYER, &mut self.random);
-            self.parked = true;
+            self.revive_player();
         }
 
         self.brain.train(&mut self.random)
+    }
+
+    ///
+    /// The player's turn for `input`, or `None` if they
+    /// stay parked.
+    ///
+    /// A turn that wakes them ends the parking.
+    ///
+    fn player_turn(&mut self, input: Input, heading: Direction) -> Option<Turn> {
+        if !self.parked {
+            return Some(steer(input, heading));
+        }
+        let turn = wake(input, heading)?;
+        self.parked = false;
+
+        Some(turn)
+    }
+
+    /// Respawns the player, parked until they next steer.
+    fn revive_player(&mut self) {
+        self.world.respawn(PLAYER, &mut self.random);
+        self.parked = true;
     }
 
     /// Each living snake's move: `player_turn` for the player, and the brain's for bots.
