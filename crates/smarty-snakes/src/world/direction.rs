@@ -21,7 +21,7 @@ impl Direction {
     /// The direction after making `turn`.
     pub(crate) const fn turned(self, turn: Turn) -> Self {
         match turn {
-            Turn::Left => self.right().right().right(),
+            Turn::Left => self.left(),
             Turn::Straight => self,
             Turn::Right => self.right(),
         }
@@ -32,6 +32,11 @@ impl Direction {
         Turn::ALL
             .into_iter()
             .find(|&turn| self.turned(turn) == other)
+    }
+
+    /// The direction a quarter turn anticlockwise.
+    pub(crate) const fn left(self) -> Self {
+        self.opposite().right()
     }
 
     /// The direction straight behind.
@@ -84,6 +89,20 @@ mod tests {
                 Some(Turn::Left),
             ],
             "turn_to finds the turn to each direction, except straight behind"
+        );
+    }
+
+    #[test]
+    fn left() {
+        assert_eq!(
+            Direction::ALL.map(Direction::left),
+            [
+                Direction::West,
+                Direction::North,
+                Direction::East,
+                Direction::South,
+            ],
+            "left turns a quarter turn anticlockwise"
         );
     }
 
