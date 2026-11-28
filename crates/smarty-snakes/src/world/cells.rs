@@ -3,8 +3,8 @@ use crate::cell::Cell;
 
 impl World {
     /// The board as one cell code per cell, row by row.
-    pub(crate) fn cells(&self) -> Vec<u8> {
-        let mut cells = vec![u8::from(Cell::Empty); self.board.area()];
+    pub(crate) fn cells(&self) -> Box<[u8]> {
+        let mut cells = vec![u8::from(Cell::Empty); self.board.area()].into_boxed_slice();
         let mut paint = |point, cell: Cell| {
             if let Some(code) = self.board.index(point).and_then(|i| cells.get_mut(i)) {
                 *code = cell.into();

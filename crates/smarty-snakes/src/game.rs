@@ -44,7 +44,7 @@ impl<R: FnMut() -> f64> Game<R> {
     }
 
     /// The board as one cell code per cell, row by row.
-    pub(crate) fn cells(&self) -> Vec<u8> {
+    pub(crate) fn cells(&self) -> Box<[u8]> {
         self.world.cells()
     }
 

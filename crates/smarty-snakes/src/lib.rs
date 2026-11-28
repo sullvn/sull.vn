@@ -73,7 +73,7 @@ impl Game {
 
     /// The board as one [`Cell`] code per cell, row by row.
     #[must_use]
-    pub fn cells(&self) -> Vec<u8> {
+    pub fn cells(&self) -> Box<[u8]> {
         let Self(game) = self;
         game.cells()
     }
