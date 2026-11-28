@@ -11,10 +11,10 @@ impl World {
             .collect();
         let food = self.food.iter().map(|&food| (food, Cell::Food));
         let heads = self
-            .slots
+            .snakes
             .iter()
             .enumerate()
-            .filter_map(|(index, slot)| Some((slot.alive()?.head, head_cell(index))));
+            .filter_map(|(index, state)| Some((state.alive()?.head, head_cell(index))));
 
         for (point, cell) in food.chain(heads) {
             let code = self
@@ -39,7 +39,7 @@ const fn tail_cell(tail: Option<Tail>) -> Cell {
     }
 }
 
-/// The cell for the head of the snake in slot `index`.
+/// The cell for the head of snake `index`.
 const fn head_cell(index: usize) -> Cell {
     if index == YOU {
         Cell::YourHead

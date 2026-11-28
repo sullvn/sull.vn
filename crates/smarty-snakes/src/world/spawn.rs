@@ -1,4 +1,4 @@
-use super::{Direction, Point, Slot, Snake, Tail, World};
+use super::{Direction, Point, Snake, SnakeState, Tail, World};
 use crate::random::pick;
 use crate::tuning::SPAWN_LENGTH;
 
@@ -8,8 +8,8 @@ impl World {
     /// those whose wait is over.
     ///
     pub(crate) fn count_down(&mut self, random: &mut impl FnMut() -> f64) {
-        for index in 0..self.slots.len() {
-            let Some(Slot::Respawning(moves)) = self.slots.get_mut(index) else {
+        for index in 0..self.snakes.len() {
+            let Some(SnakeState::Respawning(moves)) = self.snakes.get_mut(index) else {
                 continue;
             };
             *moves = moves.saturating_sub(1);
@@ -20,12 +20,12 @@ impl World {
     }
 
     ///
-    /// Puts a new snake in the empty slot `index`, in a
+    /// Brings dead snake `index` back as a new snake, in a
     /// random clear spot.
     ///
     /// The cells it covers and the cells ahead of it are
     /// free, so it never spawns into a crash. If there's
-    /// no such spot, the slot waits to try again.
+    /// no such spot, it waits to try again.
     ///
     pub(crate) fn respawn(&mut self, index: usize, random: &mut impl FnMut() -> f64) {
         let spots: Vec<_> = self
@@ -37,7 +37,7 @@ impl World {
             })
             .collect();
         let Some(&(head, heading)) = pick(random, &spots) else {
-            self.set_slot(index, Slot::Respawning(0));
+            self.set_snake(index, SnakeState::Respawning(0));
             return;
         };
 
@@ -45,7 +45,7 @@ impl World {
     }
 
     ///
-    /// Puts a new snake in slot `index`, with its head on
+    /// Makes snake `index` a new snake, with its head on
     /// `head` and its tail straight behind.
     ///
     fn spawn(&mut self, index: usize, head: Point, heading: Direction) {
@@ -64,7 +64,7 @@ impl World {
             tail_end: head.step(behind, SPAWN_LENGTH - 1),
             hunger: 0,
         };
-        self.set_slot(index, Slot::Alive(snake));
+        self.set_snake(index, SnakeState::Alive(snake));
     }
 }
 
@@ -76,8 +76,8 @@ mod tests {
     fn world(snakes: Vec<SnakeCells>, waits: &[u32]) -> World {
         let mut world = testing::world(10, 10, snakes);
         world
-            .slots
-            .extend(waits.iter().copied().map(Slot::Respawning));
+            .snakes
+            .extend(waits.iter().copied().map(SnakeState::Respawning));
 
         world
     }
@@ -130,8 +130,8 @@ mod tests {
         world.respawn(1, &mut scripted(&[0.0]));
 
         assert_eq!(
-            world.slots.get(1),
-            Some(&Slot::Respawning(0)),
+            world.snakes.get(1),
+            Some(&SnakeState::Respawning(0)),
             "respawn waits when there's nowhere to spawn"
         );
     }

@@ -1,6 +1,6 @@
 use super::direction::Direction;
 use super::point::Point;
-use super::{Slot, World};
+use super::{SnakeState, World};
 use crate::tuning::RESPAWN_MOVES;
 use crate::turn::Turn;
 
@@ -25,7 +25,7 @@ pub(crate) struct Snake {
 /// One cell of a snake's tail.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Tail {
-    /// The slot of the snake it belongs to.
+    /// The index of the snake it belongs to.
     pub(crate) snake: usize,
 
     /// The way to the snake's next cell, going toward its head.
@@ -71,7 +71,7 @@ impl World {
     }
 
     ///
-    /// Makes `step` with the snake in slot `index`.
+    /// Makes `step` with snake `index`.
     ///
     /// Its tail follows, unless there's food under its new
     /// head. Eating that grows it by one cell.
@@ -96,11 +96,11 @@ impl World {
             snake.hunger += 1;
         }
 
-        self.set_slot(index, Slot::Alive(snake));
+        self.set_snake(index, SnakeState::Alive(snake));
     }
 
     ///
-    /// Takes the snake in slot `index` off the board, and
+    /// Takes snake `index` off the board, and
     /// starts its wait to respawn.
     ///
     pub(super) fn kill(&mut self, index: usize) {
@@ -112,7 +112,7 @@ impl World {
             end = self.retract(end);
         }
 
-        self.set_slot(index, Slot::Respawning(RESPAWN_MOVES));
+        self.set_snake(index, SnakeState::Respawning(RESPAWN_MOVES));
     }
 
     ///
@@ -202,7 +202,7 @@ mod tests {
             vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::East)],
         );
         world.food = points(&[(6, 5)]);
-        if let Some(Slot::Alive(hungry)) = world.slots.first_mut() {
+        if let Some(SnakeState::Alive(hungry)) = world.snakes.first_mut() {
             hungry.hunger = 10;
         }
         world.advance(0, step(6, 5, Direction::East));
@@ -244,8 +244,8 @@ mod tests {
         world.kill(0);
 
         assert_eq!(
-            world.slots.first(),
-            Some(&Slot::Respawning(4)),
+            world.snakes.first(),
+            Some(&SnakeState::Respawning(4)),
             "kill starts the snake's wait to respawn"
         );
         assert_eq!(

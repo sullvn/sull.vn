@@ -27,7 +27,7 @@ pub(crate) fn sense(world: &World, snake: &Snake) -> Senses {
     let [left, ahead, right] = Turn::ALL.map(|turn| obstacle(world, snake, turn));
     let (food_ahead, food_right) = nearest(snake, world.food.iter().copied());
     let other_heads = world
-        .snakes()
+        .living()
         .map(|other| other.head)
         .filter(|&head| head != snake.head);
     let (other_ahead, other_right) = nearest(snake, other_heads);

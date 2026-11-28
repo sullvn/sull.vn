@@ -3,7 +3,7 @@ use rand::{RngExt, SeedableRng, rngs::StdRng};
 use crate::controls::Input;
 use crate::random::pick;
 use crate::turn::Turn;
-use crate::world::{Direction, Point, Size, Slot, Snake, Tail, World, YOU};
+use crate::world::{Direction, Point, Size, Snake, SnakeState, Tail, World, YOU};
 
 /// A snake to put in a test world.
 #[derive(Debug)]
@@ -75,7 +75,7 @@ pub(crate) fn snake(cells: &[(i32, i32)], heading: Direction) -> SnakeCells {
 
 ///
 /// A world `width` by `height` cells with no food,
-/// holding `snakes` in slot order.
+/// holding `snakes` in order.
 ///
 pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
     let mut world = World::empty(Size::new(width, height).unwrap());
@@ -88,7 +88,7 @@ pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
             };
             world.set_tail(pair[1], Some(tail));
         }
-        world.slots.push(Slot::Alive(Snake {
+        world.snakes.push(SnakeState::Alive(Snake {
             head: cells[0],
             heading,
             tail_end: *cells.last().unwrap(),
@@ -99,7 +99,7 @@ pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
     world
 }
 
-/// The cells of the snake in slot `index`, from head to tail.
+/// The cells of snake `index`, from head to tail.
 pub(crate) fn snake_cells(world: &World, index: usize) -> Vec<Point> {
     let snake = world.snake(index).unwrap();
     let mut cells = Vec::new();

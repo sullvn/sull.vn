@@ -16,7 +16,7 @@ pub(crate) use snake::{Snake, Tail};
 
 use snake::Move;
 
-/// The slot of the snake you steer. The rest are clones.
+/// The index of the snake you steer. The rest are clones.
 pub(crate) const YOU: usize = 0;
 
 ///
@@ -31,7 +31,7 @@ pub(crate) struct World {
     pub(crate) size: Size,
 
     /// Each snake's head, heading and hunger, or its wait to respawn.
-    pub(crate) slots: Vec<Slot>,
+    pub(crate) snakes: Vec<SnakeState>,
 
     /// The piece of tail on each cell, if any, row by row.
     tails: Box<[Option<Tail>]>,
@@ -40,9 +40,9 @@ pub(crate) struct World {
     pub(crate) food: Vec<Point>,
 }
 
-/// A place for one snake.
+/// One of the game's snakes: on the board, or waiting to return to it.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) enum Slot {
+pub(crate) enum SnakeState {
     Alive(Snake),
 
     /// Dead, with this many moves until it reappears.
@@ -53,8 +53,8 @@ impl World {
     /// A board full of new snakes and their food.
     pub(crate) fn new(size: Size, random: &mut impl FnMut() -> f64) -> Self {
         let mut world = Self::empty(size);
-        world.slots = vec![Slot::Respawning(0); size.snake_count()];
-        for index in 0..world.slots.len() {
+        world.snakes = vec![SnakeState::Respawning(0); size.snake_count()];
+        for index in 0..world.snakes.len() {
             world.respawn(index, random);
         }
         world.add_food(random);
@@ -66,33 +66,34 @@ impl World {
     pub(crate) fn empty(size: Size) -> Self {
         Self {
             size,
-            slots: Vec::new(),
+            snakes: Vec::new(),
             tails: vec![None; size.area()].into_boxed_slice(),
             food: Vec::new(),
         }
     }
 
-    /// The living snake in slot `index`.
+    /// Snake `index`, if it's alive.
     pub(crate) fn snake(&self, index: usize) -> Option<&Snake> {
-        self.slots.get(index).and_then(Slot::alive)
+        self.snakes.get(index).and_then(SnakeState::alive)
     }
 
     /// Every living snake.
-    pub(crate) fn snakes(&self) -> impl Iterator<Item = &Snake> {
-        self.slots.iter().filter_map(Slot::alive)
+    pub(crate) fn living(&self) -> impl Iterator<Item = &Snake> {
+        self.snakes.iter().filter_map(SnakeState::alive)
     }
 
     /// Whether `point` is a wall or part of a living snake.
     pub(crate) fn blocked(&self, point: Point) -> bool {
         !self.size.contains(point)
             || self.tail(point).is_some()
-            || self.snakes().any(|snake| snake.head == point)
+            || self.living().any(|snake| snake.head == point)
     }
 
     ///
     /// Moves every living snake at once.
     ///
-    /// `turns` has a move for each living snake's slot.
+    /// `turns` lists a move for each snake in order, with
+    /// `None` for the dead.
     ///
     /// A snake dies if its new head is off the board, on a
     /// cell any snake covered before the move, or on
@@ -105,11 +106,11 @@ impl World {
     ///
     pub(crate) fn step(&mut self, turns: &[Option<Turn>], random: &mut impl FnMut() -> f64) {
         let moves: Vec<_> = self
-            .slots
+            .snakes
             .iter()
             .zip(turns)
             .enumerate()
-            .filter_map(|(index, (slot, &turn))| Some((index, slot.alive()?.next(turn?))))
+            .filter_map(|(index, (state, &turn))| Some((index, state.alive()?.next(turn?))))
             .collect();
         let (crashed, survivors): (Vec<_>, Vec<_>) = moves
             .iter()
@@ -142,7 +143,7 @@ impl World {
         self.blocked(step.head) || same_head > 1
     }
 
-    /// Whether the snake in slot `index` has gone too long without eating.
+    /// Whether snake `index` has gone too long without eating.
     fn starved(&self, index: usize) -> bool {
         self.snake(index)
             .is_some_and(|snake| snake.hunger >= STARVATION_MOVES)
@@ -153,15 +154,15 @@ impl World {
         !self.blocked(point) && !self.food.contains(&point)
     }
 
-    /// Puts `slot` in place of slot `index`.
-    fn set_slot(&mut self, index: usize, slot: Slot) {
-        if let Some(old) = self.slots.get_mut(index) {
-            *old = slot;
+    /// Replaces the state of snake `index`.
+    fn set_snake(&mut self, index: usize, state: SnakeState) {
+        if let Some(old) = self.snakes.get_mut(index) {
+            *old = state;
         }
     }
 }
 
-impl Slot {
+impl SnakeState {
     /// The snake, if it's alive.
     pub(crate) const fn alive(&self) -> Option<&Snake> {
         match self {
@@ -187,9 +188,9 @@ mod tests {
 
     fn alive(world: &World) -> Vec<bool> {
         world
-            .slots
+            .snakes
             .iter()
-            .map(|slot| slot.alive().is_some())
+            .map(|state| state.alive().is_some())
             .collect()
     }
 
@@ -225,8 +226,8 @@ mod tests {
         step(&mut world, &[Turn::Straight]);
 
         assert_eq!(
-            world.slots,
-            [Slot::Respawning(4)],
+            world.snakes,
+            [SnakeState::Respawning(4)],
             "step kills a snake that leaves the board, starting its respawn wait"
         );
     }
@@ -332,7 +333,7 @@ mod tests {
     #[test]
     fn starves() {
         let mut world = world(vec![snake(&[(1, 5), (0, 5)], Direction::East)]);
-        if let Some(Slot::Alive(hungry)) = world.slots.first_mut() {
+        if let Some(SnakeState::Alive(hungry)) = world.snakes.first_mut() {
             hungry.hunger = 148;
         }
         step(&mut world, &[Turn::Straight]);

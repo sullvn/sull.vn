@@ -85,14 +85,14 @@ impl<R: FnMut() -> f64> Game<R> {
         self.brain.train(&mut self.random)
     }
 
-    /// Each slot's move: `yours` for you, and the brain's for clones.
+    /// Each living snake's move: `yours` for you, and the brain's for clones.
     fn turns(&self, yours: Turn) -> Result<Vec<Option<Turn>>, LengthError> {
         self.world
-            .slots
+            .snakes
             .iter()
             .enumerate()
-            .map(|(index, slot)| {
-                let Some(snake) = slot.alive() else {
+            .map(|(index, state)| {
+                let Some(snake) = state.alive() else {
                     return Ok(None);
                 };
                 if index == YOU {
@@ -109,7 +109,7 @@ impl<R: FnMut() -> f64> Game<R> {
 mod tests {
     use super::*;
     use crate::testing::{self, SnakeCells, food_seeker, scripted, seeded, snake};
-    use crate::world::{Direction, Point, Slot};
+    use crate::world::{Direction, Point, SnakeState};
 
     fn game(snakes: Vec<SnakeCells>) -> Game<impl FnMut() -> f64> {
         Game {
@@ -222,7 +222,7 @@ mod tests {
     #[test]
     fn clone_respawns() {
         let mut game = game(vec![snake(&[(8, 8), (8, 9)], Direction::North)]);
-        game.world.slots.push(Slot::Respawning(1));
+        game.world.snakes.push(SnakeState::Respawning(1));
         game.tick(Input::Up).unwrap();
 
         assert!(
@@ -277,10 +277,10 @@ mod tests {
     /// Clones whose head is on a cell that held `food` before the move.
     fn fed_clones(world: &World, food: &[Point]) -> usize {
         world
-            .slots
+            .snakes
             .iter()
             .skip(1)
-            .filter_map(Slot::alive)
+            .filter_map(SnakeState::alive)
             .filter(|clone| food.contains(&clone.head))
             .count()
     }
