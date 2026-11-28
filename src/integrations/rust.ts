@@ -10,7 +10,9 @@ import { promisify } from 'node:util'
  * Importing a crate looks like `#rust/example`.
  *
  * - Rust libraries can be called at build time or run time
+ *
  * - Basic hot updates
+ *
  * - Crates are compiled using wasm-bindgen
  *
  */
@@ -31,6 +33,7 @@ export function rust(): AstroIntegration {
           vite: {
             plugins: [
               {
+                //
                 // Static builds move client assets out of `dist/.prerender/` before
                 // rendering pages, so build-time code would load WASM from a URL
                 // that's gone.
@@ -47,8 +50,10 @@ export function rust(): AstroIntegration {
                       },
               },
             ],
+            //
             // Crates load their WASM with a top-level await, which only works in
             // ES modules
+            //
             worker: { format: 'es' },
           },
         })
@@ -64,6 +69,7 @@ export function rust(): AstroIntegration {
         let queued = false
         let latest = Promise.resolve()
 
+        //
         // Saving several files at once fires several events.
         //
         // Overlapping builds would race to write the same output.
@@ -176,6 +182,7 @@ async function generateBindings({ name, libName }: Crate, profile: Profile): Pro
  * Cargo profile for WASM builds
  *
  * - `dev` keeps rebuilds fast in `astro dev`
+ *
  * - `wasm-release` optimizes for size everywhere else
  *
  */

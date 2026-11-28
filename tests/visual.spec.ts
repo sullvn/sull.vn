@@ -23,7 +23,7 @@ test('page appearance', async ({ page, route, media }) => {
     }
     await Promise.all([...imgs].map((img) => img.decode()))
 
-    // Let layout settle after image decoding before capturing the page.
+    // Let layout settle after image decoding before capturing the page
     await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
   })
 

@@ -1,5 +1,5 @@
 ---
-// Geometry dimensions are in CSS pixels, independent of the page's font size.
+// Geometry dimensions are in CSS pixels, independent of the page's font size
 interface Props {
   radius: number
   depth: number
@@ -11,9 +11,11 @@ interface Props {
 
 const { radius, depth, color, capNearZ, capFarZ, class: className, ...rest } = Astro.props
 
+//
 // Edge dimensions and per-edge transforms are computed in JS because
 // Safari doesn't reliably resolve CSS tan()/pi inside calc() with
-// custom properties, especially within transform functions.
+// custom properties, especially within transform functions
+//
 const sides = 40
 const edgeWidth = 2.5 * radius / Math.tan(0.5 * Math.PI - Math.PI / sides)
 const edgeMarginH = radius / Math.tan(0.5 * Math.PI - Math.PI / sides)

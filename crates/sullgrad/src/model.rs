@@ -144,15 +144,13 @@ impl Model {
     }
 }
 
-///
-/// One example to learn from.
-///
+/// One example to learn from
 #[derive(Debug, Clone, Copy)]
 pub struct Sample<'a> {
-    /// What the model is given.
+    /// What the model is given
     pub inputs: &'a [f64],
 
-    /// What the model should output, each from -1 to 1.
+    /// What the model should output, each from -1 to 1
     pub targets: &'a [f64],
 }
 

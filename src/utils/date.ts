@@ -13,8 +13,10 @@ export function toTimestamp(value: unknown): number {
 }
 
 export function toIsoDay(value: unknown): string {
+  //
   // Preserve existing semantics: convert to a UTC ISO calendar day string.
   // Use Intl.DateTimeFormat to avoid manual string slicing/splitting.
+  //
   const date = coerceDate(value)
 
   const parts = new Intl.DateTimeFormat('en-US', {

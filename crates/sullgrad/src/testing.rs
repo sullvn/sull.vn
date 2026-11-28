@@ -8,7 +8,7 @@ pub(crate) fn index_as_value(i: usize) -> f64 {
 
 ///
 /// Gradients of `f` at `at`, computed by
-/// backpropagation.
+/// backpropagation
 ///
 pub(crate) fn backward_gradients<const N: usize>(
     f: impl Fn([Expression; N]) -> Expression,
@@ -31,8 +31,10 @@ pub(crate) fn numerical_gradients<const N: usize>(
     f: impl Fn([Expression; N]) -> Expression,
     at: [f64; N],
 ) -> [f64; N] {
+    //
     // Small enough for a good estimate, but not so
     // small that rounding error takes over
+    //
     const H: f64 = 1e-6;
 
     array::from_fn(|i| {

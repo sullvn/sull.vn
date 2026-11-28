@@ -8,6 +8,7 @@ import { GOLDEN_RATIO } from '../utils/math'
  * Directly used for:
  *
  * - Prose text size
+ *
  * - Definition of `rem`, for various text-relative sizing
  *
  *
