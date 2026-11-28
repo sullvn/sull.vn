@@ -24,7 +24,9 @@ pub(crate) type Senses = [f64; 9];
 
 /// What `snake` notices in `world`.
 pub(crate) fn sense(world: &World, snake: &Snake) -> Senses {
-    let [left, ahead, right] = Turn::ALL.map(|turn| obstacle(world, snake, turn));
+    let [left, ahead, right] = Turn::ALL
+        .map(|turn| world.steps_to_blocked(snake.head, snake.heading.turned(turn)))
+        .map(closeness);
     let (food_ahead, food_right) = nearest(snake, world.food.iter().copied());
     let other_heads = world
         .living()
@@ -46,18 +48,13 @@ pub(crate) fn sense(world: &World, snake: &Snake) -> Senses {
 }
 
 ///
-/// Closeness of the first blocked cell after `turn`.
+/// How close something `steps` away is.
 ///
-/// `2 / distance - 1` gives 1 for a blocked cell next
-/// to the head, 0 with one free cell between, and
-/// heads toward -1 as the distance grows.
+/// 1 beside the head, 0 with one free cell between,
+/// and falling toward -1 as it gets farther.
 ///
-fn obstacle(world: &World, snake: &Snake, turn: Turn) -> f64 {
-    let direction = snake.heading.turned(turn);
-
-    (1..=world.size.longest_side())
-        .find(|&steps| world.is_blocked(snake.head.step(direction, steps)))
-        .map_or(-1.0, |steps| 2.0 / f64::from(steps) - 1.0)
+fn closeness(steps: i32) -> f64 {
+    2.0 / f64::from(steps) - 1.0
 }
 
 ///

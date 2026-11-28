@@ -91,6 +91,15 @@ impl World {
             || self.living().any(|snake| snake.head == point)
     }
 
+    /// Steps from the cell `from` in `direction` to the first wall or snake.
+    pub(crate) fn steps_to_blocked(&self, from: Point, direction: Direction) -> i32 {
+        let farthest = self.size.longest_side();
+
+        (1..farthest)
+            .find(|&steps| self.is_blocked(from.step(direction, steps)))
+            .unwrap_or(farthest)
+    }
+
     ///
     /// Moves every living snake at once.
     ///
@@ -204,6 +213,21 @@ mod tests {
             (alive(&world), world.food.len()),
             (vec![true; 3], 3),
             "new spawns every snake, with one piece of food each"
+        );
+    }
+
+    #[test]
+    fn steps_to_blocked() {
+        let world = world(vec![
+            snake(&[(5, 5), (5, 6)], Direction::North),
+            snake(&[(8, 5)], Direction::North),
+        ]);
+        let from = Point { x: 5, y: 5 };
+
+        assert_eq!(
+            Direction::ALL.map(|direction| world.steps_to_blocked(from, direction)),
+            [6, 3, 1, 6],
+            "steps_to_blocked counts the steps to the first wall or snake"
         );
     }
 
