@@ -1,5 +1,7 @@
+use rand::Rng;
+use rand::seq::IteratorRandom;
+
 use super::{Direction, Point, Snake, SnakeState, SnakeTail, World};
-use crate::random::pick;
 use crate::tuning::SPAWN_LENGTH;
 
 impl World {
@@ -7,14 +9,14 @@ impl World {
     /// Counts down each dead snake's wait, respawning
     /// those whose wait is over.
     ///
-    pub(crate) fn count_down(&mut self, random: &mut impl FnMut() -> f64) {
+    pub(crate) fn count_down(&mut self, rng: &mut impl Rng) {
         for index in 0..self.snakes.len() {
             let Some(SnakeState::Respawning(moves)) = self.snakes.get_mut(index) else {
                 continue;
             };
             *moves = moves.saturating_sub(1);
             if *moves == 0 {
-                self.respawn(index, random);
+                self.respawn(index, rng);
             }
         }
     }
@@ -25,13 +27,13 @@ impl World {
     ///
     /// If there's no such spot, it waits to try again.
     ///
-    pub(crate) fn respawn(&mut self, index: usize, random: &mut impl FnMut() -> f64) {
+    pub(crate) fn respawn(&mut self, index: usize, rng: &mut impl Rng) {
         let spots = self
             .size
             .spawn_points()
             .flat_map(each_heading)
             .filter(|&(head, heading)| self.snake_fits(head, heading));
-        let Some((head, heading)) = pick(random, spots) else {
+        let Some((head, heading)) = spots.choose(rng) else {
             self.set_snake(index, SnakeState::Respawning(0));
             return;
         };
@@ -85,7 +87,7 @@ fn each_heading(head: Point) -> [(Point, Direction); 4] {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing::{self, SnakeCells, points, scripted, snake, snake_cells};
+    use crate::testing::{self, SnakeCells, points, seeded, snake, snake_cells};
 
     fn world(snakes: Vec<SnakeCells>, waits: &[u32]) -> World {
         let mut world = testing::world(10, 10, snakes);
@@ -99,29 +101,32 @@ mod tests {
     #[test]
     fn respawn() {
         let mut world = world(vec![], &[0]);
-        world.respawn(0, &mut scripted(&[0.0]));
+        world.respawn(0, &mut seeded(1));
+        let spawned = *world.snake(0).unwrap();
+        let behind = spawned.heading.opposite();
 
         assert_eq!(
-            (
-                world.snake(0).map(|snake| snake.heading),
-                snake_cells(&world, 0)
-            ),
-            (Some(Direction::North), points(&[(4, 4), (4, 5), (4, 6)])),
-            "respawn spawns a snake 3 cells long, away from the walls"
+            snake_cells(&world, 0),
+            [0, 1, 2].map(|steps| spawned.head.step(behind, steps)),
+            "respawn spawns a snake 3 cells long, with its tail straight behind"
+        );
+        assert!(
+            world.size.spawn_points().any(|point| point == spawned.head),
+            "respawn spawns the head away from the walls"
         );
     }
 
     #[test]
-    fn respawn_clear() {
-        let blocker = snake(&[(4, 1), (4, 2), (4, 3)], Direction::South);
+    fn respawn_fits() {
+        let blocker = snake(&[(7, 4), (8, 4), (9, 4)], Direction::West);
         let mut world = world(vec![blocker], &[0]);
-        world.food = points(&[(6, 4)]);
-        world.respawn(1, &mut scripted(&[0.0]));
+        world.food = points(&[(4, 5), (5, 5)]);
+        world.respawn(1, &mut seeded(1));
 
         assert_eq!(
             world.snake(1).map(|snake| (snake.head, snake.heading)),
-            Some((Point { x: 5, y: 4 }, Direction::North)),
-            "respawn skips spots where snakes or food cover its cells or path ahead"
+            Some((Point { x: 4, y: 4 }, Direction::West)),
+            "respawn takes the only spot where snakes and food leave its cells and path ahead free"
         );
     }
 
@@ -141,7 +146,7 @@ mod tests {
             Direction::North,
         );
         let mut world = world(vec![blocker], &[1]);
-        world.respawn(1, &mut scripted(&[0.0]));
+        world.respawn(1, &mut seeded(1));
 
         assert_eq!(
             world.snakes.get(1),
@@ -153,10 +158,10 @@ mod tests {
     #[test]
     fn count_down() {
         let mut world = world(vec![], &[4]);
-        let mut random = scripted(&[0.0]);
+        let mut rng = seeded(1);
         let waits: Vec<_> = (0..4)
             .map(|_| {
-                world.count_down(&mut random);
+                world.count_down(&mut rng);
                 world.snake(0).is_some()
             })
             .collect();

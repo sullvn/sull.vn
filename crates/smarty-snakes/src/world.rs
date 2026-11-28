@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::tuning::STARVATION_MOVES;
 use crate::turn::Turn;
 
@@ -51,13 +53,13 @@ pub(crate) enum SnakeState {
 
 impl World {
     /// A board full of new snakes and their food.
-    pub(crate) fn new(size: Size, random: &mut impl FnMut() -> f64) -> Self {
+    pub(crate) fn new(size: Size, rng: &mut impl Rng) -> Self {
         let mut world = Self::empty(size);
         world.snakes = vec![SnakeState::Respawning(0); size.snake_count()];
         for index in 0..world.snakes.len() {
-            world.respawn(index, random);
+            world.respawn(index, rng);
         }
-        world.add_food(random);
+        world.add_food(rng);
 
         world
     }
@@ -104,7 +106,7 @@ impl World {
     /// Snakes also die of hunger. The dead leave at once
     /// and start counting down to respawn.
     ///
-    pub(crate) fn step(&mut self, turns: &[Option<Turn>], random: &mut impl FnMut() -> f64) {
+    pub(crate) fn step(&mut self, turns: &[Option<Turn>], rng: &mut impl Rng) {
         let moves: Vec<_> = self
             .snakes
             .iter()
@@ -127,7 +129,7 @@ impl World {
             }
         }
 
-        self.add_food(random);
+        self.add_food(rng);
     }
 
     ///
@@ -175,7 +177,7 @@ impl SnakeState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing::{self, SnakeCells, points, scripted, snake, snake_cells};
+    use crate::testing::{self, SnakeCells, points, seeded, snake, snake_cells};
 
     fn world(snakes: Vec<SnakeCells>) -> World {
         testing::world(10, 10, snakes)
@@ -183,7 +185,7 @@ mod tests {
 
     fn step(world: &mut World, turns: &[Turn]) {
         let turns: Vec<_> = turns.iter().copied().map(Some).collect();
-        world.step(&turns, &mut scripted(&[0.0]));
+        world.step(&turns, &mut seeded(1));
     }
 
     fn alive(world: &World) -> Vec<bool> {
@@ -196,7 +198,7 @@ mod tests {
 
     #[test]
     fn new() {
-        let world = World::new(Size::new(20, 28).unwrap(), &mut scripted(&[0.3, 0.7]));
+        let world = World::new(Size::new(20, 28).unwrap(), &mut seeded(1));
 
         assert_eq!(
             (alive(&world), world.food.len()),
@@ -323,10 +325,10 @@ mod tests {
             points(&[(6, 5), (5, 5), (4, 5)]),
             "step grows a snake that eats"
         );
-        assert_eq!(
-            world.food,
-            points(&[(0, 0)]),
-            "step replaces eaten food on a free cell"
+        assert_eq!(world.food.len(), 1, "step replaces eaten food");
+        assert!(
+            world.food.iter().all(|&food| !world.is_blocked(food)),
+            "step puts the new food on a free cell"
         );
     }
 

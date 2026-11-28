@@ -1,3 +1,4 @@
+use rand::Rng;
 use sullgrad::error::LengthError;
 
 use crate::brain::{Brain, PlayerSample};
@@ -13,28 +14,27 @@ use crate::world::{Direction, PLAYER, Size, SnakeState, World};
 /// The world only moves while the player does. They
 /// start parked, and park again whenever they die.
 ///
-/// `random` returns a number from 0 to 1, and is the
-/// game's only source of chance.
+/// `rng` is the game's only source of chance.
 ///
 #[derive(Debug)]
 pub(crate) struct Game<R> {
     world: World,
     brain: Brain,
     parked: bool,
-    random: R,
+    rng: R,
 }
 
-impl<R: FnMut() -> f64> Game<R> {
+impl<R: Rng> Game<R> {
     /// A new game, with the player parked.
-    pub(crate) fn new(size: Size, mut random: R) -> Self {
-        let world = World::new(size, &mut random);
-        let brain = Brain::new(&mut random);
+    pub(crate) fn new(size: Size, mut rng: R) -> Self {
+        let world = World::new(size, &mut rng);
+        let brain = Brain::new(&mut rng);
 
         Self {
             world,
             brain,
             parked: true,
-            random,
+            rng,
         }
     }
 
@@ -63,19 +63,19 @@ impl<R: FnMut() -> f64> Game<R> {
             return Ok(());
         };
 
-        self.world.count_down(&mut self.random);
+        self.world.count_down(&mut self.rng);
         self.brain.record(PlayerSample {
             inputs: sense(&self.world, &player),
             target: player_turn,
         });
 
         let turns = self.turns(player_turn)?;
-        self.world.step(&turns, &mut self.random);
+        self.world.step(&turns, &mut self.rng);
         if self.world.snake(PLAYER).is_none() {
             self.revive_player();
         }
 
-        self.brain.train(&mut self.random)
+        self.brain.train(&mut self.rng)
     }
 
     ///
@@ -96,7 +96,7 @@ impl<R: FnMut() -> f64> Game<R> {
 
     /// Respawns the player, parked until they next steer.
     fn revive_player(&mut self) {
-        self.world.respawn(PLAYER, &mut self.random);
+        self.world.respawn(PLAYER, &mut self.rng);
         self.parked = true;
     }
 
@@ -135,26 +135,28 @@ impl<R: FnMut() -> f64> Game<R> {
 
 #[cfg(test)]
 mod tests {
+    use rand::rngs::SmallRng;
+
     use super::*;
-    use crate::testing::{self, SnakeCells, food_seeker, scripted, seeded, snake};
+    use crate::testing::{self, SnakeCells, food_seeker, seeded, snake};
     use crate::world::{Direction, Point, SnakeState};
 
-    fn game(snakes: Vec<SnakeCells>) -> Game<impl FnMut() -> f64> {
+    fn game(snakes: Vec<SnakeCells>) -> Game<SmallRng> {
         Game {
             world: testing::world(10, 10, snakes),
-            brain: Brain::new(&mut scripted(&[0.5])),
+            brain: Brain::new(&mut seeded(1)),
             parked: true,
-            random: scripted(&[0.0]),
+            rng: seeded(2),
         }
     }
 
-    fn head(game: &Game<impl FnMut() -> f64>, index: usize) -> Option<Point> {
+    fn head(game: &Game<SmallRng>, index: usize) -> Option<Point> {
         game.world.snake(index).map(|snake| snake.head)
     }
 
     #[test]
     fn starts_parked() {
-        let game = Game::new(Size::new(20, 20).unwrap(), scripted(&[0.3, 0.6]));
+        let game = Game::new(Size::new(20, 20).unwrap(), seeded(1));
 
         assert!(game.parked(), "new games start parked");
     }

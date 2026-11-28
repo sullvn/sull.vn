@@ -1,9 +1,10 @@
 use std::collections::VecDeque;
 
+use rand::seq::IteratorRandom;
+use rand::{Rng, RngExt};
 use sullgrad::error::LengthError;
 use sullgrad::{Model, Sample};
 
-use crate::random::pick;
 use crate::senses::Senses;
 use crate::tuning::{
     BATCH_SAMPLES, HIDDEN_NEURONS, INITIAL_WEIGHT, LEARNING_RATE, MAX_SAMPLES, MIN_SAMPLES,
@@ -33,11 +34,11 @@ pub(crate) struct PlayerSample {
 
 impl Brain {
     /// A brain with random weights and nothing learned.
-    pub(crate) fn new(random: &mut impl FnMut() -> f64) -> Self {
+    pub(crate) fn new(rng: &mut impl Rng) -> Self {
         let inputs = Senses::default().len();
         let outputs = Turn::ALL.len();
         let model = Model::from_fn(inputs, &[HIDDEN_NEURONS, outputs], |_| {
-            initial_weight(random)
+            rng.random_range(-INITIAL_WEIGHT..INITIAL_WEIGHT)
         });
 
         Self {
@@ -73,34 +74,24 @@ impl Brain {
     }
 
     /// Learns from the recorded samples, once there are enough.
-    pub(crate) fn train(&mut self, random: &mut impl FnMut() -> f64) -> Result<(), LengthError> {
+    pub(crate) fn train(&mut self, rng: &mut impl Rng) -> Result<(), LengthError> {
         if self.samples.len() < MIN_SAMPLES {
             return Ok(());
         }
 
         for _ in 0..TRAIN_STEPS {
             self.model
-                .train_step(&batch(&self.samples, random), LEARNING_RATE)?;
+                .train_step(&batch(&self.samples, rng), LEARNING_RATE)?;
         }
 
         Ok(())
     }
 }
 
-/// A random starting weight, from -[`INITIAL_WEIGHT`] to [`INITIAL_WEIGHT`].
-fn initial_weight(random: &mut impl FnMut() -> f64) -> f64 {
-    let centered = random() - 0.5;
-
-    centered * (2.0 * INITIAL_WEIGHT)
-}
-
 /// Random samples for one training step.
-fn batch<'a>(
-    samples: &'a VecDeque<PlayerSample>,
-    random: &mut impl FnMut() -> f64,
-) -> Vec<Sample<'a>> {
+fn batch<'a>(samples: &'a VecDeque<PlayerSample>, rng: &mut impl Rng) -> Vec<Sample<'a>> {
     (0..BATCH_SAMPLES)
-        .filter_map(|_| balanced_sample(samples, random))
+        .filter_map(|_| balanced_sample(samples, rng))
         .collect()
 }
 
@@ -117,14 +108,14 @@ fn batch<'a>(
 ///
 fn balanced_sample<'a>(
     samples: &'a VecDeque<PlayerSample>,
-    random: &mut impl FnMut() -> f64,
+    rng: &mut impl Rng,
 ) -> Option<Sample<'a>> {
     let with_target = |turn: Turn| samples.iter().filter(move |sample| sample.target == turn);
-    let turns = Turn::ALL
+    let turn = Turn::ALL
         .into_iter()
-        .filter(|&turn| with_target(turn).next().is_some());
-    let turn = pick(random, turns)?;
-    let sample = pick(random, with_target(turn))?;
+        .filter(|&turn| with_target(turn).next().is_some())
+        .choose(rng)?;
+    let sample = with_target(turn).choose(rng)?;
 
     Some(Sample {
         inputs: &sample.inputs,
@@ -135,7 +126,7 @@ fn balanced_sample<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing::{scripted, seeded};
+    use crate::testing::seeded;
 
     fn sample(turn: Turn) -> PlayerSample {
         PlayerSample {
@@ -146,15 +137,20 @@ mod tests {
 
     #[test]
     fn new() {
-        let brain = Brain::new(&mut scripted(&[0.0, 1.0]));
+        let brain = Brain::new(&mut seeded(1));
+        let parameters = brain.model.parameters();
 
-        assert_eq!(
-            brain.model.parameters().get(..2),
-            Some([-0.3, 0.3].as_slice()),
+        assert!(
+            parameters.iter().all(|weight| (-0.3..0.3).contains(weight)),
             "new starts weights from -0.3 to 0.3"
         );
+        assert_ne!(
+            parameters.first(),
+            parameters.last(),
+            "new starts weights at different values"
+        );
         assert_eq!(
-            brain.model.parameters().len(),
+            parameters.len(),
             211,
             "new has 9 inputs, 16 hidden neurons, and 3 outputs"
         );
@@ -178,7 +174,7 @@ mod tests {
 
     #[test]
     fn record() {
-        let mut brain = Brain::new(&mut scripted(&[0.5]));
+        let mut brain = Brain::new(&mut seeded(1));
         brain.record(sample(Turn::Left));
         for _ in 0..480 {
             brain.record(sample(Turn::Straight));
@@ -196,27 +192,29 @@ mod tests {
         let samples: VecDeque<_> = [Turn::Left, Turn::Straight, Turn::Straight, Turn::Straight]
             .map(sample)
             .into();
-        let batch = batch(&samples, &mut scripted(&[0.0, 0.0, 0.5, 0.0]));
-        let lefts = batch
+        let mut rng = seeded(1);
+        let picked: Vec<_> = (0..100).flat_map(|_| batch(&samples, &mut rng)).collect();
+        let lefts = picked
             .iter()
-            .filter(|picked| picked.targets == Turn::Left.targets())
+            .filter(|sample| sample.targets == Turn::Left.targets())
             .count();
 
-        assert_eq!(
-            (batch.len(), lefts),
-            (16, 8),
-            "batch picks each turn taken equally often, however rare"
+        assert_eq!(picked.len(), 1600, "batch picks 16 samples");
+        assert!(
+            (700..900).contains(&lefts),
+            "batch picks each turn taken about equally often, however rare, \
+             but picked left {lefts} times in 1600"
         );
     }
 
     #[test]
     fn train_waits() {
-        let mut brain = Brain::new(&mut scripted(&[0.5, 0.7]));
+        let mut brain = Brain::new(&mut seeded(1));
         let before = brain.model.parameters().to_vec();
         for _ in 0..15 {
             brain.record(sample(Turn::Left));
         }
-        brain.train(&mut scripted(&[0.5])).unwrap();
+        brain.train(&mut seeded(2)).unwrap();
 
         assert_eq!(
             brain.model.parameters(),
@@ -228,12 +226,12 @@ mod tests {
     #[test]
     fn learns() {
         let mut brain = Brain::new(&mut seeded(1));
-        let mut random = seeded(2);
+        let mut rng = seeded(2);
         for _ in 0..16 {
             brain.record(sample(Turn::Left));
         }
         for _ in 0..10 {
-            brain.train(&mut random).unwrap();
+            brain.train(&mut rng).unwrap();
         }
 
         assert_eq!(

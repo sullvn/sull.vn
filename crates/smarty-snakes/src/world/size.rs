@@ -42,7 +42,7 @@ impl Size {
     }
 
     /// Every cell, row by row.
-    pub(crate) fn points(self) -> impl Iterator<Item = Point> + Clone {
+    pub(crate) fn points(self) -> impl Iterator<Item = Point> {
         grid(0..self.width, 0..self.height)
     }
 
@@ -82,7 +82,7 @@ impl Size {
     }
 
     /// Cells where a snake's head may spawn, away from the walls.
-    pub(crate) fn spawn_points(self) -> impl Iterator<Item = Point> + Clone {
+    pub(crate) fn spawn_points(self) -> impl Iterator<Item = Point> {
         grid(
             SPAWN_MARGIN..self.width - SPAWN_MARGIN,
             SPAWN_MARGIN..self.height - SPAWN_MARGIN,
@@ -91,7 +91,7 @@ impl Size {
 }
 
 /// Every point with `x` in `xs` and `y` in `ys`, row by row.
-fn grid(xs: Range<i32>, ys: Range<i32>) -> impl Iterator<Item = Point> + Clone {
+fn grid(xs: Range<i32>, ys: Range<i32>) -> impl Iterator<Item = Point> {
     ys.flat_map(move |y| xs.clone().map(move |x| Point { x, y }))
 }
 

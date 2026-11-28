@@ -1,7 +1,8 @@
-use rand::{RngExt, SeedableRng, rngs::StdRng};
+use rand::rngs::SmallRng;
+use rand::seq::IteratorRandom;
+use rand::{Rng, RngExt, SeedableRng};
 
 use crate::controls::Input;
-use crate::random::pick;
 use crate::turn::Turn;
 use crate::world::{Direction, PLAYER, Point, Size, Snake, SnakeState, SnakeTail, World};
 
@@ -18,7 +19,7 @@ pub(crate) struct SnakeCells {
 /// food and avoids crashing, but 1 time in 10 makes a
 /// random safe move instead.
 ///
-pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> Input {
+pub(crate) fn food_seeker(world: &World, rng: &mut impl Rng) -> Input {
     let Some(player) = world.snake(PLAYER) else {
         return Input::Up;
     };
@@ -34,8 +35,8 @@ pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> In
     let closest = safe.iter().min_by_key(|&&direction| {
         food.map_or(0, |&food| player.head.step(direction, 1).distance(food))
     });
-    let direction = if random() < 0.1 {
-        pick(random, safe.iter())
+    let direction = if rng.random_bool(0.1) {
+        safe.iter().choose(rng)
     } else {
         closest
     };
@@ -48,16 +49,9 @@ pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> In
     }
 }
 
-/// Random numbers that repeat `values` in order.
-pub(crate) fn scripted(values: &[f64]) -> impl FnMut() -> f64 {
-    let mut values = values.iter().copied().cycle();
-    move || values.next().unwrap_or(0.0)
-}
-
-/// Random numbers from 0 to 1 that repeat for each `seed`.
-pub(crate) fn seeded(seed: u64) -> impl FnMut() -> f64 {
-    let mut rng = StdRng::seed_from_u64(seed);
-    move || rng.random()
+/// A source of chance that repeats for each `seed`.
+pub(crate) fn seeded(seed: u64) -> SmallRng {
+    SmallRng::seed_from_u64(seed)
 }
 
 /// Points from `(x, y)` pairs.

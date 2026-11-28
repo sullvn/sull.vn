@@ -4,7 +4,6 @@ mod brain;
 mod cell;
 mod controls;
 mod game;
-mod random;
 mod senses;
 mod tuning;
 mod turn;

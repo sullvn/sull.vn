@@ -1,3 +1,5 @@
+use rand::SeedableRng;
+use rand::rngs::SmallRng;
 use wasm_bindgen::prelude::*;
 
 use crate::controls::Input;
@@ -7,11 +9,11 @@ use crate::world::Size;
 ///
 /// A game of Smarty Snakes.
 ///
-/// Draws its chance from `Math.random`.
+/// Seeds its chance from `Math.random`.
 ///
 #[wasm_bindgen]
 #[derive(Debug)]
-pub struct Game(game::Game<fn() -> f64>);
+pub struct Game(game::Game<SmallRng>);
 
 #[wasm_bindgen]
 impl Game {
@@ -27,9 +29,9 @@ impl Game {
     pub fn new(width: u16, height: u16) -> Result<Self, JsError> {
         let size = Size::new(width, height)
             .ok_or_else(|| JsError::new("The board is too small for snakes to spawn"))?;
-        let random: fn() -> f64 = js_sys::Math::random;
+        let rng = SmallRng::seed_from_u64(js_sys::Math::random().to_bits());
 
-        Ok(Self(game::Game::new(size, random)))
+        Ok(Self(game::Game::new(size, rng)))
     }
 
     ///
@@ -53,6 +55,7 @@ impl Game {
     /// Whether the player is parked, so nothing moves until they do.
     #[wasm_bindgen(getter)]
     #[must_use]
+    #[expect(clippy::missing_const_for_fn, reason = "wasm-bindgen rejects const fn")]
     pub fn parked(&self) -> bool {
         let Self(game) = self;
         game.parked()
