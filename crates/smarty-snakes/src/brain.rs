@@ -37,7 +37,7 @@ impl Brain {
         let inputs = Senses::default().len();
         let outputs = Turn::ALL.len();
         let model = Model::from_fn(inputs, &[HIDDEN_NEURONS, outputs], |_| {
-            (random() - 0.5) * (2.0 * INITIAL_WEIGHT)
+            initial_weight(random)
         });
 
         Self {
@@ -84,6 +84,13 @@ impl Brain {
 
         Ok(())
     }
+}
+
+/// A random starting weight, from -[`INITIAL_WEIGHT`] to [`INITIAL_WEIGHT`].
+fn initial_weight(random: &mut impl FnMut() -> f64) -> f64 {
+    let centered = random() - 0.5;
+
+    centered * (2.0 * INITIAL_WEIGHT)
 }
 
 /// Samples grouped by turn, leaving out turns never taken.
