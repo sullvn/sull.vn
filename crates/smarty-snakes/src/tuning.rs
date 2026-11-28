@@ -65,11 +65,3 @@ pub(crate) const INITIAL_WEIGHT: f64 = 0.3;
 /// play. Training time grows in step with this number.
 ///
 pub(crate) const HIDDEN_NEURONS: usize = 16;
-
-///
-/// Cells at which a distance sense reaches its limit.
-///
-/// Fixed rather than scaled to the board, so the brain
-/// works the same on any board size.
-///
-pub(crate) const SENSE_RANGE: f64 = 10.0;

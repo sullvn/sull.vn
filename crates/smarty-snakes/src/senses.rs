@@ -1,6 +1,5 @@
-use crate::tuning::SENSE_RANGE;
 use crate::turn::Turn;
-use crate::world::{Point, Snake, World};
+use crate::world::{Point, Size, Snake, World};
 
 ///
 /// What a snake notices, all relative to its heading.
@@ -17,8 +16,9 @@ use crate::world::{Point, Snake, World};
 ///
 /// Obstacles are walls or any snake's body, and range
 /// from 1 when right next to the head toward -1 when
-/// far away. Cell counts are scaled by [`SENSE_RANGE`]
-/// to -1 to 1, and directions are 1, 0 or -1.
+/// far away. Cell counts are a share of the board's
+/// longest side, from -1 to 1, and directions are 1, 0
+/// or -1.
 ///
 pub(crate) type Senses = [f64; 9];
 
@@ -38,12 +38,12 @@ pub(crate) fn sense(world: &World, snake: &Snake) -> Senses {
         left,
         ahead,
         right,
-        scale(food_ahead),
-        scale(food_right),
+        scale(food_ahead, world.size),
+        scale(food_right, world.size),
         f64::from(food_ahead.signum()),
         f64::from(food_right.signum()),
-        scale(other_ahead),
-        scale(other_right),
+        scale(other_ahead, world.size),
+        scale(other_right, world.size),
     ]
 }
 
@@ -67,9 +67,9 @@ fn nearest(snake: &Snake, points: impl Iterator<Item = Point>) -> (i32, i32) {
         .map_or((0, 0), |point| snake.head.relative(snake.heading, point))
 }
 
-/// Scales a cell count to -1 to 1.
-fn scale(cells: i32) -> f64 {
-    (f64::from(cells) / SENSE_RANGE).clamp(-1.0, 1.0)
+/// `cells` as a share of the board's longest side, from -1 to 1.
+fn scale(cells: i32, size: Size) -> f64 {
+    f64::from(cells) / f64::from(size.longest_side())
 }
 
 #[cfg(test)]
@@ -117,19 +117,19 @@ mod tests {
 
         assert_eq!(
             senses(&world).get(3..7),
-            Some([0.3, -0.1, 1.0, -1.0].as_slice()),
+            Some([0.15, -0.05, 1.0, -1.0].as_slice()),
             "sense finds the nearest food, ahead and to the right"
         );
     }
 
     #[test]
     fn food_far() {
-        let world = world(vec![snake(&[(5, 0)], Direction::South)], &[(5, 15)]);
+        let world = world(vec![snake(&[(5, 0)], Direction::South)], &[(5, 19)]);
 
         assert_eq!(
             senses(&world).get(3..7),
-            Some([1.0, 0.0, 1.0, 0.0].as_slice()),
-            "sense caps food distances at 10 cells"
+            Some([0.95, 0.0, 1.0, 0.0].as_slice()),
+            "sense measures distances as a share of the board's longest side"
         );
     }
 
@@ -146,7 +146,7 @@ mod tests {
 
         assert_eq!(
             senses(&world).get(7..),
-            Some([0.0, -0.2].as_slice()),
+            Some([0.0, -0.1].as_slice()),
             "sense finds the nearest other head, ahead and to the right"
         );
     }
