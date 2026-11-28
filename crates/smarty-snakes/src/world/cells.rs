@@ -1,60 +1,76 @@
-use super::{World, YOU};
+use super::{Tail, World, YOU};
 use crate::cell::Cell;
 
 impl World {
     /// The board as one cell code per cell, row by row.
     pub(crate) fn cells(&self) -> Box<[u8]> {
-        let mut cells = vec![u8::from(Cell::Empty); self.board.area()].into_boxed_slice();
-        let mut paint = |point, cell: Cell| {
-            if let Some(code) = self.board.index(point).and_then(|i| cells.get_mut(i)) {
+        let mut cells: Box<[u8]> = self
+            .tails
+            .iter()
+            .map(|&tail| tail_cell(tail).into())
+            .collect();
+        let food = self.food.iter().map(|&food| (food, Cell::Food));
+        let heads = self
+            .slots
+            .iter()
+            .enumerate()
+            .filter_map(|(index, slot)| Some((slot.alive()?.head, head_cell(index))));
+
+        for (point, cell) in food.chain(heads) {
+            let code = self
+                .size
+                .index(point)
+                .and_then(|index| cells.get_mut(index));
+            if let Some(code) = code {
                 *code = cell.into();
             }
-        };
-
-        for &food in &self.food {
-            paint(food, Cell::Food);
-        }
-        for (index, slot) in self.slots.iter().enumerate() {
-            let Some(snake) = slot.alive() else { continue };
-            let (body, head) = if index == YOU {
-                (Cell::You, Cell::YourHead)
-            } else {
-                (Cell::Clone, Cell::CloneHead)
-            };
-
-            for &point in &snake.body {
-                paint(point, body);
-            }
-            paint(snake.head, head);
         }
 
         cells
     }
 }
 
+/// The cell for a piece of tail, or for no tail.
+const fn tail_cell(tail: Option<Tail>) -> Cell {
+    match tail {
+        None => Cell::Empty,
+        Some(Tail { snake: YOU, .. }) => Cell::You,
+        Some(_) => Cell::Clone,
+    }
+}
+
+/// The cell for the head of the snake in slot `index`.
+const fn head_cell(index: usize) -> Cell {
+    if index == YOU {
+        Cell::YourHead
+    } else {
+        Cell::CloneHead
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::testing::{points, snake};
-    use crate::world::{Board, Direction, Slot};
+    use crate::testing::{points, snake, world};
+    use crate::world::Direction;
 
     #[test]
     fn cells() {
-        let world = World {
-            board: Board::new(9, 9).unwrap(),
-            slots: vec![
-                Slot::Alive(snake(&[(1, 0), (0, 0)], Direction::Right)),
-                Slot::Alive(snake(&[(3, 0), (4, 0)], Direction::Left)),
+        let mut world = world(
+            9,
+            9,
+            vec![
+                snake(&[(1, 0), (0, 0)], Direction::Right),
+                snake(&[(3, 0), (4, 0)], Direction::Left),
             ],
-            food: points(&[(6, 0)]),
-        };
+        );
+        world.food = points(&[(6, 0)]);
         let cells = world.cells();
 
         assert_eq!(cells.len(), 81, "cells has one code per cell");
         assert_eq!(
             cells.get(..9),
             Some([2, 3, 0, 5, 4, 0, 1, 0, 0].as_slice()),
-            "cells marks food, and each snake's head and body"
+            "cells marks food, and each snake's head and tail"
         );
     }
 }

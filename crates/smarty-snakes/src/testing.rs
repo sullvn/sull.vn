@@ -3,7 +3,15 @@ use rand::{RngExt, SeedableRng, rngs::StdRng};
 use crate::controls::Input;
 use crate::random::pick;
 use crate::turn::Turn;
-use crate::world::{Direction, Point, Snake, World, YOU};
+use crate::world::{Direction, Point, Size, Slot, Snake, Tail, World, YOU};
+
+/// A snake to put in a test world.
+#[derive(Debug)]
+pub(crate) struct SnakeCells {
+    /// The cells it covers, from head to tail.
+    cells: Vec<Point>,
+    heading: Direction,
+}
 
 ///
 /// The input from a player who heads for the nearest
@@ -58,14 +66,59 @@ pub(crate) fn points(pairs: &[(i32, i32)]) -> Vec<Point> {
 }
 
 /// A snake covering `cells`, from head to tail.
-pub(crate) fn snake(cells: &[(i32, i32)], heading: Direction) -> Snake {
-    let mut cells = points(cells).into_iter();
-    let head = cells.next().unwrap();
-
-    Snake {
-        head,
+pub(crate) fn snake(cells: &[(i32, i32)], heading: Direction) -> SnakeCells {
+    SnakeCells {
+        cells: points(cells),
         heading,
-        body: cells.collect(),
-        hunger: 0,
     }
+}
+
+///
+/// A world `width` by `height` cells with no food,
+/// holding `snakes` in slot order.
+///
+pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
+    let mut world = World::empty(Size::new(width, height).unwrap());
+
+    for (index, SnakeCells { cells, heading }) in snakes.into_iter().enumerate() {
+        for pair in cells.windows(2) {
+            let tail = Tail {
+                snake: index,
+                toward_head: toward(pair[1], pair[0]),
+            };
+            world.set_tail(pair[1], Some(tail));
+        }
+        world.slots.push(Slot::Alive(Snake {
+            head: cells[0],
+            heading,
+            tail_end: *cells.last().unwrap(),
+            hunger: 0,
+        }));
+    }
+
+    world
+}
+
+/// The cells of the snake in slot `index`, from head to tail.
+pub(crate) fn snake_cells(world: &World, index: usize) -> Vec<Point> {
+    let snake = world.snake(index).unwrap();
+    let mut cells = Vec::new();
+    let mut point = snake.tail_end;
+    while let Some(tail) = world.tail(point) {
+        cells.push(point);
+        point = point.step(tail.toward_head, 1);
+    }
+    assert_eq!(point, snake.head, "a snake's tail leads to its head");
+    cells.push(point);
+    cells.reverse();
+
+    cells
+}
+
+/// The direction from `from` to the cell next to it, `to`.
+fn toward(from: Point, to: Point) -> Direction {
+    Direction::ALL
+        .into_iter()
+        .find(|&direction| from.step(direction, 1) == to)
+        .unwrap()
 }

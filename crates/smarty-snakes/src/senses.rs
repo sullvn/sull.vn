@@ -55,7 +55,7 @@ pub(crate) fn sense(world: &World, snake: &Snake) -> Senses {
 fn obstacle(world: &World, snake: &Snake, turn: Turn) -> f64 {
     let direction = snake.heading.turned(turn);
 
-    (1..=world.board.longest_side())
+    (1..=world.size.longest_side())
         .find(|&steps| world.blocked(snake.head.step(direction, steps)))
         .map_or(-1.0, |steps| 2.0 / f64::from(steps) - 1.0)
 }
@@ -78,23 +78,26 @@ fn scale(cells: i32) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing::{points, snake};
-    use crate::world::{Board, Direction, Slot};
+    use crate::testing::{self, SnakeCells, points, snake};
+    use crate::world::{Direction, YOU};
 
-    fn world(snakes: Vec<Snake>, food: &[(i32, i32)]) -> World {
-        World {
-            board: Board::new(10, 20).unwrap(),
-            slots: snakes.into_iter().map(Slot::Alive).collect(),
-            food: points(food),
-        }
+    fn world(snakes: Vec<SnakeCells>, food: &[(i32, i32)]) -> World {
+        let mut world = testing::world(10, 20, snakes);
+        world.food = points(food);
+
+        world
+    }
+
+    /// What you notice in `world`.
+    fn senses(world: &World) -> Senses {
+        sense(world, world.snake(YOU).unwrap())
     }
 
     #[test]
     fn obstacles() {
-        let you = snake(&[(5, 5), (5, 6)], Direction::Up);
         let world = world(
             vec![
-                you.clone(),
+                snake(&[(5, 5), (5, 6)], Direction::Up),
                 snake(&[(4, 5)], Direction::Up),
                 snake(&[(5, 3)], Direction::Up),
             ],
@@ -102,7 +105,7 @@ mod tests {
         );
 
         assert_eq!(
-            sense(&world, &you).get(..3),
+            senses(&world).get(..3),
             Some([1.0, 0.0, 2.0 / 5.0 - 1.0].as_slice()),
             "sense finds the closeness of snakes and walls to the left, ahead, and right"
         );
@@ -110,11 +113,13 @@ mod tests {
 
     #[test]
     fn food() {
-        let you = snake(&[(5, 5)], Direction::Right);
-        let world = world(vec![you.clone()], &[(1, 4), (8, 4), (7, 19)]);
+        let world = world(
+            vec![snake(&[(5, 5)], Direction::Right)],
+            &[(1, 4), (8, 4), (7, 19)],
+        );
 
         assert_eq!(
-            sense(&world, &you).get(3..7),
+            senses(&world).get(3..7),
             Some([0.3, -0.1, 1.0, -1.0].as_slice()),
             "sense finds the nearest food, ahead and to the right"
         );
@@ -122,11 +127,10 @@ mod tests {
 
     #[test]
     fn food_far() {
-        let you = snake(&[(5, 0)], Direction::Down);
-        let world = world(vec![you.clone()], &[(5, 15)]);
+        let world = world(vec![snake(&[(5, 0)], Direction::Down)], &[(5, 15)]);
 
         assert_eq!(
-            sense(&world, &you).get(3..7),
+            senses(&world).get(3..7),
             Some([1.0, 0.0, 1.0, 0.0].as_slice()),
             "sense caps food distances at 10 cells"
         );
@@ -134,10 +138,9 @@ mod tests {
 
     #[test]
     fn other_heads() {
-        let you = snake(&[(5, 5)], Direction::Left);
         let world = world(
             vec![
-                you.clone(),
+                snake(&[(5, 5)], Direction::Left),
                 snake(&[(5, 7), (5, 8)], Direction::Up),
                 snake(&[(9, 19)], Direction::Up),
             ],
@@ -145,7 +148,7 @@ mod tests {
         );
 
         assert_eq!(
-            sense(&world, &you).get(7..),
+            senses(&world).get(7..),
             Some([0.0, -0.2].as_slice()),
             "sense finds the nearest other head, ahead and to the right"
         );
@@ -153,11 +156,10 @@ mod tests {
 
     #[test]
     fn alone() {
-        let you = snake(&[(5, 5)], Direction::Up);
-        let world = world(vec![you.clone()], &[]);
+        let world = world(vec![snake(&[(5, 5)], Direction::Up)], &[]);
 
         assert_eq!(
-            sense(&world, &you).get(3..),
+            senses(&world).get(3..),
             Some([0.0; 6].as_slice()),
             "sense gives zeros for food and heads that aren't there"
         );

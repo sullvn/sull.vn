@@ -4,7 +4,7 @@ use crate::brain::{Brain, Lesson};
 use crate::controls::{Input, steer, wake};
 use crate::senses::sense;
 use crate::turn::Turn;
-use crate::world::{Board, World, YOU};
+use crate::world::{Size, World, YOU};
 
 ///
 /// Snakes on a shared board, where every clone learns
@@ -26,8 +26,8 @@ pub(crate) struct Game<R> {
 
 impl<R: FnMut() -> f64> Game<R> {
     /// A new game, with you parked.
-    pub(crate) fn new(board: Board, mut random: R) -> Self {
-        let world = World::new(board, &mut random);
+    pub(crate) fn new(size: Size, mut random: R) -> Self {
+        let world = World::new(size, &mut random);
         let brain = Brain::new(&mut random);
 
         Self {
@@ -108,16 +108,12 @@ impl<R: FnMut() -> f64> Game<R> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing::{food_seeker, scripted, seeded, snake};
-    use crate::world::{Direction, Point, Slot, Snake};
+    use crate::testing::{self, SnakeCells, food_seeker, scripted, seeded, snake};
+    use crate::world::{Direction, Point, Slot};
 
-    fn game(snakes: Vec<Snake>) -> Game<impl FnMut() -> f64> {
+    fn game(snakes: Vec<SnakeCells>) -> Game<impl FnMut() -> f64> {
         Game {
-            world: World {
-                board: Board::new(10, 10).unwrap(),
-                slots: snakes.into_iter().map(Slot::Alive).collect(),
-                food: Vec::new(),
-            },
+            world: testing::world(10, 10, snakes),
             brain: Brain::new(&mut scripted(&[0.5])),
             parked: true,
             random: scripted(&[0.0]),
@@ -130,7 +126,7 @@ mod tests {
 
     #[test]
     fn starts_parked() {
-        let game = Game::new(Board::new(20, 20).unwrap(), scripted(&[0.3, 0.6]));
+        let game = Game::new(Size::new(20, 20).unwrap(), scripted(&[0.3, 0.6]));
 
         assert!(game.parked(), "new games start parked");
     }
@@ -261,7 +257,7 @@ mod tests {
         /// Moves played in each game, enough for clones to learn.
         const MOVES: usize = 300;
 
-        let mut game = Game::new(Board::new(40, 30).unwrap(), seeded(1));
+        let mut game = Game::new(Size::new(40, 30).unwrap(), seeded(1));
         let mut player = seeded(2);
         let mut meals = 0;
 

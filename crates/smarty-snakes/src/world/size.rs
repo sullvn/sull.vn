@@ -5,12 +5,12 @@ use crate::tuning::{CELLS_PER_SNAKE, MIN_SNAKES, SPAWN_MARGIN};
 
 /// The board's size in cells. Its edges are walls.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct Board {
+pub(crate) struct Size {
     width: i32,
     height: i32,
 }
 
-impl Board {
+impl Size {
     ///
     /// The shortest side a board can have.
     ///
@@ -21,7 +21,7 @@ impl Board {
     const MIN_SIDE: i32 = 2 * SPAWN_MARGIN + 1;
 
     ///
-    /// A board `width` by `height` cells.
+    /// The size of a board `width` by `height` cells.
     ///
     /// Returns `None` if it's too small for a snake to
     /// spawn on.
@@ -70,7 +70,7 @@ impl Board {
     }
 
     ///
-    /// How many snakes play on this board, counting yours.
+    /// How many snakes play on a board this size, counting yours.
     ///
     /// Rounded to the nearest snake.
     ///
@@ -102,7 +102,7 @@ mod tests {
     #[test]
     fn too_small() {
         assert_eq!(
-            [Board::new(8, 20), Board::new(20, 8)],
+            [Size::new(8, 20), Size::new(20, 8)],
             [None, None],
             "new rejects boards without room to spawn"
         );
@@ -110,9 +110,9 @@ mod tests {
 
     #[test]
     fn contains() {
-        let board = Board::new(10, 9).unwrap();
+        let size = Size::new(10, 9).unwrap();
         let points = [(0, 0), (9, 8), (-1, 0), (0, -1), (10, 0), (0, 9)]
-            .map(|(x, y)| board.contains(Point { x, y }));
+            .map(|(x, y)| size.contains(Point { x, y }));
 
         assert_eq!(
             points,
@@ -123,10 +123,10 @@ mod tests {
 
     #[test]
     fn index() {
-        let board = Board::new(10, 9).unwrap();
+        let size = Size::new(10, 9).unwrap();
 
         assert_eq!(
-            [Point { x: 3, y: 2 }, Point { x: 10, y: 0 }].map(|point| board.index(point)),
+            [Point { x: 3, y: 2 }, Point { x: 10, y: 0 }].map(|point| size.index(point)),
             [Some(23), None],
             "index counts row by row, and skips points off the board"
         );
@@ -135,7 +135,7 @@ mod tests {
     #[test]
     fn snake_count() {
         let counts = [(20, 28), (48, 30), (9, 9)]
-            .map(|(width, height)| Board::new(width, height).unwrap().snake_count());
+            .map(|(width, height)| Size::new(width, height).unwrap().snake_count());
 
         assert_eq!(
             counts,
@@ -146,8 +146,8 @@ mod tests {
 
     #[test]
     fn spawn_points() {
-        let board = Board::new(10, 9).unwrap();
-        let points: Vec<_> = board.spawn_points().collect();
+        let size = Size::new(10, 9).unwrap();
+        let points: Vec<_> = size.spawn_points().collect();
 
         assert_eq!(
             points,

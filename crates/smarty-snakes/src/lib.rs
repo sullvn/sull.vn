@@ -38,11 +38,11 @@ impl Game {
     ///
     #[wasm_bindgen(constructor)]
     pub fn new(width: u16, height: u16) -> Result<Self, JsError> {
-        let board = world::Board::new(width, height)
+        let size = world::Size::new(width, height)
             .ok_or_else(|| JsError::new("The board is too small for snakes to spawn"))?;
         let random: fn() -> f64 = js_sys::Math::random;
 
-        Ok(Self(game::Game::new(board, random)))
+        Ok(Self(game::Game::new(size, random)))
     }
 
     ///
