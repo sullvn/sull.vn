@@ -6,27 +6,27 @@ use sullgrad::{Model, Sample};
 use crate::random::pick;
 use crate::senses::Senses;
 use crate::tuning::{
-    BATCH_LESSONS, HIDDEN_NEURONS, INITIAL_WEIGHT, LEARNING_RATE, MEMORY_LESSONS, MIN_LESSONS,
+    BATCH_SAMPLES, HIDDEN_NEURONS, INITIAL_WEIGHT, LEARNING_RATE, MAX_SAMPLES, MIN_SAMPLES,
     TRAIN_STEPS,
 };
 use crate::turn::Turn;
 
 ///
-/// The network every clone shares, and the lessons it
+/// The network every clone shares, and the samples it
 /// learns from.
 ///
-/// Every lesson is one of your moves, so the clones
+/// Every sample is one of your moves, so the clones
 /// learn to move like you.
 ///
 #[derive(Debug)]
 pub(crate) struct Brain {
     model: Model,
-    pub(crate) memory: VecDeque<Lesson>,
+    pub(crate) samples: VecDeque<PlayerSample>,
 }
 
-/// One of your moves: what you noticed, and which way you went.
+/// One of the player's moves: what they sensed, and which way they turned.
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub(crate) struct Lesson {
+pub(crate) struct PlayerSample {
     pub(crate) senses: Senses,
     pub(crate) turn: Turn,
 }
@@ -42,7 +42,7 @@ impl Brain {
 
         Self {
             model,
-            memory: VecDeque::with_capacity(MEMORY_LESSONS),
+            samples: VecDeque::with_capacity(MAX_SAMPLES),
         }
     }
 
@@ -62,21 +62,21 @@ impl Brain {
         Ok(top.map_or(Turn::Straight, |(turn, _)| turn))
     }
 
-    /// Remembers `lesson`, forgetting the oldest past the limit.
-    pub(crate) fn remember(&mut self, lesson: Lesson) {
-        if self.memory.len() == MEMORY_LESSONS {
-            self.memory.pop_front();
+    /// Records `sample`, dropping the oldest past the limit.
+    pub(crate) fn record(&mut self, sample: PlayerSample) {
+        if self.samples.len() == MAX_SAMPLES {
+            self.samples.pop_front();
         }
-        self.memory.push_back(lesson);
+        self.samples.push_back(sample);
     }
 
-    /// Learns from the lessons in memory, once there are enough.
+    /// Learns from the recorded samples, once there are enough.
     pub(crate) fn train(&mut self, random: &mut impl FnMut() -> f64) -> Result<(), LengthError> {
-        if self.memory.len() < MIN_LESSONS {
+        if self.samples.len() < MIN_SAMPLES {
             return Ok(());
         }
 
-        let by_turn = group(&self.memory);
+        let by_turn = group(&self.samples);
         for _ in 0..TRAIN_STEPS {
             self.model
                 .train_step(&batch(&by_turn, random), LEARNING_RATE)?;
@@ -86,30 +86,38 @@ impl Brain {
     }
 }
 
-/// Lessons grouped by turn, leaving out turns never taken.
-fn group(memory: &VecDeque<Lesson>) -> Vec<Vec<&Lesson>> {
+/// Samples grouped by turn, leaving out turns never taken.
+fn group(samples: &VecDeque<PlayerSample>) -> Vec<Vec<&PlayerSample>> {
     Turn::ALL
         .into_iter()
-        .map(|turn| memory.iter().filter(|l| l.turn == turn).collect::<Vec<_>>())
-        .filter(|lessons| !lessons.is_empty())
+        .map(|turn| {
+            samples
+                .iter()
+                .filter(|sample| sample.turn == turn)
+                .collect::<Vec<_>>()
+        })
+        .filter(|group| !group.is_empty())
         .collect()
 }
 
 ///
-/// Random lessons with each turn equally likely.
+/// Random samples with each turn equally likely.
 ///
 /// Most moves go straight. Without the balance, the
 /// brain learns little else.
 ///
-fn batch<'a>(by_turn: &[Vec<&'a Lesson>], random: &mut impl FnMut() -> f64) -> Vec<Sample<'a>> {
-    (0..BATCH_LESSONS)
+fn batch<'a>(
+    by_turn: &[Vec<&'a PlayerSample>],
+    random: &mut impl FnMut() -> f64,
+) -> Vec<Sample<'a>> {
+    (0..BATCH_SAMPLES)
         .filter_map(|_| {
-            let lessons = pick(random, by_turn.iter())?;
-            let lesson = pick(random, lessons.iter())?;
+            let samples = pick(random, by_turn.iter())?;
+            let sample = pick(random, samples.iter())?;
 
             Some(Sample {
-                inputs: &lesson.senses,
-                targets: lesson.turn.targets(),
+                inputs: &sample.senses,
+                targets: sample.turn.targets(),
             })
         })
         .collect()
@@ -120,8 +128,8 @@ mod tests {
     use super::*;
     use crate::testing::{scripted, seeded};
 
-    fn lesson(turn: Turn) -> Lesson {
-        Lesson {
+    fn sample(turn: Turn) -> PlayerSample {
+        PlayerSample {
             senses: [0.5; 9],
             turn,
         }
@@ -149,7 +157,7 @@ mod tests {
         parameters[210] = 1.0;
         let brain = Brain {
             model: Model::from_parameters(9, &[16, 3], &parameters).unwrap(),
-            memory: VecDeque::new(),
+            samples: VecDeque::new(),
         };
 
         assert_eq!(
@@ -160,30 +168,30 @@ mod tests {
     }
 
     #[test]
-    fn remember() {
+    fn record() {
         let mut brain = Brain::new(&mut scripted(&[0.5]));
-        brain.remember(lesson(Turn::Left));
+        brain.record(sample(Turn::Left));
         for _ in 0..480 {
-            brain.remember(lesson(Turn::Straight));
+            brain.record(sample(Turn::Straight));
         }
 
         assert_eq!(
-            (brain.memory.len(), brain.memory.front()),
-            (480, Some(&lesson(Turn::Straight))),
-            "remember keeps the newest 480 lessons"
+            (brain.samples.len(), brain.samples.front()),
+            (480, Some(&sample(Turn::Straight))),
+            "record keeps the newest 480 samples"
         );
     }
 
     #[test]
     fn batch_balanced() {
-        let memory: VecDeque<_> = [Turn::Left, Turn::Straight, Turn::Straight, Turn::Straight]
-            .map(lesson)
+        let samples: VecDeque<_> = [Turn::Left, Turn::Straight, Turn::Straight, Turn::Straight]
+            .map(sample)
             .into();
-        let by_turn = group(&memory);
+        let by_turn = group(&samples);
         let batch = batch(&by_turn, &mut scripted(&[0.0, 0.0, 0.5, 0.0]));
         let lefts = batch
             .iter()
-            .filter(|sample| sample.targets == Turn::Left.targets())
+            .filter(|picked| picked.targets == Turn::Left.targets())
             .count();
 
         assert_eq!(
@@ -198,14 +206,14 @@ mod tests {
         let mut brain = Brain::new(&mut scripted(&[0.5, 0.7]));
         let before = brain.model.parameters().to_vec();
         for _ in 0..15 {
-            brain.remember(lesson(Turn::Left));
+            brain.record(sample(Turn::Left));
         }
         brain.train(&mut scripted(&[0.5])).unwrap();
 
         assert_eq!(
             brain.model.parameters(),
             before,
-            "train waits for 16 lessons"
+            "train waits for 16 samples"
         );
     }
 
@@ -214,7 +222,7 @@ mod tests {
         let mut brain = Brain::new(&mut seeded(1));
         let mut random = seeded(2);
         for _ in 0..16 {
-            brain.remember(lesson(Turn::Left));
+            brain.record(sample(Turn::Left));
         }
         for _ in 0..10 {
             brain.train(&mut random).unwrap();
@@ -223,7 +231,7 @@ mod tests {
         assert_eq!(
             brain.choose(&[0.5; 9]),
             Ok(Turn::Left),
-            "train teaches the brain the moves in its lessons"
+            "train teaches the brain the moves in its samples"
         );
     }
 }

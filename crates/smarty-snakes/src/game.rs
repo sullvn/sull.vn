@@ -1,6 +1,6 @@
 use sullgrad::error::LengthError;
 
-use crate::brain::{Brain, Lesson};
+use crate::brain::{Brain, PlayerSample};
 use crate::controls::{Input, steer, wake};
 use crate::senses::sense;
 use crate::turn::Turn;
@@ -72,7 +72,7 @@ impl<R: FnMut() -> f64> Game<R> {
         self.world.count_down(&mut self.random);
         if let Some(you) = self.world.snake(YOU) {
             let senses = sense(&self.world, you);
-            self.brain.remember(Lesson { senses, turn });
+            self.brain.record(PlayerSample { senses, turn });
         }
 
         let turns = self.turns(turn)?;
@@ -142,7 +142,7 @@ mod tests {
         game.tick(Input::Down).unwrap();
 
         assert_eq!(
-            (game.parked(), game.cells(), game.brain.memory.len()),
+            (game.parked(), game.cells(), game.brain.samples.len()),
             (true, before, 0),
             "tick does nothing while parked, without an input that wakes you"
         );
@@ -188,12 +188,17 @@ mod tests {
     }
 
     #[test]
-    fn lessons() {
+    fn samples() {
         let mut game = game(vec![snake(&[(5, 5), (5, 6)], Direction::North)]);
         game.tick(Input::Up).unwrap();
         game.tick(Input::None).unwrap();
         game.tick(Input::Right).unwrap();
-        let turns: Vec<_> = game.brain.memory.iter().map(|lesson| lesson.turn).collect();
+        let turns: Vec<_> = game
+            .brain
+            .samples
+            .iter()
+            .map(|sample| sample.turn)
+            .collect();
 
         assert_eq!(
             turns,
@@ -213,7 +218,7 @@ mod tests {
             "tick respawns you at once when you die, parked"
         );
         assert_eq!(
-            game.brain.memory.len(),
+            game.brain.samples.len(),
             1,
             "tick records the move that killed you"
         );
@@ -248,7 +253,7 @@ mod tests {
     /// clones ate.
     ///
     /// A scripted player chases the nearest food for 300
-    /// moves. With `training` off, the brain's memory is
+    /// moves. With `training` off, the brain's samples are
     /// wiped before every move so it never trains, which
     /// gives the baseline that trained clones are measured
     /// against.
@@ -263,7 +268,7 @@ mod tests {
 
         for _ in 0..MOVES {
             if !training {
-                game.brain.memory.clear();
+                game.brain.samples.clear();
             }
             let food = game.world.food.clone();
             game.tick(food_seeker(&game.world, &mut player)).unwrap();

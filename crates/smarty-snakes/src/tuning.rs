@@ -23,25 +23,25 @@ pub(crate) const STARVATION_MOVES: u32 = 150;
 pub(crate) const RESPAWN_MOVES: u32 = 4;
 
 ///
-/// Most recent lessons kept.
+/// Most recent samples kept.
 ///
 /// A minute of play at eight moves per second.
 ///
-pub(crate) const MEMORY_LESSONS: usize = 480;
+pub(crate) const MAX_SAMPLES: usize = 480;
 
-/// Lessons needed before training starts.
-pub(crate) const MIN_LESSONS: usize = 16;
+/// Samples needed before training starts.
+pub(crate) const MIN_SAMPLES: usize = 16;
 
 ///
 /// Training steps after each move.
 ///
-/// Training is limited by lessons, not steps. In
+/// Training is limited by samples, not steps. In
 /// simulations, 32 steps learned no better than 4.
 ///
 pub(crate) const TRAIN_STEPS: usize = 4;
 
-/// Lessons in each training step's batch.
-pub(crate) const BATCH_LESSONS: usize = 16;
+/// Samples in each training step's batch.
+pub(crate) const BATCH_SAMPLES: usize = 16;
 
 /// How far each training step moves the weights.
 pub(crate) const LEARNING_RATE: f64 = 0.1;
