@@ -8,7 +8,7 @@ impl World {
     ///
     pub(crate) fn add_food(&mut self, random: &mut impl FnMut() -> f64) {
         while self.food.len() < self.snakes.len() {
-            let free = self.size.points().filter(|&point| self.free(point));
+            let free = self.size.points().filter(|&point| self.is_free(point));
             let Some(food) = pick(random, free) else {
                 return;
             };

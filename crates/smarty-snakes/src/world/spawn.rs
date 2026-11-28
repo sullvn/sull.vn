@@ -50,7 +50,7 @@ impl World {
         let tail_end = 1 - SPAWN_LENGTH;
         let ahead = SPAWN_LENGTH;
 
-        (tail_end..=ahead).all(|steps| self.free(head.step(heading, steps)))
+        (tail_end..=ahead).all(|steps| self.is_free(head.step(heading, steps)))
     }
 
     ///

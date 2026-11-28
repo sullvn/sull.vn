@@ -83,7 +83,7 @@ impl World {
     }
 
     /// Whether `point` is a wall or part of a living snake.
-    pub(crate) fn blocked(&self, point: Point) -> bool {
+    pub(crate) fn is_blocked(&self, point: Point) -> bool {
         !self.size.contains(point)
             || self.tail(point).is_some()
             || self.living().any(|snake| snake.head == point)
@@ -122,7 +122,7 @@ impl World {
         }
         for (index, step) in survivors {
             self.advance(index, step);
-            if self.starved(index) {
+            if self.is_starved(index) {
                 self.kill(index);
             }
         }
@@ -140,18 +140,18 @@ impl World {
             .filter(|(_, other)| other.head == step.head)
             .count();
 
-        self.blocked(step.head) || same_head > 1
+        self.is_blocked(step.head) || same_head > 1
     }
 
     /// Whether snake `index` has gone too long without eating.
-    fn starved(&self, index: usize) -> bool {
+    fn is_starved(&self, index: usize) -> bool {
         self.snake(index)
             .is_some_and(|snake| snake.hunger >= STARVATION_MOVES)
     }
 
     /// Whether `point` is on the board with no snake or food on it.
-    fn free(&self, point: Point) -> bool {
-        !self.blocked(point) && !self.food.contains(&point)
+    fn is_free(&self, point: Point) -> bool {
+        !self.is_blocked(point) && !self.food.contains(&point)
     }
 
     /// Replaces the state of snake `index`.
@@ -276,7 +276,7 @@ mod tests {
             "step kills a snake that moves into the cells of one that dies in the same move"
         );
         assert_eq!(
-            [(9, 5), (8, 5), (7, 5), (6, 5), (6, 6)].map(|(x, y)| world.blocked(Point { x, y })),
+            [(9, 5), (8, 5), (7, 5), (6, 5), (6, 6)].map(|(x, y)| world.is_blocked(Point { x, y })),
             [false; 5],
             "step clears every cell of the snakes that die"
         );

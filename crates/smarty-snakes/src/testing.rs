@@ -25,7 +25,7 @@ pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> In
     let safe: Vec<_> = [Turn::Straight, Turn::Left, Turn::Right]
         .map(|turn| you.heading.turned(turn))
         .into_iter()
-        .filter(|&direction| !world.blocked(you.head.step(direction, 1)))
+        .filter(|&direction| !world.is_blocked(you.head.step(direction, 1)))
         .collect();
     let food = world
         .food

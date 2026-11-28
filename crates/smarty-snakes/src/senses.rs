@@ -56,7 +56,7 @@ fn obstacle(world: &World, snake: &Snake, turn: Turn) -> f64 {
     let direction = snake.heading.turned(turn);
 
     (1..=world.size.longest_side())
-        .find(|&steps| world.blocked(snake.head.step(direction, steps)))
+        .find(|&steps| world.is_blocked(snake.head.step(direction, steps)))
         .map_or(-1.0, |steps| 2.0 / f64::from(steps) - 1.0)
 }
 

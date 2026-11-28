@@ -249,7 +249,7 @@ mod tests {
             "kill starts the snake's wait to respawn"
         );
         assert_eq!(
-            [(5, 5), (4, 5), (4, 6), (2, 3)].map(|(x, y)| world.blocked(Point { x, y })),
+            [(5, 5), (4, 5), (4, 6), (2, 3)].map(|(x, y)| world.is_blocked(Point { x, y })),
             [false, false, false, true],
             "kill clears the snake's cells, and no other snake's"
         );
