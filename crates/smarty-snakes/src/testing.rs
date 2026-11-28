@@ -35,7 +35,7 @@ pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> In
         food.map_or(0, |&food| you.head.step(direction, 1).distance(food))
     });
     let direction = if random() < 0.1 {
-        pick(random, &safe)
+        pick(random, safe.iter())
     } else {
         closest
     };

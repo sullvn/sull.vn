@@ -36,7 +36,7 @@ impl World {
                 (1 - SPAWN_LENGTH..=SPAWN_LENGTH).all(|steps| self.free(head.step(heading, steps)))
             })
             .collect();
-        let Some(&(head, heading)) = pick(random, &spots) else {
+        let Some(&(head, heading)) = pick(random, spots.iter()) else {
             self.set_snake(index, SnakeState::Respawning(0));
             return;
         };

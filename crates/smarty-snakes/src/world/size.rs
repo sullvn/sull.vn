@@ -42,7 +42,7 @@ impl Size {
     }
 
     /// Every cell, row by row.
-    pub(crate) fn points(self) -> impl Iterator<Item = Point> {
+    pub(crate) fn points(self) -> impl Iterator<Item = Point> + Clone {
         grid(0..self.width, 0..self.height)
     }
 
@@ -91,7 +91,7 @@ impl Size {
 }
 
 /// Every point with `x` in `xs` and `y` in `ys`, row by row.
-fn grid(xs: Range<i32>, ys: Range<i32>) -> impl Iterator<Item = Point> {
+fn grid(xs: Range<i32>, ys: Range<i32>) -> impl Iterator<Item = Point> + Clone {
     ys.flat_map(move |y| xs.clone().map(move |x| Point { x, y }))
 }
 

@@ -104,8 +104,8 @@ fn group(memory: &VecDeque<Lesson>) -> Vec<Vec<&Lesson>> {
 fn batch<'a>(by_turn: &[Vec<&'a Lesson>], random: &mut impl FnMut() -> f64) -> Vec<Sample<'a>> {
     (0..BATCH_LESSONS)
         .filter_map(|_| {
-            let lessons = pick(random, by_turn)?;
-            let lesson = pick(random, lessons)?;
+            let lessons = pick(random, by_turn.iter())?;
+            let lesson = pick(random, lessons.iter())?;
 
             Some(Sample {
                 inputs: &lesson.senses,

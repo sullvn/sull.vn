@@ -2,14 +2,17 @@
 /// Picks one of `items` with `random`, which returns a
 /// number from 0 to 1.
 ///
-/// Returns `None` only if `items` is empty.
+/// Returns `None` only if there are no items.
 ///
-pub(crate) fn pick<'a, T>(random: &mut impl FnMut() -> f64, items: &'a [T]) -> Option<&'a T> {
-    let count = f64::from(u32::try_from(items.len()).ok()?);
-    let position = (random() * count).floor();
+pub(crate) fn pick<I>(random: &mut impl FnMut() -> f64, mut items: I) -> Option<I::Item>
+where
+    I: Iterator + Clone,
+{
+    let count = items.clone().count();
+    let position = (random() * f64::from(u32::try_from(count).ok()?)).floor();
 
     // Rust has no fallible float-to-integer conversion. `as`
-    // saturates instead, and `get` catches anything past the end.
+    // saturates instead, and `min` keeps it within the items.
     #[expect(
         clippy::as_conversions,
         clippy::cast_possible_truncation,
@@ -17,8 +20,9 @@ pub(crate) fn pick<'a, T>(random: &mut impl FnMut() -> f64, items: &'a [T]) -> O
         reason = "saturating is safe here"
     )]
     let index = position as usize;
+    let last = count.checked_sub(1)?;
 
-    items.get(index).or_else(|| items.last())
+    items.nth(index.min(last))
 }
 
 #[cfg(test)]
@@ -30,7 +34,7 @@ mod tests {
     fn picks_by_position() {
         let mut random = scripted(&[0.0, 0.5, 0.99]);
         let items = ['a', 'b', 'c'];
-        let picks: Vec<_> = (0..3).map(|_| pick(&mut random, &items)).collect();
+        let picks: Vec<_> = (0..3).map(|_| pick(&mut random, items.iter())).collect();
 
         assert_eq!(
             picks,
@@ -44,7 +48,7 @@ mod tests {
         let mut random = scripted(&[1.0]);
 
         assert_eq!(
-            pick(&mut random, &['a', 'b']),
+            pick(&mut random, ['a', 'b'].iter()),
             Some(&'b'),
             "pick treats 1 as the last item"
         );
@@ -56,7 +60,7 @@ mod tests {
         let no_items: [char; 0] = [];
 
         assert_eq!(
-            pick(&mut random, &no_items),
+            pick(&mut random, no_items.iter()),
             None,
             "pick has nothing to pick from no items"
         );
