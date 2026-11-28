@@ -41,9 +41,13 @@ pub(crate) struct SnakeTail {
     pub(crate) toward_head: Direction,
 }
 
-/// A snake's next move: where its head goes, and the way it then faces.
+///
+/// A snake's next move: which snake, where its head
+/// goes, and the way it then faces.
+///
 #[derive(Clone, Copy, Debug)]
-pub(super) struct Move {
+pub(crate) struct Move {
+    pub(super) snake: usize,
     pub(super) head: Point,
     pub(super) heading: Direction,
 }
@@ -59,11 +63,12 @@ impl SnakeState {
 }
 
 impl Snake {
-    /// The move this snake makes by taking `turn`.
-    pub(super) const fn next(&self, turn: Turn) -> Move {
+    /// The move this snake, snake `index`, makes by taking `turn`.
+    pub(crate) const fn next(&self, index: usize, turn: Turn) -> Move {
         let heading = self.heading.turned(turn);
 
         Move {
+            snake: index,
             head: self.head.step(heading, 1),
             heading,
         }
@@ -90,17 +95,17 @@ impl World {
     }
 
     ///
-    /// Makes `step` with snake `index`.
+    /// Makes `step`.
     ///
-    /// Its tail follows, unless there's food under its new
-    /// head. Eating that grows it by one cell.
+    /// The snake's tail follows, unless there's food under
+    /// its new head. Eating that grows it by one cell.
     ///
-    pub(super) fn advance(&mut self, index: usize, step: Move) {
-        let Some(mut snake) = self.snake(index).copied() else {
+    pub(super) fn advance(&mut self, step: Move) {
+        let Some(mut snake) = self.snake(step.snake).copied() else {
             return;
         };
         let neck = SnakeTail {
-            snake: index,
+            snake: step.snake,
             toward_head: step.heading,
         };
         self.set_tail(snake.head, Some(neck));
@@ -113,7 +118,7 @@ impl World {
             snake.tail_end = self.retract(snake.tail_end);
         }
 
-        self.set_snake(index, SnakeState::Alive(snake));
+        self.set_snake(step.snake, SnakeState::Alive(snake));
     }
 
     ///
@@ -153,6 +158,7 @@ mod tests {
 
     fn step(x: i32, y: i32, heading: Direction) -> Move {
         Move {
+            snake: 0,
             head: Point { x, y },
             heading,
         }
@@ -161,7 +167,7 @@ mod tests {
     #[test]
     fn next() {
         let world = world(10, 10, vec![snake(&[(5, 5), (4, 5)], Direction::East)]);
-        let step = world.snake(0).unwrap().next(Turn::Left);
+        let step = world.snake(0).unwrap().next(0, Turn::Left);
 
         assert_eq!(
             (step.head, step.heading),
@@ -194,7 +200,7 @@ mod tests {
             10,
             vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::East)],
         );
-        world.advance(0, step(5, 4, Direction::North));
+        world.advance(step(5, 4, Direction::North));
 
         assert_eq!(
             snake_cells(&world, 0),
@@ -216,7 +222,7 @@ mod tests {
             vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::East)],
         );
         world.food = points(&[(6, 5)]);
-        world.advance(0, step(6, 5, Direction::East));
+        world.advance(step(6, 5, Direction::East));
 
         assert_eq!(
             snake_cells(&world, 0),
@@ -229,7 +235,7 @@ mod tests {
     #[test]
     fn advance_no_tail() {
         let mut world = world(10, 10, vec![snake(&[(5, 5)], Direction::East)]);
-        world.advance(0, step(6, 5, Direction::East));
+        world.advance(step(6, 5, Direction::East));
 
         assert_eq!(
             snake_cells(&world, 0),

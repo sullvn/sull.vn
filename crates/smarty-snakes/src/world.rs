@@ -11,5 +11,5 @@ mod step;
 pub(crate) use direction::Direction;
 pub(crate) use point::Point;
 pub(crate) use size::Size;
-pub(crate) use snake::{PLAYER, Snake, SnakeState, SnakeTail};
+pub(crate) use snake::{Move, PLAYER, Snake, SnakeState, SnakeTail};
 pub(crate) use state::World;

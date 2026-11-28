@@ -64,7 +64,15 @@ impl World {
 
     /// Every living snake.
     pub(crate) fn living(&self) -> impl Iterator<Item = &Snake> {
-        self.snakes.iter().filter_map(SnakeState::alive)
+        self.living_indexed().map(|(_, snake)| snake)
+    }
+
+    /// Every living snake, with its index.
+    pub(crate) fn living_indexed(&self) -> impl Iterator<Item = (usize, &Snake)> {
+        self.snakes
+            .iter()
+            .enumerate()
+            .filter_map(|(index, state)| Some((index, state.alive()?)))
     }
 
     /// Whether `point` is a wall or part of a living snake.

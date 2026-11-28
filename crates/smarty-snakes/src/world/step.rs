@@ -1,15 +1,10 @@
 use rand::Rng;
 
-use super::World;
-use super::snake::Move;
-use crate::turn::Turn;
+use super::{Move, World};
 
 impl World {
     ///
-    /// Moves every living snake at once.
-    ///
-    /// `turns` lists a move for each snake in order, with
-    /// `None` for the dead.
+    /// Makes every move in `moves` at once.
     ///
     /// A snake dies if its new head is off the board, on a
     /// cell any snake covered before the move, or on
@@ -20,24 +15,19 @@ impl World {
     /// The dead leave at once and start counting down to
     /// respawn.
     ///
-    pub(crate) fn step(&mut self, turns: &[Option<Turn>], rng: &mut impl Rng) {
-        let moves: Vec<_> = self
-            .snakes
-            .iter()
-            .zip(turns)
-            .enumerate()
-            .filter_map(|(index, (state, &turn))| Some((index, state.alive()?.next(turn?))))
-            .collect();
+    pub(crate) fn step(&mut self, moves: &[Move], rng: &mut impl Rng) {
+        // Every move is judged against the board as it
+        // stands, before any snake moves.
         let (crashed, survivors): (Vec<_>, Vec<_>) = moves
             .iter()
             .copied()
-            .partition(|&(_, step)| self.crashes(step, &moves));
+            .partition(|&step| self.crashes(step, moves));
 
-        for (index, _) in crashed {
-            self.kill(index);
+        for step in crashed {
+            self.kill(step.snake);
         }
-        for (index, step) in survivors {
-            self.advance(index, step);
+        for step in survivors {
+            self.advance(step);
         }
 
         self.add_food(rng);
@@ -47,11 +37,8 @@ impl World {
     /// Whether making `step` kills a snake, when every
     /// snake makes its move in `moves` at once.
     ///
-    fn crashes(&self, step: Move, moves: &[(usize, Move)]) -> bool {
-        let same_head = moves
-            .iter()
-            .filter(|(_, other)| other.head == step.head)
-            .count();
+    fn crashes(&self, step: Move, moves: &[Move]) -> bool {
+        let same_head = moves.iter().filter(|other| other.head == step.head).count();
 
         self.is_blocked(step.head) || same_head > 1
     }
@@ -61,6 +48,7 @@ impl World {
 mod tests {
     use super::*;
     use crate::testing::{self, SnakeCells, points, seeded, snake, snake_cells};
+    use crate::turn::Turn;
     use crate::world::{Direction, Point, SnakeState};
 
     fn world(snakes: Vec<SnakeCells>) -> World {
@@ -68,8 +56,12 @@ mod tests {
     }
 
     fn step(world: &mut World, turns: &[Turn]) {
-        let turns: Vec<_> = turns.iter().copied().map(Some).collect();
-        world.step(&turns, &mut seeded(1));
+        let moves: Vec<_> = world
+            .living_indexed()
+            .zip(turns)
+            .map(|((index, snake), &turn)| snake.next(index, turn))
+            .collect();
+        world.step(&moves, &mut seeded(1));
     }
 
     fn alive(world: &World) -> Vec<bool> {

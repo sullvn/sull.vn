@@ -5,7 +5,7 @@ use crate::brain::{Brain, PlayerSample};
 use crate::controls::{Input, steer, wake};
 use crate::senses::sense;
 use crate::turn::Turn;
-use crate::world::{Direction, PLAYER, Size, SnakeState, World};
+use crate::world::{Direction, Move, PLAYER, Size, Snake, World};
 
 ///
 /// Snakes on a shared board, where every bot learns
@@ -69,8 +69,8 @@ impl<R: Rng> Game<R> {
             target: player_turn,
         });
 
-        let turns = self.turns(player_turn)?;
-        self.world.step(&turns, &mut self.rng);
+        let moves = self.moves(player_turn)?;
+        self.world.step(&moves, &mut self.rng);
         if self.world.snake(PLAYER).is_none() {
             self.revive_player();
         }
@@ -100,36 +100,33 @@ impl<R: Rng> Game<R> {
         self.parked = true;
     }
 
-    /// Each snake's move in order, with `None` for the dead.
-    fn turns(&self, player_turn: Turn) -> Result<Vec<Option<Turn>>, LengthError> {
+    /// Every living snake's next move.
+    fn moves(&self, player_turn: Turn) -> Result<Vec<Move>, LengthError> {
         self.world
-            .snakes
-            .iter()
-            .enumerate()
-            .map(|(index, state)| self.turn_for(index, state, player_turn))
+            .living_indexed()
+            .map(|(index, snake)| self.next_move(index, snake, player_turn))
             .collect()
     }
 
     ///
-    /// The move snake `index` makes, or `None` if it's dead.
+    /// Snake `index`'s next move.
     ///
     /// The player makes `player_turn`. A bot makes the
     /// turn the brain predicts.
     ///
-    fn turn_for(
+    fn next_move(
         &self,
         index: usize,
-        state: &SnakeState,
+        snake: &Snake,
         player_turn: Turn,
-    ) -> Result<Option<Turn>, LengthError> {
-        let Some(snake) = state.alive() else {
-            return Ok(None);
+    ) -> Result<Move, LengthError> {
+        let turn = if index == PLAYER {
+            player_turn
+        } else {
+            self.brain.predict(&sense(&self.world, snake))?
         };
-        if index == PLAYER {
-            return Ok(Some(player_turn));
-        }
 
-        self.brain.predict(&sense(&self.world, snake)).map(Some)
+        Ok(snake.next(index, turn))
     }
 }
 

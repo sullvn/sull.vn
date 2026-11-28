@@ -1,4 +1,4 @@
-use super::{PLAYER, Point, SnakeState, SnakeTail, World};
+use super::{PLAYER, SnakeTail, World};
 use crate::cell::Cell;
 
 impl World {
@@ -11,10 +11,8 @@ impl World {
             .collect();
         let food = self.food.iter().map(|&food| (food, Cell::Food));
         let heads = self
-            .snakes
-            .iter()
-            .enumerate()
-            .filter_map(|(index, state)| head(index, state));
+            .living_indexed()
+            .map(|(index, snake)| (snake.head, head_cell(index)));
 
         for (point, cell) in food.chain(heads) {
             let code = self
@@ -37,16 +35,6 @@ const fn tail_cell(tail: Option<SnakeTail>) -> Cell {
         Some(SnakeTail { snake: PLAYER, .. }) => Cell::PlayerTail,
         Some(_) => Cell::BotTail,
     }
-}
-
-///
-/// Where the head of snake `index` is and the cell to
-/// draw there, if it's alive.
-///
-fn head(index: usize, state: &SnakeState) -> Option<(Point, Cell)> {
-    let snake = state.alive()?;
-
-    Some((snake.head, head_cell(index)))
 }
 
 /// The cell for the head of snake `index`.
