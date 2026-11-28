@@ -1,8 +1,20 @@
+use super::World;
 use super::direction::Direction;
 use super::point::Point;
-use super::{SnakeState, World};
 use crate::tuning::RESPAWN_MOVES;
 use crate::turn::Turn;
+
+/// The index of the player's snake. The rest are bots.
+pub(crate) const PLAYER: usize = 0;
+
+/// One of the game's snakes: on the board, or waiting to return to it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum SnakeState {
+    Alive(Snake),
+
+    /// Dead, with this many moves until it reappears.
+    Respawning(u32),
+}
 
 ///
 /// A living snake.
@@ -34,6 +46,16 @@ pub(crate) struct SnakeTail {
 pub(super) struct Move {
     pub(super) head: Point,
     pub(super) heading: Direction,
+}
+
+impl SnakeState {
+    /// The snake, if it's alive.
+    pub(crate) const fn alive(&self) -> Option<&Snake> {
+        match self {
+            Self::Alive(snake) => Some(snake),
+            Self::Respawning(_) => None,
+        }
+    }
 }
 
 impl Snake {
