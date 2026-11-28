@@ -21,27 +21,36 @@ impl World {
 
     ///
     /// Brings dead snake `index` back as a new snake, in a
-    /// random clear spot.
+    /// random spot where it fits.
     ///
-    /// The cells it covers and the cells ahead of it are
-    /// free, so it never spawns into a crash. If there's
-    /// no such spot, it waits to try again.
+    /// If there's no such spot, it waits to try again.
     ///
     pub(crate) fn respawn(&mut self, index: usize, random: &mut impl FnMut() -> f64) {
-        let spots: Vec<_> = self
+        let spots = self
             .size
             .spawn_points()
             .flat_map(|head| Direction::ALL.map(|heading| (head, heading)))
-            .filter(|&(head, heading)| {
-                (1 - SPAWN_LENGTH..=SPAWN_LENGTH).all(|steps| self.free(head.step(heading, steps)))
-            })
-            .collect();
-        let Some(&(head, heading)) = pick(random, spots.iter()) else {
+            .filter(|&(head, heading)| self.snake_fits(head, heading));
+        let Some((head, heading)) = pick(random, spots) else {
             self.set_snake(index, SnakeState::Respawning(0));
             return;
         };
 
         self.spawn(index, head, heading);
+    }
+
+    ///
+    /// Whether a new snake fits with its head on `head`,
+    /// facing `heading`.
+    ///
+    /// Its own cells must be free, and as many cells
+    /// ahead, so it never spawns into a crash.
+    ///
+    fn snake_fits(&self, head: Point, heading: Direction) -> bool {
+        let tail_end = 1 - SPAWN_LENGTH;
+        let ahead = SPAWN_LENGTH;
+
+        (tail_end..=ahead).all(|steps| self.free(head.step(heading, steps)))
     }
 
     ///

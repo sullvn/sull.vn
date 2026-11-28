@@ -82,7 +82,7 @@ impl Size {
     }
 
     /// Cells where a snake's head may spawn, away from the walls.
-    pub(crate) fn spawn_points(self) -> impl Iterator<Item = Point> {
+    pub(crate) fn spawn_points(self) -> impl Iterator<Item = Point> + Clone {
         grid(
             SPAWN_MARGIN..self.width - SPAWN_MARGIN,
             SPAWN_MARGIN..self.height - SPAWN_MARGIN,
