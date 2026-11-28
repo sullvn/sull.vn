@@ -237,23 +237,27 @@ mod tests {
 
     #[test]
     fn clones_learn() {
-        let learned = clone_meals(true);
-        let unlearned = clone_meals(false);
+        let trained = simulate_clone_meals(true);
+        let untrained = simulate_clone_meals(false);
 
         assert!(
-            learned > 3 * unlearned,
-            "clones of a player who heads for food eat far more than clones that never learned, \
-             but ate {learned} to {unlearned}"
+            trained > 3 * untrained,
+            "clones that train on a player who chases food eat far more than clones that never \
+             train, but ate {trained} to {untrained}"
         );
     }
 
     ///
-    /// Food eaten by clones while a player heads for food.
+    /// Simulates a game and returns how much food its
+    /// clones ate.
     ///
-    /// Without `learning`, the brain forgets every lesson,
-    /// so it never trains.
+    /// A scripted player chases the nearest food for 300
+    /// moves. With `training` off, the brain's memory is
+    /// wiped before every move so it never trains, which
+    /// gives the baseline that trained clones are measured
+    /// against.
     ///
-    fn clone_meals(learning: bool) -> usize {
+    fn simulate_clone_meals(training: bool) -> usize {
         /// Moves played in each game, enough for clones to learn.
         const MOVES: usize = 300;
 
@@ -262,22 +266,26 @@ mod tests {
         let mut meals = 0;
 
         for _ in 0..MOVES {
-            if !learning {
+            if !training {
                 game.brain.memory.clear();
             }
             let food = game.world.food.clone();
             game.tick(food_seeker(&game.world, &mut player)).unwrap();
 
-            meals += game
-                .world
-                .slots
-                .iter()
-                .skip(1)
-                .filter_map(Slot::alive)
-                .filter(|clone| food.contains(&clone.head))
-                .count();
+            meals += fed_clones(&game.world, &food);
         }
 
         meals
+    }
+
+    /// Clones whose head is on a cell that held `food` before the move.
+    fn fed_clones(world: &World, food: &[Point]) -> usize {
+        world
+            .slots
+            .iter()
+            .skip(1)
+            .filter_map(Slot::alive)
+            .filter(|clone| food.contains(&clone.head))
+            .count()
     }
 }
