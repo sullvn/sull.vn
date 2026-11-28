@@ -34,17 +34,17 @@ impl World {
 const fn tail_cell(tail: Option<SnakeTail>) -> Cell {
     match tail {
         None => Cell::Empty,
-        Some(SnakeTail { snake: YOU, .. }) => Cell::You,
-        Some(_) => Cell::Clone,
+        Some(SnakeTail { snake: YOU, .. }) => Cell::PlayerTail,
+        Some(_) => Cell::BotTail,
     }
 }
 
 /// The cell for the head of snake `index`.
 const fn head_cell(index: usize) -> Cell {
     if index == YOU {
-        Cell::YourHead
+        Cell::PlayerHead
     } else {
-        Cell::CloneHead
+        Cell::BotHead
     }
 }
 

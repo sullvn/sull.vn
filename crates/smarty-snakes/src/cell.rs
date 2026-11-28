@@ -10,17 +10,17 @@ pub enum Cell {
     /// Food for any snake.
     Food = 1,
 
-    /// Part of your snake, behind its head.
-    You = 2,
+    /// Part of the player's tail.
+    PlayerTail = 2,
 
-    /// Your snake's head.
-    YourHead = 3,
+    /// The player's head.
+    PlayerHead = 3,
 
-    /// Part of a clone, behind its head.
-    Clone = 4,
+    /// Part of a bot's tail.
+    BotTail = 4,
 
-    /// A clone's head.
-    CloneHead = 5,
+    /// A bot's head.
+    BotHead = 5,
 }
 
 impl From<Cell> for u8 {
@@ -28,10 +28,10 @@ impl From<Cell> for u8 {
         match cell {
             Cell::Empty => 0,
             Cell::Food => 1,
-            Cell::You => 2,
-            Cell::YourHead => 3,
-            Cell::Clone => 4,
-            Cell::CloneHead => 5,
+            Cell::PlayerTail => 2,
+            Cell::PlayerHead => 3,
+            Cell::BotTail => 4,
+            Cell::BotHead => 5,
         }
     }
 }
