@@ -124,20 +124,20 @@
     outline: 0.0625rem solid color-mix(in oklab, var(--fg) 25%, transparent);
   }
 
-  /* Bodies are paler than heads, so a parked snake shows which way it faces */
-  .you {
+  /* Tails are paler than heads, so a parked snake shows which way it faces */
+  .player-tail {
     fill: color-mix(in oklab, var(--green) 60%, var(--bg));
   }
 
-  .yourHead {
+  .player-head {
     fill: var(--green);
   }
 
-  .clone {
+  .bot-tail {
     fill: color-mix(in oklab, var(--purple) 60%, var(--bg));
   }
 
-  .cloneHead {
+  .bot-head {
     fill: var(--purple);
   }
 

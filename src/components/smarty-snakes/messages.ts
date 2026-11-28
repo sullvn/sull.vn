@@ -51,12 +51,32 @@ export interface Frame {
 
 /**
  * Names for each `Cell` code, in code order
+ *
+ * They double as CSS classes. The type ties each name to its code, so
+ * renaming or reordering a `Cell` in the crate fails to compile here.
+ *
  */
 export const cellNames = [
   'empty',
   'food',
-  'you',
-  'yourHead',
-  'clone',
-  'cloneHead',
-] as const satisfies Record<Cell, string>
+  'player-tail',
+  'player-head',
+  'bot-tail',
+  'bot-head',
+] as const satisfies CellNames
+
+/**
+ * Each `Cell` code paired with its name in kebab case
+ */
+type CellNames = {
+  readonly [Name in keyof typeof Cell & string as (typeof Cell)[Name]]: KebabCase<Name>
+}
+
+/**
+ * `PlayerTail` as `player-tail`
+ */
+type KebabCase<Name extends string> = Name extends `${infer First}${infer Rest}`
+  ? Rest extends Uncapitalize<Rest>
+    ? `${Lowercase<First>}${KebabCase<Rest>}`
+    : `${Lowercase<First>}-${KebabCase<Rest>}`
+  : Name
