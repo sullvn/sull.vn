@@ -1,0 +1,8 @@
+---
+import Base from '../layouts/Base.astro'
+import SmartySnakes from '../components/smarty-snakes/SmartySnakes.svelte'
+---
+
+<Base title="Smarty Snakes test" description="A snake game where every other snake learns from you">
+  <SmartySnakes client:only="svelte" />
+</Base>
