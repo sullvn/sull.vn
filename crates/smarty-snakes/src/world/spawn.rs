@@ -29,7 +29,7 @@ impl World {
         let spots = self
             .size
             .spawn_points()
-            .flat_map(|head| Direction::ALL.map(|heading| (head, heading)))
+            .flat_map(each_heading)
             .filter(|&(head, heading)| self.snake_fits(head, heading));
         let Some((head, heading)) = pick(random, spots) else {
             self.set_snake(index, SnakeState::Respawning(0));
@@ -75,6 +75,11 @@ impl World {
         };
         self.set_snake(index, SnakeState::Alive(snake));
     }
+}
+
+/// `head` paired with each direction a snake there could face.
+fn each_heading(head: Point) -> [(Point, Direction); 4] {
+    Direction::ALL.map(|heading| (head, heading))
 }
 
 #[cfg(test)]

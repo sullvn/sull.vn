@@ -119,14 +119,12 @@ fn balanced_sample<'a>(
     samples: &'a VecDeque<PlayerSample>,
     random: &mut impl FnMut() -> f64,
 ) -> Option<Sample<'a>> {
+    let with_target = |turn: Turn| samples.iter().filter(move |sample| sample.target == turn);
     let turns = Turn::ALL
         .into_iter()
-        .filter(|&turn| samples.iter().any(|sample| sample.target == turn));
+        .filter(|&turn| with_target(turn).next().is_some());
     let turn = pick(random, turns)?;
-    let sample = pick(
-        random,
-        samples.iter().filter(|sample| sample.target == turn),
-    )?;
+    let sample = pick(random, with_target(turn))?;
 
     Some(Sample {
         inputs: &sample.inputs,

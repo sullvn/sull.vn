@@ -4,7 +4,7 @@ use crate::brain::{Brain, PlayerSample};
 use crate::controls::{Input, steer, wake};
 use crate::senses::sense;
 use crate::turn::Turn;
-use crate::world::{Direction, PLAYER, Size, World};
+use crate::world::{Direction, PLAYER, Size, SnakeState, World};
 
 ///
 /// Snakes on a shared board, where every bot learns
@@ -100,23 +100,36 @@ impl<R: FnMut() -> f64> Game<R> {
         self.parked = true;
     }
 
-    /// Each living snake's move: `player_turn` for the player, and the brain's for bots.
+    /// Each snake's move in order, with `None` for the dead.
     fn turns(&self, player_turn: Turn) -> Result<Vec<Option<Turn>>, LengthError> {
         self.world
             .snakes
             .iter()
             .enumerate()
-            .map(|(index, state)| {
-                let Some(snake) = state.alive() else {
-                    return Ok(None);
-                };
-                if index == PLAYER {
-                    return Ok(Some(player_turn));
-                }
-
-                self.brain.predict(&sense(&self.world, snake)).map(Some)
-            })
+            .map(|(index, state)| self.turn_for(index, state, player_turn))
             .collect()
+    }
+
+    ///
+    /// The move snake `index` makes, or `None` if it's dead.
+    ///
+    /// The player makes `player_turn`. A bot makes the
+    /// turn the brain predicts.
+    ///
+    fn turn_for(
+        &self,
+        index: usize,
+        state: &SnakeState,
+        player_turn: Turn,
+    ) -> Result<Option<Turn>, LengthError> {
+        let Some(snake) = state.alive() else {
+            return Ok(None);
+        };
+        if index == PLAYER {
+            return Ok(Some(player_turn));
+        }
+
+        self.brain.predict(&sense(&self.world, snake)).map(Some)
     }
 }
 
