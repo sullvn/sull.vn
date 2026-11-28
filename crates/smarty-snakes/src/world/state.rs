@@ -8,6 +8,17 @@ use super::{Direction, Point, Size, Snake, SnakeState, SnakeTail};
 /// Every snake moves at once, and food reappears as
 /// it's eaten, one piece per snake.
 ///
+/// Each fact is kept once, in the shape it's asked for:
+///
+/// - Tails are a grid, because the game mostly asks
+///   what's on a cell.
+///
+/// - Food is a short list, because the game asks where
+///   all of it is.
+///
+/// - Snakes are a list in a fixed order, so a snake
+///   keeps its index when it dies and respawns.
+///
 #[derive(Clone, Debug)]
 pub(crate) struct World {
     /// The board's width and height in cells.
