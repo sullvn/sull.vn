@@ -2,7 +2,7 @@ import { Game, Input } from '#rust/smarty-snakes'
 import type { FromWorker, ToWorker } from './messages.ts'
 
 /**
- * Time between moves, for eight moves a second
+ * Milliseconds between moves, for eight moves a second
  */
 const moveInterval = 125
 
@@ -29,7 +29,7 @@ send({ type: 'ready' })
 
 /**
  * Plays a move with the latest input, keeping the clock running only while
- * you move
+ * the player moves
  */
 function tick(): void {
   if (!game) return
