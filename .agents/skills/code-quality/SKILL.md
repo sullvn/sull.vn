@@ -56,7 +56,7 @@ Put the reason for a choice where a reader will ask about it:
 
 Don't end a single-sentence comment with a period. With two or more sentences, end each one with a period.
 
-When a comment has more than one paragraph, start and end it with an empty comment line. This applies to every language and comment style:
+When a comment takes more than one line, start and end it with an empty comment line. This applies to every language and comment style:
 
 ```ts
 /**
@@ -77,7 +77,16 @@ When a comment has more than one paragraph, start and end it with an empty comme
 ///
 ```
 
-Single-paragraph comments, even multi-line ones, don't get the empty lines.
+A single sentence that wraps over several lines gets them too:
+
+```rust
+///
+/// Counts down each dead snake's wait, respawning
+/// those whose wait is over
+///
+```
+
+A comment that fits on one line doesn't get the empty lines.
 
 Put an empty line between the items of a bulleted list in a comment:
 

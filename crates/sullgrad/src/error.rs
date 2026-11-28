@@ -1,8 +1,6 @@
 //! Errors from building, running and training models
 
-///
 /// A slice had the wrong length for the model
-///
 #[derive(Debug, PartialEq, Eq)]
 pub enum LengthError {
     /// The batch was empty, or too large to average

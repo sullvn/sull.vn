@@ -144,9 +144,7 @@ impl Model {
     }
 }
 
-///
 /// One example to learn from
-///
 #[derive(Debug, Clone, Copy)]
 pub struct Sample<'a> {
     /// What the model is given

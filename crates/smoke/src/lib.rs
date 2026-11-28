@@ -2,6 +2,7 @@
 
 use wasm_bindgen::prelude::*;
 
+///
 /// Returns a greeting for `name`.
 ///
 /// ```
@@ -21,6 +22,7 @@ pub fn sum(values: &[f64]) -> f64 {
     values.iter().sum()
 }
 
+///
 /// Parses a decimal byte.
 ///
 /// # Errors
