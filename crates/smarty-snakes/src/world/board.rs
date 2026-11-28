@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use super::point::Point;
 use crate::tuning::{CELLS_PER_SNAKE, MIN_SNAKES, SPAWN_MARGIN};
 
@@ -41,7 +43,7 @@ impl Board {
 
     /// Every cell, row by row.
     pub(crate) fn points(self) -> impl Iterator<Item = Point> {
-        (0..self.height).flat_map(move |y| (0..self.width).map(move |x| Point { x, y }))
+        grid(0..self.width, 0..self.height)
     }
 
     /// Where `point` falls in a row-by-row list of cells.
@@ -81,13 +83,16 @@ impl Board {
 
     /// Cells where a snake's head may spawn, away from the walls.
     pub(crate) fn spawn_points(self) -> impl Iterator<Item = Point> {
-        self.points().filter(move |point| {
-            let x = SPAWN_MARGIN..self.width - SPAWN_MARGIN;
-            let y = SPAWN_MARGIN..self.height - SPAWN_MARGIN;
-
-            x.contains(&point.x) && y.contains(&point.y)
-        })
+        grid(
+            SPAWN_MARGIN..self.width - SPAWN_MARGIN,
+            SPAWN_MARGIN..self.height - SPAWN_MARGIN,
+        )
     }
+}
+
+/// Every point with `x` in `xs` and `y` in `ys`, row by row.
+fn grid(xs: Range<i32>, ys: Range<i32>) -> impl Iterator<Item = Point> {
+    ys.flat_map(move |y| xs.clone().map(move |x| Point { x, y }))
 }
 
 #[cfg(test)]
