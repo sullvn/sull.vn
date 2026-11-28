@@ -5,13 +5,21 @@ use crate::world::{Point, Size, Snake, World};
 /// What a snake notices, all relative to its heading.
 ///
 /// 1. Obstacle to the left
+///
 /// 2. Obstacle ahead
+///
 /// 3. Obstacle to the right
+///
 /// 4. Nearest food, cells ahead
+///
 /// 5. Nearest food, cells to the right
+///
 /// 6. Nearest food, whether ahead or behind
+///
 /// 7. Nearest food, whether right or left
+///
 /// 8. Nearest other snake's head, cells ahead
+///
 /// 9. Nearest other snake's head, cells to the right
 ///
 /// Obstacles are walls or any snake's body, and range

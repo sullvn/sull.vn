@@ -19,6 +19,7 @@ impl Expression {
     /// - Its output is centered on `0`. Sigmoid's is
     ///   always positive, so it nudges the next layer's
     ///   weights all in the same direction.
+    ///
     /// - Its slope is up to 4x steeper, so it passes
     ///   back more of the gradient.
     ///
@@ -33,9 +34,11 @@ impl Expression {
     /// Tanh is still the better fit when:
     ///
     /// - Output must stay between `-1` and `1`.
+    ///
     /// - Output is fed back in as input step after step,
     ///   where `ReLU`'s unlimited output can grow out of
     ///   control.
+    ///
     /// - The network is small, so tanh's flattening
     ///   costs less than `ReLU` units getting stuck at
     ///   `0` and no longer learning.

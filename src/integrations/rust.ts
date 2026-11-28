@@ -10,7 +10,9 @@ import { promisify } from 'node:util'
  * Importing a crate looks like `#rust/example`.
  *
  * - Rust libraries can be called at build time or run time
+ *
  * - Basic hot updates
+ *
  * - Crates are compiled using wasm-bindgen
  *
  */
@@ -180,6 +182,7 @@ async function generateBindings({ name, libName }: Crate, profile: Profile): Pro
  * Cargo profile for WASM builds
  *
  * - `dev` keeps rebuilds fast in `astro dev`
+ *
  * - `wasm-release` optimizes for size everywhere else
  *
  */

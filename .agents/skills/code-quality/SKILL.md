@@ -98,7 +98,7 @@ let (crashed, survivors) = judge(moves);
 
 A comment that fits on one line doesn't get the empty lines.
 
-Put an empty line between the items of a bulleted list in a comment:
+Put an empty line between the items of a bulleted or numbered list in a comment:
 
 ```rust
 ///
