@@ -16,8 +16,10 @@ impl World {
     /// respawn.
     ///
     pub(crate) fn step(&mut self, moves: &[Move], rng: &mut impl Rng) {
+        //
         // Every move is judged against the board as it
         // stands, before any snake moves
+        //
         let (crashed, survivors): (Vec<_>, Vec<_>) = moves
             .iter()
             .copied()

@@ -12,8 +12,10 @@ edition = "2024"
 #
 
 [workspace.lints.rust]
+#
 # Groups need -1 priority so later, more specific rules
 # can fine tune them
+#
 let_underscore = { level = "warn", priority = -1 }
 rust_2018_idioms = { level = "warn", priority = -1 }
 unused = { level = "warn", priority = -1 }

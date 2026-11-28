@@ -31,6 +31,7 @@ export function rust(): AstroIntegration {
           vite: {
             plugins: [
               {
+                //
                 // Static builds move client assets out of `dist/.prerender/` before
                 // rendering pages, so build-time code would load WASM from a URL
                 // that's gone.
@@ -47,8 +48,10 @@ export function rust(): AstroIntegration {
                       },
               },
             ],
+            //
             // Crates load their WASM with a top-level await, which only works in
             // ES modules
+            //
             worker: { format: 'es' },
           },
         })
@@ -64,6 +67,7 @@ export function rust(): AstroIntegration {
         let queued = false
         let latest = Promise.resolve()
 
+        //
         // Saving several files at once fires several events.
         //
         // Overlapping builds would race to write the same output.

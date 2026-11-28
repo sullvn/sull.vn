@@ -86,6 +86,16 @@ A single sentence that wraps over several lines gets them too:
 ///
 ```
 
+So do line comments inside a function:
+
+```rust
+//
+// Every move is judged against the board as it stands,
+// before any snake moves
+//
+let (crashed, survivors) = judge(moves);
+```
+
 A comment that fits on one line doesn't get the empty lines.
 
 Put an empty line between the items of a bulleted list in a comment:
