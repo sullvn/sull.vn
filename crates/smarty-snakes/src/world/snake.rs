@@ -17,9 +17,6 @@ pub(crate) struct Snake {
 
     /// The last cell of its tail, or its head if it has none.
     pub(crate) tail_end: Point,
-
-    /// Moves since the snake last ate.
-    pub(crate) hunger: u32,
 }
 
 /// One cell of a snake's tail.
@@ -90,10 +87,8 @@ impl World {
 
         if self.food.contains(&step.head) {
             self.food.retain(|&food| food != step.head);
-            snake.hunger = 0;
         } else {
             snake.tail_end = self.retract(snake.tail_end);
-            snake.hunger += 1;
         }
 
         self.set_snake(index, SnakeState::Alive(snake));
@@ -185,12 +180,9 @@ mod tests {
             "advance moves the head and the tail follows"
         );
         assert_eq!(
-            (
-                world.tail(Point { x: 3, y: 5 }),
-                world.snake(0).unwrap().hunger
-            ),
-            (None, 1),
-            "advance without eating leaves the last cell, and adds hunger"
+            world.tail(Point { x: 3, y: 5 }),
+            None,
+            "advance without eating leaves the last cell"
         );
     }
 
@@ -202,9 +194,6 @@ mod tests {
             vec![snake(&[(5, 5), (4, 5), (3, 5)], Direction::East)],
         );
         world.food = points(&[(6, 5)]);
-        if let Some(SnakeState::Alive(hungry)) = world.snakes.first_mut() {
-            hungry.hunger = 10;
-        }
         world.advance(0, step(6, 5, Direction::East));
 
         assert_eq!(
@@ -212,11 +201,7 @@ mod tests {
             points(&[(6, 5), (5, 5), (4, 5), (3, 5)]),
             "advance onto food grows by one cell"
         );
-        assert_eq!(
-            (world.food.len(), world.snake(0).unwrap().hunger),
-            (0, 0),
-            "advance onto food eats it, and resets hunger"
-        );
+        assert_eq!(world.food.len(), 0, "advance onto food eats it");
     }
 
     #[test]

@@ -73,7 +73,6 @@ impl World {
             head,
             heading,
             tail_end: head.step(behind, SPAWN_LENGTH - 1),
-            hunger: 0,
         };
         self.set_snake(index, SnakeState::Alive(snake));
     }

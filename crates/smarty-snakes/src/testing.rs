@@ -86,7 +86,6 @@ pub(crate) fn world(width: u16, height: u16, snakes: Vec<SnakeCells>) -> World {
             head: cells[0],
             heading,
             tail_end: *cells.last().unwrap(),
-            hunger: 0,
         }));
     }
 

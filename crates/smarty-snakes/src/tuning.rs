@@ -16,9 +16,6 @@ pub(crate) const SPAWN_LENGTH: i32 = 3;
 ///
 pub(crate) const SPAWN_MARGIN: i32 = 4;
 
-/// Moves a snake can make without eating before it starves.
-pub(crate) const STARVATION_MOVES: u32 = 150;
-
 /// Moves a dead bot waits before it reappears.
 pub(crate) const RESPAWN_MOVES: u32 = 4;
 

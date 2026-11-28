@@ -1,6 +1,5 @@
 use rand::Rng;
 
-use crate::tuning::STARVATION_MOVES;
 use crate::turn::Turn;
 
 mod cells;
@@ -32,7 +31,7 @@ pub(crate) struct World {
     /// The board's width and height in cells.
     pub(crate) size: Size,
 
-    /// Each snake's head, heading and hunger, or its wait to respawn.
+    /// Each snake's head and heading, or its wait to respawn.
     pub(crate) snakes: Vec<SnakeState>,
 
     /// The piece of tail on each cell, if any, row by row.
@@ -112,8 +111,8 @@ impl World {
     /// that's about to leave is deadly, and so is swapping
     /// places head to head.
     ///
-    /// Snakes also die of hunger. The dead leave at once
-    /// and start counting down to respawn.
+    /// The dead leave at once and start counting down to
+    /// respawn.
     ///
     pub(crate) fn step(&mut self, turns: &[Option<Turn>], rng: &mut impl Rng) {
         let moves: Vec<_> = self
@@ -133,9 +132,6 @@ impl World {
         }
         for (index, step) in survivors {
             self.advance(index, step);
-            if self.is_starved(index) {
-                self.kill(index);
-            }
         }
 
         self.add_food(rng);
@@ -152,12 +148,6 @@ impl World {
             .count();
 
         self.is_blocked(step.head) || same_head > 1
-    }
-
-    /// Whether snake `index` has gone too long without eating.
-    fn is_starved(&self, index: usize) -> bool {
-        self.snake(index)
-            .is_some_and(|snake| snake.hunger >= STARVATION_MOVES)
     }
 
     /// Whether `point` is on the board with no snake or food on it.
@@ -353,23 +343,6 @@ mod tests {
         assert!(
             world.food.iter().all(|&food| !world.is_blocked(food)),
             "step puts the new food on a free cell"
-        );
-    }
-
-    #[test]
-    fn starves() {
-        let mut world = world(vec![snake(&[(1, 5), (0, 5)], Direction::East)]);
-        if let Some(SnakeState::Alive(hungry)) = world.snakes.first_mut() {
-            hungry.hunger = 148;
-        }
-        step(&mut world, &[Turn::Straight]);
-        let survives = alive(&world);
-        step(&mut world, &[Turn::Straight]);
-
-        assert_eq!(
-            [survives, alive(&world)],
-            [[true], [false]],
-            "step kills a snake on its 150th move without eating"
         );
     }
 }
