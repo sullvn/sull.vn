@@ -70,7 +70,7 @@ impl Size {
     }
 
     ///
-    /// How many snakes play on a board this size, counting yours.
+    /// How many snakes play on a board this size, counting the player's.
     ///
     /// Rounded to the nearest snake.
     ///

@@ -16,8 +16,8 @@ pub(crate) use snake::{Snake, SnakeTail};
 
 use snake::Move;
 
-/// The index of the snake you steer. The rest are clones.
-pub(crate) const YOU: usize = 0;
+/// The index of the player's snake. The rest are bots.
+pub(crate) const PLAYER: usize = 0;
 
 ///
 /// The board, its snakes, and their food.

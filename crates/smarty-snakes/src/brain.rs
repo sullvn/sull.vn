@@ -12,11 +12,11 @@ use crate::tuning::{
 use crate::turn::Turn;
 
 ///
-/// The network every clone shares, and the samples it
+/// The network every bot shares, and the samples it
 /// learns from.
 ///
-/// Every sample is one of your moves, so the clones
-/// learn to move like you.
+/// Every sample is one of the player's moves, so the
+/// bots learn to move like the player.
 ///
 #[derive(Debug)]
 pub(crate) struct Brain {
@@ -112,7 +112,7 @@ fn batch<'a>(
 /// brain learns little else.
 ///
 /// Drawing from every sample also beats taking the
-/// newest. In simulations, clones trained on the newest
+/// newest. In simulations, bots trained on the newest
 /// ate about 7% less.
 ///
 fn balanced_sample<'a>(

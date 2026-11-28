@@ -1,4 +1,4 @@
-//! A snake game where every other snake learns from you
+//! A snake game where every other snake learns from the player
 use wasm_bindgen::prelude::*;
 
 mod brain;
@@ -30,7 +30,7 @@ pub struct Game(game::Game<fn() -> f64>);
 impl Game {
     ///
     /// A new game on a board `width` by `height` cells,
-    /// with you parked.
+    /// with the player parked.
     ///
     /// # Errors
     ///
@@ -46,10 +46,10 @@ impl Game {
     }
 
     ///
-    /// Plays one move, with `input` steering you.
+    /// Plays one move, with `input` steering the player.
     ///
-    /// Does nothing if you're parked and `input` doesn't
-    /// wake you.
+    /// Does nothing if the player is parked and `input`
+    /// doesn't wake them.
     ///
     /// # Errors
     ///
@@ -63,7 +63,7 @@ impl Game {
             .map_err(|error| JsError::new(&format!("Brain error: {error:?}")))
     }
 
-    /// Whether you're parked, so nothing moves until you do.
+    /// Whether the player is parked, so nothing moves until they do.
     #[wasm_bindgen(getter)]
     #[must_use]
     pub fn parked(&self) -> bool {

@@ -4,15 +4,15 @@ use crate::turn::Turn;
 use crate::world::Direction;
 
 ///
-/// What you pressed or tapped since the last move.
+/// What the player pressed or tapped since the last move.
 ///
 /// Arrows point on the screen. Taps turn relative to
-/// your snake's heading.
+/// their snake's heading.
 ///
 #[wasm_bindgen]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Input {
-    /// Nothing, so your snake goes straight.
+    /// Nothing, so the player's snake goes straight.
     None = 0,
 
     /// The up arrow.

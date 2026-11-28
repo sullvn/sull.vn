@@ -1,9 +1,9 @@
 //! Numbers that shape how the game plays and learns
 
-/// Board cells for each snake, counting yours.
+/// Board cells for each snake, counting the player's.
 pub(crate) const CELLS_PER_SNAKE: i32 = 200;
 
-/// Fewest snakes on a board: yours and one clone.
+/// Fewest snakes on a board: the player's and one bot.
 pub(crate) const MIN_SNAKES: usize = 2;
 
 /// Length of a newly spawned snake.
@@ -19,7 +19,7 @@ pub(crate) const SPAWN_MARGIN: i32 = 4;
 /// Moves a snake can make without eating before it starves.
 pub(crate) const STARVATION_MOVES: u32 = 150;
 
-/// Moves a dead clone waits before it reappears.
+/// Moves a dead bot waits before it reappears.
 pub(crate) const RESPAWN_MOVES: u32 = 4;
 
 ///

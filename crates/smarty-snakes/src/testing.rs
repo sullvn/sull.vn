@@ -3,7 +3,7 @@ use rand::{RngExt, SeedableRng, rngs::StdRng};
 use crate::controls::Input;
 use crate::random::pick;
 use crate::turn::Turn;
-use crate::world::{Direction, Point, Size, Snake, SnakeState, SnakeTail, World, YOU};
+use crate::world::{Direction, PLAYER, Point, Size, Snake, SnakeState, SnakeTail, World};
 
 /// A snake to put in a test world.
 #[derive(Debug)]
@@ -19,20 +19,20 @@ pub(crate) struct SnakeCells {
 /// random safe move instead.
 ///
 pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> Input {
-    let Some(you) = world.snake(YOU) else {
+    let Some(player) = world.snake(PLAYER) else {
         return Input::Up;
     };
     let safe: Vec<_> = [Turn::Straight, Turn::Left, Turn::Right]
-        .map(|turn| you.heading.turned(turn))
+        .map(|turn| player.heading.turned(turn))
         .into_iter()
-        .filter(|&direction| !world.is_blocked(you.head.step(direction, 1)))
+        .filter(|&direction| !world.is_blocked(player.head.step(direction, 1)))
         .collect();
     let food = world
         .food
         .iter()
-        .min_by_key(|&&food| you.head.distance(food));
+        .min_by_key(|&&food| player.head.distance(food));
     let closest = safe.iter().min_by_key(|&&direction| {
-        food.map_or(0, |&food| you.head.step(direction, 1).distance(food))
+        food.map_or(0, |&food| player.head.step(direction, 1).distance(food))
     });
     let direction = if random() < 0.1 {
         pick(random, safe.iter())
@@ -40,7 +40,7 @@ pub(crate) fn food_seeker(world: &World, random: &mut impl FnMut() -> f64) -> In
         closest
     };
 
-    match direction.copied().unwrap_or(you.heading) {
+    match direction.copied().unwrap_or(player.heading) {
         Direction::North => Input::Up,
         Direction::East => Input::Right,
         Direction::South => Input::Down,

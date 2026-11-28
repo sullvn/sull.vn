@@ -4,14 +4,14 @@ use crate::brain::{Brain, PlayerSample};
 use crate::controls::{Input, steer, wake};
 use crate::senses::sense;
 use crate::turn::Turn;
-use crate::world::{Size, World, YOU};
+use crate::world::{PLAYER, Size, World};
 
 ///
-/// Snakes on a shared board, where every clone learns
-/// from you.
+/// Snakes on a shared board, where every bot learns
+/// from the player.
 ///
-/// The world only moves while you do. You start parked,
-/// and park again whenever you die.
+/// The world only moves while the player does. They
+/// start parked, and park again whenever they die.
 ///
 /// `random` returns a number from 0 to 1, and is the
 /// game's only source of chance.
@@ -25,7 +25,7 @@ pub(crate) struct Game<R> {
 }
 
 impl<R: FnMut() -> f64> Game<R> {
-    /// A new game, with you parked.
+    /// A new game, with the player parked.
     pub(crate) fn new(size: Size, mut random: R) -> Self {
         let world = World::new(size, &mut random);
         let brain = Brain::new(&mut random);
@@ -38,7 +38,7 @@ impl<R: FnMut() -> f64> Game<R> {
         }
     }
 
-    /// Whether you're parked, so nothing moves.
+    /// Whether the player is parked, so nothing moves.
     pub(crate) const fn parked(&self) -> bool {
         self.parked
     }
@@ -49,14 +49,14 @@ impl<R: FnMut() -> f64> Game<R> {
     }
 
     ///
-    /// Plays one move, with `input` steering you.
+    /// Plays one move, with `input` steering the player.
     ///
-    /// Does nothing if you're parked and `input` doesn't
-    /// wake you.
+    /// Does nothing if the player is parked and `input`
+    /// doesn't wake them.
     ///
     pub(crate) fn tick(&mut self, input: Input) -> Result<(), LengthError> {
-        let Some(heading) = self.world.snake(YOU).map(|you| you.heading) else {
-            self.world.respawn(YOU, &mut self.random);
+        let Some(heading) = self.world.snake(PLAYER).map(|player| player.heading) else {
+            self.world.respawn(PLAYER, &mut self.random);
             return Ok(());
         };
         let turn = if self.parked {
@@ -70,8 +70,8 @@ impl<R: FnMut() -> f64> Game<R> {
         self.parked = false;
 
         self.world.count_down(&mut self.random);
-        if let Some(you) = self.world.snake(YOU) {
-            let inputs = sense(&self.world, you);
+        if let Some(player) = self.world.snake(PLAYER) {
+            let inputs = sense(&self.world, player);
             self.brain.record(PlayerSample {
                 inputs,
                 target: turn,
@@ -80,16 +80,16 @@ impl<R: FnMut() -> f64> Game<R> {
 
         let turns = self.turns(turn)?;
         self.world.step(&turns, &mut self.random);
-        if self.world.snake(YOU).is_none() {
-            self.world.respawn(YOU, &mut self.random);
+        if self.world.snake(PLAYER).is_none() {
+            self.world.respawn(PLAYER, &mut self.random);
             self.parked = true;
         }
 
         self.brain.train(&mut self.random)
     }
 
-    /// Each living snake's move: `yours` for you, and the brain's for clones.
-    fn turns(&self, yours: Turn) -> Result<Vec<Option<Turn>>, LengthError> {
+    /// Each living snake's move: `player_turn` for the player, and the brain's for bots.
+    fn turns(&self, player_turn: Turn) -> Result<Vec<Option<Turn>>, LengthError> {
         self.world
             .snakes
             .iter()
@@ -98,8 +98,8 @@ impl<R: FnMut() -> f64> Game<R> {
                 let Some(snake) = state.alive() else {
                     return Ok(None);
                 };
-                if index == YOU {
-                    return Ok(Some(yours));
+                if index == PLAYER {
+                    return Ok(Some(player_turn));
                 }
 
                 self.brain.predict(&sense(&self.world, snake)).map(Some)
@@ -147,7 +147,7 @@ mod tests {
         assert_eq!(
             (game.parked(), game.cells(), game.brain.samples.len()),
             (true, before, 0),
-            "tick does nothing while parked, without an input that wakes you"
+            "tick does nothing while parked, without an input that wakes the player"
         );
     }
 
@@ -157,9 +157,9 @@ mod tests {
         game.tick(Input::Left).unwrap();
 
         assert_eq!(
-            (game.parked(), head(&game, YOU)),
+            (game.parked(), head(&game, PLAYER)),
             (false, Some(Point { x: 4, y: 5 })),
-            "tick wakes you with an arrow, and makes that move"
+            "tick wakes the player with an arrow, and makes that move"
         );
     }
 
@@ -169,14 +169,14 @@ mod tests {
         game.tick(Input::TapLeft).unwrap();
 
         assert_eq!(
-            head(&game, YOU),
+            head(&game, PLAYER),
             Some(Point { x: 5, y: 4 }),
-            "tick wakes you with a tap, which sets off straight"
+            "tick wakes the player with a tap, which sets off straight"
         );
     }
 
     #[test]
-    fn clones_move() {
+    fn bots_move() {
         let mut game = game(vec![
             snake(&[(5, 5), (5, 6)], Direction::North),
             snake(&[(2, 2), (2, 3)], Direction::North),
@@ -186,7 +186,7 @@ mod tests {
         assert_ne!(
             head(&game, 1),
             Some(Point { x: 2, y: 2 }),
-            "tick moves clones as you move"
+            "tick moves bots as the player moves"
         );
     }
 
@@ -206,7 +206,7 @@ mod tests {
         assert_eq!(
             turns,
             [Turn::Straight, Turn::Straight, Turn::Right],
-            "tick records each of your moves, including not steering"
+            "tick records each of the player's moves, including not steering"
         );
     }
 
@@ -216,53 +216,53 @@ mod tests {
         game.tick(Input::Up).unwrap();
 
         assert_eq!(
-            (game.parked(), game.world.snake(YOU).is_some()),
+            (game.parked(), game.world.snake(PLAYER).is_some()),
             (true, true),
-            "tick respawns you at once when you die, parked"
+            "tick respawns the player at once when they die, parked"
         );
         assert_eq!(
             game.brain.samples.len(),
             1,
-            "tick records the move that killed you"
+            "tick records the move that killed the player"
         );
     }
 
     #[test]
-    fn clone_respawns() {
+    fn bot_respawns() {
         let mut game = game(vec![snake(&[(8, 8), (8, 9)], Direction::North)]);
         game.world.snakes.push(SnakeState::Respawning(1));
         game.tick(Input::Up).unwrap();
 
         assert!(
             game.world.snake(1).is_some(),
-            "tick respawns clones whose wait is over"
+            "tick respawns bots whose wait is over"
         );
     }
 
     #[test]
-    fn clones_learn() {
-        let trained = simulate_clone_meals(true);
-        let untrained = simulate_clone_meals(false);
+    fn bots_learn() {
+        let trained = simulate_bot_meals(true);
+        let untrained = simulate_bot_meals(false);
 
         assert!(
             trained > 3 * untrained,
-            "clones that train on a player who chases food eat far more than clones that never \
+            "bots that train on a player who chases food eat far more than bots that never \
              train, but ate {trained} to {untrained}"
         );
     }
 
     ///
     /// Simulates a game and returns how much food its
-    /// clones ate.
+    /// bots ate.
     ///
     /// A scripted player chases the nearest food for 300
     /// moves. With `training` off, the brain's samples are
     /// wiped before every move so it never trains, which
-    /// gives the baseline that trained clones are measured
+    /// gives the baseline that trained bots are measured
     /// against.
     ///
-    fn simulate_clone_meals(training: bool) -> usize {
-        /// Moves played in each game, enough for clones to learn.
+    fn simulate_bot_meals(training: bool) -> usize {
+        /// Moves played in each game, enough for bots to learn.
         const MOVES: usize = 300;
 
         let mut game = Game::new(Size::new(40, 30).unwrap(), seeded(1));
@@ -276,20 +276,20 @@ mod tests {
             let food = game.world.food.clone();
             game.tick(food_seeker(&game.world, &mut player)).unwrap();
 
-            meals += fed_clones(&game.world, &food);
+            meals += fed_bots(&game.world, &food);
         }
 
         meals
     }
 
-    /// Clones whose head is on a cell that held `food` before the move.
-    fn fed_clones(world: &World, food: &[Point]) -> usize {
+    /// Bots whose head is on a cell that held `food` before the move.
+    fn fed_bots(world: &World, food: &[Point]) -> usize {
         world
             .snakes
             .iter()
             .skip(1)
             .filter_map(SnakeState::alive)
-            .filter(|clone| food.contains(&clone.head))
+            .filter(|bot| food.contains(&bot.head))
             .count()
     }
 }

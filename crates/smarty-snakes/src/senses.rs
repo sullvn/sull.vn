@@ -79,7 +79,7 @@ fn scale(cells: i32) -> f64 {
 mod tests {
     use super::*;
     use crate::testing::{self, SnakeCells, points, snake};
-    use crate::world::{Direction, YOU};
+    use crate::world::{Direction, PLAYER};
 
     fn world(snakes: Vec<SnakeCells>, food: &[(i32, i32)]) -> World {
         let mut world = testing::world(10, 20, snakes);
@@ -88,9 +88,9 @@ mod tests {
         world
     }
 
-    /// What you notice in `world`.
+    /// What the player's snake notices in `world`.
     fn senses(world: &World) -> Senses {
-        sense(world, world.snake(YOU).unwrap())
+        sense(world, world.snake(PLAYER).unwrap())
     }
 
     #[test]
